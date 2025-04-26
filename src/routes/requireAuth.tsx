@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useAuthContext } from "../hooks/useAuth";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export const RequireAuth = ({
   role,

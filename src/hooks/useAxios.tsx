@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 import { useMemo } from "react";
-import { useAuthContext } from "./useAuth";
+import { useAuthContext } from "./useAuthContext";
 import { message } from "antd";
 const BASE_URL = "http://localhost:8000";
 
