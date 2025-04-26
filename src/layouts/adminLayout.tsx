@@ -2,15 +2,15 @@ import { Layout } from "antd";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/sidebar";
 import Header from "../components/header";
-import SchoolLogo from "../assets/images/school_logo.png";
+import SchoolLogo from "../components/schoolLogo";
 const { Header: AntHeader } = Layout;
 
 const AdminLayout = () => {
   return (
     <div className="flex flex-col h-screen">
       <AntHeader className="h-16 px-6 py-2 shadow-md flex items-center justify-between bg-white z-10">
-        <div className="text-xl font-bold text-blue-600">
-          <img src={SchoolLogo} alt="" width={50} height={50} />
+        <div className="text-xl">
+          <SchoolLogo />
         </div>
         <Header />
       </AntHeader>
