@@ -1,5 +1,4 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 
 export const RequireAuth = ({
@@ -10,6 +9,7 @@ export const RequireAuth = ({
   children: React.JSX.Element;
 }) => {
   const { user } = useAuthContext();
+  console.log(user, role);
 
   //   if (!user) return <Navigate to="/login" replace />;
   //   if (role && user.role !== role)

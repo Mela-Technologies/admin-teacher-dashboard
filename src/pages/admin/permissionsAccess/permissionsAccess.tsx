@@ -1,5 +1,3 @@
-import React from "react";
-
 const PermissionsAccessPage = () => {
   return <div>PermissionsAccessPage</div>;
 };

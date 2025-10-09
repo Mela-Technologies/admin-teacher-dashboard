@@ -1,4 +1,4 @@
-import { Navigate, useRoutes } from "react-router-dom";
+import { useRoutes } from "react-router-dom";
 import LoginPage from "../pages/authentication/loginPage";
 import { RequireAuth } from "./requireAuth";
 import { adminRoutes } from "./adminRoutes";
@@ -30,7 +30,7 @@ export const AppRoutes = () => {
       children: teacherRoutes,
     },
 
-    { path: "*", element: <Navigate to="/login" replace /> },
+    { path: "*", element: <div>404page</div> },
   ]);
 
   return routes;

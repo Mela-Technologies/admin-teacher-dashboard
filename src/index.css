@@ -1,3 +1,28 @@
 @import "tailwindcss";
 
 @import "antd/dist/reset.css";
+
+@theme {
+  /* colors */
+  --color-lamaSky: #c3ebfa;
+  --color-lamaSkyLight: #edf9fd;
+  --color-lamaPurple: #cfceff;
+  --color-lamaPurpleLight: #f1f0ff;
+  --color-lamaYellow: #fae27c;
+  --color-lamaYellowLight: #fefce8;
+
+  /* background images (as CSS variable strings) */
+  --bg-gradient-radial: radial-gradient(var(--tw-gradient-stops));
+  --bg-gradient-conic: conic-gradient(
+    from 180deg at 50% 50%,
+    var(--tw-gradient-stops)
+  );
+}
+
+.custom-menu :global(.ant-menu-item-selected) {
+  background-color: #e0f2fe !important; /* sky-100 */
+  color: #0284c7 !important; /* sky-600 */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  transition: all 0.25s ease;
+}

@@ -1,7 +1,6 @@
-import { Menu } from "antd";
+import { ConfigProvider, Menu } from "antd";
 import {
   DashboardOutlined,
-  UserAddOutlined,
   KeyOutlined,
   BookOutlined,
   TeamOutlined,
@@ -25,31 +24,13 @@ const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
     },
     {
       type: "group",
-      label: "Admission",
-      children: [
-        {
-          key: "user-registration",
-          icon: <UserAddOutlined />,
-          label: "User Registration",
-          onClick: () => navigate("/admin/admission/user-registration"),
-        },
-        {
-          key: "permission-access",
-          icon: <KeyOutlined />,
-          label: "Permission & Access",
-          onClick: () => navigate("/admin/admission/permissions"),
-        },
-      ],
-    },
-    {
-      type: "group",
       label: "Academics",
       children: [
         {
-          key: "lessons",
+          key: "class",
           icon: <BookOutlined />,
-          label: "Lessons",
-          onClick: () => navigate("/admin/academics/lessons"),
+          label: "Class",
+          onClick: () => navigate("/admin/academics/class"),
         },
         {
           key: "courses",
@@ -57,6 +38,12 @@ const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
           label: "Courses",
           onClick: () => navigate("/admin/academics/courses"),
         },
+      ],
+    },
+    {
+      type: "group",
+      label: "Students Management",
+      children: [
         {
           key: "students",
           icon: <TeamOutlined />,
@@ -64,16 +51,28 @@ const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
           onClick: () => navigate("/admin/academics/students"),
         },
         {
-          key: "teachers",
-          icon: <TeamOutlined />,
-          label: "Teachers",
-          onClick: () => navigate("/admin/academics/teachers"),
-        },
-        {
           key: "parents",
           icon: <TeamOutlined />,
           label: "Parents",
           onClick: () => navigate("/admin/academics/parents"),
+        },
+        {
+          key: "attendance",
+          icon: <KeyOutlined />,
+          label: "Attendance",
+          onClick: () => navigate("/admin/academics/attendance"),
+        },
+      ],
+    },
+    {
+      type: "group",
+      label: "Staff",
+      children: [
+        {
+          key: "teachers",
+          icon: <TeamOutlined />,
+          label: "Teachers",
+          onClick: () => navigate("/admin/academics/teachers"),
         },
       ],
     },
@@ -200,13 +199,25 @@ const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
   const items = role === "admin" ? adminItems : teacherItems;
 
   return (
-    <Menu
-      theme="light"
-      mode="inline"
-      defaultSelectedKeys={["dashboard"]}
-      items={items}
-      className="h-full border-r"
-    />
+    <ConfigProvider
+      theme={{
+        components: {
+          // Menu: {
+          //   itemSelectedColor: "#0284c7", // text/icon color when selected
+          //   itemSelectedBg: "#fff", // background when selected
+          //   itemActiveBg: "#f0f9ff", // hover/active background
+          // },
+        },
+      }}
+    >
+      <Menu
+        theme="light"
+        mode="inline"
+        defaultSelectedKeys={["dashboard"]}
+        items={items}
+        className="h-full border-r"
+      />
+    </ConfigProvider>
   );
 };
 
