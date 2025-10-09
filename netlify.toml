@@ -1,0 +1,10 @@
+# netlify.toml
+[build]
+  command = "npm run build"   # or "yarn build"
+  publish = "dist"            # the folder Vite outputs to
+
+# Optional: redirect all routes to index.html for SPA routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

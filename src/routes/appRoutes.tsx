@@ -8,7 +8,7 @@ import TeacherLayout from "../layouts/teacherLayout";
 
 export const AppRoutes = () => {
   const routes = useRoutes([
-    { path: "/login", element: <LoginPage /> },
+    { path: "/", element: <LoginPage /> },
 
     {
       path: "/admin",
