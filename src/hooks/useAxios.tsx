@@ -1,12 +1,11 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 import { useMemo } from "react";
-import { useAuthContext } from "./useAuthContext";
 import { message } from "antd";
+import { useNavigate } from "react-router-dom";
 const BASE_URL = "http://localhost:8000";
 
 export const useAxios = (): AxiosInstance => {
-  const { logout } = useAuthContext();
-
+  const navigator = useNavigate();
   const axiosInstance = useMemo(() => {
     const instance = axios.create({
       baseURL: BASE_URL,
@@ -52,7 +51,6 @@ export const useAxios = (): AxiosInstance => {
               );
               currentUser.token = newToken;
               localStorage.setItem("user", JSON.stringify(currentUser));
-
               // Update header and retry original request
               axiosInstance.defaults.headers.common.Authorization = `Bearer ${newToken}`;
               originalRequest.headers!.Authorization = `Bearer ${newToken}`;
@@ -60,7 +58,8 @@ export const useAxios = (): AxiosInstance => {
             }
           } catch (refreshError) {
             console.error("Token refresh failed:", refreshError);
-            logout();
+            message.error("Token refresh faild");
+            navigator("/login");
           }
         }
 
@@ -83,7 +82,7 @@ export const useAxios = (): AxiosInstance => {
     );
 
     return instance;
-  }, [logout]);
+  }, []);
 
   return axiosInstance;
 };

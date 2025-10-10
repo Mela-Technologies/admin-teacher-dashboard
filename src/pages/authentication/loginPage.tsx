@@ -1,20 +1,14 @@
 import { Form, Input, Button, Card, Layout, Select } from "antd";
 import useLogin from "../../hooks/useLogin";
 import SchoolLogo from "../../components/schoolLogo";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-export type LoginProps = { role?: string; email?: string; password?: string };
+import { LoginProps } from "../../types/login";
+
 const LoginPage = () => {
   const [form] = Form.useForm();
   const { login, loading } = useLogin();
   const { Header } = Layout;
-  const navigator = useNavigate();
-  useEffect(() => {
-    navigator("/admin/dashboard");
-  }, []);
 
   const onFinish = (values: LoginProps) => {
-    console.log(values);
     login(values);
   };
 

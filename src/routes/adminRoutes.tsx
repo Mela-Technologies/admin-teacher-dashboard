@@ -1,37 +1,38 @@
-import AttendancePage from "../pages/admin/attendance/attendance";
-import AddClassPage from "../pages/admin/class/addClass";
-import ClassDetailPage from "../pages/admin/class/classDetail/classDetailPage";
-import ClassAdminPage from "../pages/admin/class/classes";
-import AdminCoursesPage from "../pages/admin/courses/courses";
-import DashBoardAdmin from "../pages/admin/dashboard/dashboardAdmin";
-import AdminEventsPage from "../pages/admin/events/events";
-import AdminLessonsPage from "../pages/admin/lessons/lessons";
-import AdminMessagesPage from "../pages/admin/messages/messages";
-import AdminParentsPage from "../pages/admin/parents/parents";
-import PermissionsAccessPage from "../pages/admin/permissionsAccess/permissionsAccess";
-import UserRegistrationPage from "../pages/admin/registration/registration";
-import AdminSettingsPage from "../pages/admin/settings/settings";
-import AdminStudentsAddPage from "../pages/admin/students/addStudent";
-import AdminStudentDetailPage from "../pages/admin/students/studentDetail/studentDetailPage";
-import AdminStudentsPage from "../pages/admin/students/students";
-import AdminTeacherPage from "../pages/admin/teachers/teachers";
+import AttendancePage from "../pages/attendance/attendance";
+import AddClassPage from "../pages/class/addClass";
+import ClassDetailPage from "../pages/class/classDetail/classDetailPage";
+import ClassPage from "../pages/class/classes";
+import CoursesPage from "../pages/courses/courses";
+import DashBoard from "../pages/dashboard/dashboard";
+import EventsPage from "../pages/events/events";
+import LessonsPage from "../pages/lessons/lessons";
+import MessagesPage from "../pages/messages/messages";
+import ParentsPage from "../pages/parents/parents";
+import PermissionsAccessPage from "../pages/permissionsAccess/permissionsAccess";
+import UserRegistrationPage from "../pages/registration/registration";
+import SettingsPage from "../pages/settings/settings";
+import AddStudentsPage from "../pages/students/addStudent";
+import StudentDetailPage from "../pages/students/studentDetail/studentDetailPage";
+import StudentsPage from "../pages/students/students";
+import TeacherPage from "../pages/teachers/teachers";
 
+const role = "admin";
 export const adminRoutes = [
-  { path: "dashboard", element: <DashBoardAdmin /> },
+  { path: "dashboard", element: <DashBoard /> },
   { path: "admission/user-registration", element: <UserRegistrationPage /> },
   { path: "admission/permissions", element: <PermissionsAccessPage /> },
-  { path: "academics/lessons", element: <AdminLessonsPage /> },
-  { path: "academics/courses", element: <AdminCoursesPage /> },
-  { path: "academics/class", element: <ClassAdminPage /> },
-  { path: "academics/class/add", element: <AddClassPage /> },
-  { path: "academics/class/detail", element: <ClassDetailPage /> },
-  { path: "academics/students", element: <AdminStudentsPage /> },
-  { path: "academics/students/add", element: <AdminStudentsAddPage /> },
-  { path: "academics/students/detail", element: <AdminStudentDetailPage /> },
-  { path: "academics/attendance", element: <AttendancePage /> },
-  { path: "academics/teachers", element: <AdminTeacherPage /> },
-  { path: "academics/parents", element: <AdminParentsPage /> },
-  { path: "academics/events", element: <AdminEventsPage /> },
-  { path: "academics/message", element: <AdminMessagesPage /> },
-  { path: "settings", element: <AdminSettingsPage /> },
+  { path: "academics/lessons", element: <LessonsPage role={role} /> },
+  { path: "academics/courses", element: <CoursesPage role={role} /> },
+  { path: "academics/class", element: <ClassPage role={role} /> },
+  { path: "academics/class/add", element: <AddClassPage role={role} /> },
+  { path: "academics/class/detail", element: <ClassDetailPage role={role} /> },
+  { path: "students", element: <StudentsPage role={role} /> },
+  { path: "students/add", element: <AddStudentsPage role={role} /> },
+  { path: "students/detail", element: <StudentDetailPage role={role} /> },
+  { path: "students/attendance", element: <AttendancePage role={role} /> },
+  { path: "students/parents", element: <ParentsPage role={role} /> },
+  { path: "staff/teachers", element: <TeacherPage role={role} /> },
+  { path: "communication/events", element: <EventsPage role={role} /> },
+  { path: "communication/message", element: <MessagesPage role={role} /> },
+  { path: "settings", element: <SettingsPage role={role} /> },
 ];
