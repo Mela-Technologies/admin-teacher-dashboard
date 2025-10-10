@@ -2,6 +2,7 @@
 import React from "react";
 import { Input, Button, Table } from "antd";
 import { ClassFormValues, SectionType } from "./addClassController";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   initialValues: ClassFormValues;
@@ -24,25 +25,25 @@ const AddClassForm: React.FC<Props> = ({
 }) => {
   const [gradeLevel, setGradeLevel] = React.useState(initialValues.gradeLevel);
   const [otherData, setOtherData] = React.useState(initialValues.otherData);
-
+  const { t } = useTranslation();
   const handleSubmit = () => {
     onSubmit({ gradeLevel, otherData, sections });
   };
 
   const sectionColumns = [
     {
-      title: "Section Name",
+      title: t("sectionName"),
       dataIndex: "name",
       render: (text: string, record: SectionType) => (
         <Input
           value={text}
           onChange={(e) => updateSection(record.key, "name", e.target.value)}
-          placeholder="Section Name"
+          placeholder={t("sectionName")}
         />
       ),
     },
     {
-      title: "Capacity",
+      title: t("capacity"),
       dataIndex: "capacity",
       render: (text: number, record: SectionType) => (
         <Input
@@ -51,12 +52,12 @@ const AddClassForm: React.FC<Props> = ({
           onChange={(e) =>
             updateSection(record.key, "capacity", parseInt(e.target.value) || 0)
           }
-          placeholder="Capacity"
+          placeholder={t("capacity")}
         />
       ),
     },
     {
-      title: "Room Number",
+      title: t("roomNumber"),
       dataIndex: "roomNumber",
       render: (text: string, record: SectionType) => (
         <Input
@@ -64,7 +65,7 @@ const AddClassForm: React.FC<Props> = ({
           onChange={(e) =>
             updateSection(record.key, "roomNumber", e.target.value)
           }
-          placeholder="Room Number"
+          placeholder={t("roomNumber")}
         />
       ),
     },
@@ -72,7 +73,7 @@ const AddClassForm: React.FC<Props> = ({
       title: "Action",
       render: (_: any, record: SectionType) => (
         <Button danger onClick={() => removeSection(record.key)}>
-          Remove
+          {t("remove")}
         </Button>
       ),
     },
@@ -82,13 +83,13 @@ const AddClassForm: React.FC<Props> = ({
     <div className="space-y-6">
       {/* Grade Info */}
       <div className="p-4 border-gray-200 rounded bg-white shadow-sm space-y-4">
-        <h3 className="text-lg font-semibold">Grade Information</h3>
+        <h3 className="text-lg font-semibold">{t("Grade Information")}</h3>
         <div>
           <label className="block mb-1 font-medium">Grade Level</label>
           <Input
             value={gradeLevel}
             onChange={(e) => setGradeLevel(e.target.value)}
-            placeholder="Enter grade level"
+            placeholder={t("Enter grade level")}
           />
         </div>
         <div>
@@ -105,7 +106,7 @@ const AddClassForm: React.FC<Props> = ({
       <div className="p-4 border-gray-200 rounded bg-white shadow-sm">
         <h3 className="text-lg font-semibold mb-3">Sections</h3>
         <Button type="dashed" onClick={addSection} className="mb-3">
-          Add Section
+          {t("Add Section")}
         </Button>
         <Table
           dataSource={sections}
@@ -117,7 +118,7 @@ const AddClassForm: React.FC<Props> = ({
 
       <div className="flex justify-end">
         <Button type="primary" onClick={handleSubmit} loading={loading}>
-          Submit
+          {t("Submit")}
         </Button>
       </div>
     </div>

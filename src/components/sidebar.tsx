@@ -11,85 +11,86 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import type { MenuProps } from "antd";
+import { useTranslation } from "react-i18next";
 
 const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
   const navigate = useNavigate();
-
+  const { t } = useTranslation();
   const adminItems: MenuProps["items"] = [
     {
       key: "dashboard",
       icon: <DashboardOutlined />,
-      label: "Dashboard",
+      label: t("dashboard"),
       onClick: () => navigate("/admin/dashboard"),
     },
     {
       type: "group",
-      label: "Academics",
+      label: t("academics"),
       children: [
         {
           key: "class",
           icon: <BookOutlined />,
-          label: "Class",
+          label: t("class"),
           onClick: () => navigate("/admin/academics/class"),
         },
         {
           key: "courses",
           icon: <ReadOutlined />,
-          label: "Courses",
+          label: t("courses"),
           onClick: () => navigate("/admin/academics/courses"),
         },
       ],
     },
     {
       type: "group",
-      label: "Students Management",
+      label: t("studentsManagement"),
       children: [
         {
           key: "students",
           icon: <TeamOutlined />,
-          label: "Students",
+          label: t("students"),
           onClick: () => navigate("/admin/academics/students"),
         },
         {
           key: "parents",
           icon: <TeamOutlined />,
-          label: "Parents",
+          label: t("parents"),
           onClick: () => navigate("/admin/academics/parents"),
         },
         {
           key: "attendance",
           icon: <KeyOutlined />,
-          label: "Attendance",
+          label: t("attendance"),
           onClick: () => navigate("/admin/academics/attendance"),
         },
       ],
     },
     {
       type: "group",
-      label: "Staff",
+      label: t("staff"),
       children: [
         {
           key: "teachers",
           icon: <TeamOutlined />,
-          label: "Teachers",
+          label: t("teachers"),
           onClick: () => navigate("/admin/academics/teachers"),
         },
       ],
     },
     {
       type: "group",
-      label: "Communication",
+      label: t("communication"),
       children: [
         {
           key: "events",
           icon: "",
-          label: "Events",
+          label: t("events"),
           onClick: () => () => navigate("/admin/academics/events"),
         },
         {
           key: "message",
           icon: "",
-          label: "Message",
+          label: t("message"),
           onClick: () => () => navigate("/admin/academics/message"),
         },
       ],
@@ -98,13 +99,13 @@ const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
     {
       key: "settings",
       icon: <SettingOutlined />,
-      label: "Settings",
+      label: t("settings"),
       onClick: () => navigate("/admin/settings"),
     },
     {
       key: "logout",
       icon: <LogoutOutlined />,
-      label: "Logout",
+      label: t("logout"),
       onClick: () => navigate("/login"),
     },
   ];
@@ -113,17 +114,17 @@ const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
     {
       key: "dashboard",
       icon: <DashboardOutlined />,
-      label: "Dashboard",
+      label: t("dashboard"),
       onClick: () => navigate("/teacher/dashboard"),
     },
     {
       type: "group",
-      label: "My Academics",
+      label: t("myAcademics"),
       children: [
         {
           key: "my-lessons",
           icon: <BookOutlined />,
-          label: "My Lessons",
+          label: t("myLessons"),
           onClick: () => navigate("/teacher/academics/lessons"),
         },
         {
@@ -135,30 +136,30 @@ const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
         {
           key: "my-students",
           icon: <TeamOutlined />,
-          label: "My Students",
+          label: t("myStudents"),
           onClick: () => navigate("/teacher/academics/students"),
         },
         {
           key: "attendance",
           icon: <CalendarOutlined />,
-          label: "Attendance",
+          label: t("attendance"),
           onClick: () => navigate("/teacher/attendance"),
         },
       ],
     },
     {
       type: "group",
-      label: "Grade",
+      label: t("grade"),
       children: [
         {
           key: "results",
-          label: "Result",
+          label: t("result"),
           icon: "",
           onClick: () => navigate("/teacher/results"),
         },
         {
           key: "exams",
-          label: "Exams",
+          label: t("exams"),
           icon: "",
           onClick: () => navigate("/teacher/exams"),
         },
@@ -166,18 +167,18 @@ const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
     },
     {
       type: "group",
-      label: "Communication",
+      label: t("communication"),
       children: [
         {
           key: "events",
           icon: "",
-          label: "Events",
+          label: t("events"),
           onClick: () => () => navigate("/admin/academics/events"),
         },
         {
           key: "message",
           icon: "",
-          label: "Message",
+          label: t("message"),
           onClick: () => () => navigate("/admin/academics/message"),
         },
       ],
@@ -185,13 +186,13 @@ const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
     {
       key: "settings",
       icon: <SettingOutlined />,
-      label: "Settings",
+      label: t("settings"),
       onClick: () => navigate("/teacher/settings"),
     },
     {
       key: "logout",
       icon: <LogoutOutlined />,
-      label: "Logout",
+      label: t("logout"),
       onClick: () => navigate("/login"),
     },
   ];

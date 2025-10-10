@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import { useTranslation } from "react-i18next";
 
 type ValuePiece = Date | null;
 
@@ -30,12 +31,12 @@ const events = [
 
 const EventCalendar = () => {
   const [value, onChange] = useState<Value>(new Date());
-
+  const { t } = useTranslation();
   return (
     <div className="bg-white p-4 rounded-md">
       <Calendar onChange={onChange} value={value} />
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold my-4">Events</h1>
+        <h1 className="text-xl font-semibold my-4">{t("events")}</h1>
         <img src="/moreDark.png" alt="" width={20} height={20} />
       </div>
       <div className="flex flex-col gap-4">

@@ -11,6 +11,7 @@ import {
   SettingOutlined,
   ImportOutlined,
 } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 type TopActionBarProps = {
   hasSelection: boolean;
@@ -20,6 +21,8 @@ type TopActionBarProps = {
   onDelete?: () => void;
   onExport?: () => void;
   onPrint?: () => void;
+  title?: string;
+  addBtnText?: string;
 };
 
 const TopActionBar: React.FC<TopActionBarProps> = ({
@@ -30,18 +33,21 @@ const TopActionBar: React.FC<TopActionBarProps> = ({
   onDelete,
   onExport,
   onPrint,
+  title,
+  addBtnText,
 }) => {
+  const { t } = useTranslation();
   // --- Main Menu Items ---
   const mainMenuItems: MenuProps["items"] = [
     {
       key: "import",
       icon: <ImportOutlined />,
-      label: "Import",
+      label: t("import"),
     },
     {
       key: "settings",
       icon: <SettingOutlined />,
-      label: "List Settings",
+      label: t("listSettings"),
     },
   ];
 
@@ -50,25 +56,25 @@ const TopActionBar: React.FC<TopActionBarProps> = ({
     {
       key: "edit",
       icon: <EditOutlined />,
-      label: "Edit",
+      label: t("edit"),
       onClick: onEdit,
     },
     {
       key: "export",
       icon: <FileExcelOutlined />,
-      label: "Export",
+      label: t("export"),
       onClick: onExport,
     },
     {
       key: "print",
       icon: <PrinterOutlined />,
-      label: "Print",
+      label: t("print"),
       onClick: onPrint,
     },
     {
       key: "delete",
       icon: <DeleteOutlined />,
-      label: "Delete",
+      label: t("delete"),
       onClick: onDelete,
       danger: true,
     },
@@ -77,7 +83,7 @@ const TopActionBar: React.FC<TopActionBarProps> = ({
   return (
     <div className="flex justify-between items-center p-2 border-b border-gray-200">
       {/* Left side */}
-      Title
+      {title ?? t("titleHere")}
       {/* Right side - Add/Actions and Menu */}
       <div className="flex items-center gap-2">
         {/* Refresh */}
@@ -97,7 +103,7 @@ const TopActionBar: React.FC<TopActionBarProps> = ({
           </Dropdown>
         ) : (
           <Button type="primary" icon={<PlusOutlined />} onClick={onAddUser}>
-            Add User
+            {addBtnText ?? "Add"}
           </Button>
         )}
       </div>

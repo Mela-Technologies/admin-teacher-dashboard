@@ -13,6 +13,7 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { StudentFormValues } from "./studentRegistrationController";
+import { useTranslation } from "react-i18next";
 
 const { Option } = Select;
 
@@ -29,7 +30,7 @@ const StudentRegistrationForm: React.FC<Props> = ({
 }) => {
   const [form] = Form.useForm<StudentFormValues>();
   const [pictureFile, setPictureFile] = useState<File | null>(null);
-
+  const { t } = useTranslation();
   const handleSubmit = (values: StudentFormValues) => {
     onSubmit({ ...values, picture: pictureFile });
   };
@@ -48,28 +49,28 @@ const StudentRegistrationForm: React.FC<Props> = ({
           {/* PERSONAL DATA */}
           <div className={sectionClass}>
             <Divider orientation="left" className="text-gray-500 font-semibold">
-              Personal Data
+              {t("personalData")}
             </Divider>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Form.Item
                 name="firstName"
-                label="First Name"
+                label={t("firstName")}
                 rules={[{ required: true }]}
               >
                 <Input placeholder="Enter first name" />
               </Form.Item>
               <Form.Item
                 name="lastName"
-                label="Last Name"
+                label={t("lastName")}
                 rules={[{ required: true }]}
               >
                 <Input placeholder="Enter last name" />
               </Form.Item>
 
-              <Form.Item name="gender" label="Gender">
+              <Form.Item name="gender" label={t("gender")}>
                 <Radio.Group>
-                  <Radio value="Male">Male</Radio>
-                  <Radio value="Female">Female</Radio>
+                  <Radio value="Male">{t("male")}</Radio>
+                  <Radio value="Female">{t("female")}</Radio>
                 </Radio.Group>
               </Form.Item>
 
@@ -77,7 +78,7 @@ const StudentRegistrationForm: React.FC<Props> = ({
                 <DatePicker className="w-full" format="YYYY-MM-DD" />
               </Form.Item>
 
-              <Form.Item name="birthPlace" label="Birth Place">
+              <Form.Item name="birthPlace" label={t("birthPlace")}>
                 <Select placeholder="Select birth place">
                   <Option value="Addis Ababa">Addis Ababa</Option>
                   <Option value="Jimma">Jimma</Option>
@@ -86,14 +87,14 @@ const StudentRegistrationForm: React.FC<Props> = ({
                 </Select>
               </Form.Item>
 
-              <Form.Item name="role" label="Role">
+              <Form.Item name="role" label={t("role")}>
                 <Select placeholder="Select role">
                   <Option value="student">Student</Option>
                   <Option value="prefect">Prefect</Option>
                 </Select>
               </Form.Item>
 
-              <Form.Item name="title" label="Title">
+              <Form.Item name="title" label={t("nameTitle")}>
                 <Select placeholder="Select title">
                   <Option value="Mr">Mr.</Option>
                   <Option value="Ms">Ms.</Option>
@@ -101,7 +102,7 @@ const StudentRegistrationForm: React.FC<Props> = ({
                 </Select>
               </Form.Item>
 
-              <Form.Item label="Picture">
+              <Form.Item label={t("picture")}>
                 <Upload
                   beforeUpload={(file) => {
                     setPictureFile(file);
@@ -118,23 +119,23 @@ const StudentRegistrationForm: React.FC<Props> = ({
           {/* CONTACT INFO */}
           <div className={sectionClass}>
             <Divider orientation="left" className="text-gray-500 font-semibold">
-              Contact Information
+              {t("contactInformation")}
             </Divider>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Form.Item name="mobile" label="Mobile Phone">
+              <Form.Item name="mobile" label={t("mobilePhone")}>
                 <Input placeholder="+251..." />
               </Form.Item>
-              <Form.Item name="email" label="Email">
+              <Form.Item name="email" label={t("email")}>
                 <Input type="email" placeholder="example@email.com" />
               </Form.Item>
 
-              <Form.Item name={["address", "street"]} label="Street">
+              <Form.Item name={["address", "street"]} label={t("street")}>
                 <Input placeholder="Street address" />
               </Form.Item>
-              <Form.Item name={["address", "city"]} label="City">
+              <Form.Item name={["address", "city"]} label={t("city")}>
                 <Input placeholder="City name" />
               </Form.Item>
-              <Form.Item name={["address", "post"]} label="Postal Code">
+              <Form.Item name={["address", "post"]} label={t("postalCode")}>
                 <Input placeholder="Postal code" />
               </Form.Item>
             </div>
@@ -143,24 +144,30 @@ const StudentRegistrationForm: React.FC<Props> = ({
           {/* ACCESS INFO */}
           <div className={sectionClass}>
             <Divider orientation="left" className="text-gray-500 font-semibold">
-              Access
+              {t("access")}
             </Divider>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Form.Item label="Username Preference" name="usernamePreference">
+              <Form.Item
+                label={t("usernamePreference")}
+                name="usernamePreference"
+              >
                 <Radio.Group>
-                  <Radio value="phone">Phone Number</Radio>
-                  <Radio value="email">Email</Radio>
+                  <Radio value="phone">{t("phoneNumber")}</Radio>
+                  <Radio value="email">{t("email")}</Radio>
                 </Radio.Group>
               </Form.Item>
 
-              <Form.Item label="Password Preference" name="passwordPreference">
+              <Form.Item
+                label={t("passwordPreference")}
+                name="passwordPreference"
+              >
                 <Radio.Group>
-                  <Radio value="dob">Date of Birth</Radio>
-                  <Radio value="otp">Generate OTP</Radio>
+                  <Radio value="dob">{t("dateOfBirth")}</Radio>
+                  <Radio value="otp">{t("generateOTP")}</Radio>
                 </Radio.Group>
               </Form.Item>
 
-              <Form.Item label="Send Credentials" name="sendCredential">
+              <Form.Item label={t("sendCredentials")} name="sendCredential">
                 <Checkbox.Group>
                   <Checkbox value="none">Don't Send</Checkbox>
                   <Checkbox value="email">Email</Checkbox>
@@ -178,7 +185,7 @@ const StudentRegistrationForm: React.FC<Props> = ({
               className="bg-blue-600 hover:bg-blue-700"
               onClick={() => form.submit()}
             >
-              Register Student
+              {t("registerStudent")}
             </Button>
           </div>
         </div>

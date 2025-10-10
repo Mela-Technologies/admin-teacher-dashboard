@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from "react";
 import TopActionBar from "../../../components/topActionBar";
-import { Table, Input, Select } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import { Table, Input, Select, Button } from "antd";
+import { SearchOutlined, ReloadOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const { Option } = Select;
 
@@ -11,6 +12,8 @@ const students = [
     key: 1,
     firstName: "Saba",
     lastName: "Elias",
+    grade: "Grade 10",
+    status: "Active",
     gender: "Female",
     dob: "11-06-2001",
     birthPlace: "Addis Ababa",
@@ -20,6 +23,8 @@ const students = [
     key: 2,
     firstName: "Jane",
     lastName: "Yirga",
+    grade: "Grade 11",
+    status: "Inactive",
     gender: "Male",
     dob: "09-03-2000",
     birthPlace: "Jimma",
@@ -29,6 +34,8 @@ const students = [
     key: 3,
     firstName: "Kirubel",
     lastName: "Samuel",
+    grade: "Grade 10",
+    status: "Active",
     gender: "Male",
     dob: "23-02-2000",
     birthPlace: "Addis Ababa",
@@ -38,39 +45,56 @@ const students = [
 
 const AdminStudentsPage: React.FC = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [selectedColumn, setSelectedColumn] = useState<string>("firstName");
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [gradeFilter, setGradeFilter] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const navigator = useNavigate();
+  const { t } = useTranslation();
+  // Define columns
   const columns = [
-    { title: "First Name", dataIndex: "firstName" },
-    { title: "Last Name", dataIndex: "lastName" },
-    { title: "Gender", dataIndex: "gender" },
-    { title: "DOB", dataIndex: "dob" },
-    { title: "Birth Place", dataIndex: "birthPlace" },
-    { title: "Address", dataIndex: "address" },
+    {
+      title: t("fullName"),
+      dataIndex: "fullName",
+      render: (_: any, record: any) => `${record.firstName} ${record.lastName}`,
+    },
+    { title: t("grade"), dataIndex: "grade" },
+    { title: t("status"), dataIndex: "status" },
+    { title: t("gender"), dataIndex: "gender" },
+    { title: t("dob"), dataIndex: "dob" },
+    { title: t("birthPlace"), dataIndex: "birthPlace" },
+    { title: t("address"), dataIndex: "address" },
   ];
 
-  // 🔍 Filtered data based on selected column and search term
+  // Filter data by full name, grade, and status
   const filteredData = useMemo(() => {
-    if (!searchTerm) return students;
     return students.filter((student) => {
-      const value = student[selectedColumn as keyof typeof student];
-      return (
-        value &&
-        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      const fullName = `${student.firstName} ${student.lastName}`.toLowerCase();
+      const matchesSearch = fullName.includes(searchTerm.toLowerCase());
+      const matchesGrade = gradeFilter ? student.grade === gradeFilter : true;
+      const matchesStatus = statusFilter
+        ? student.status === statusFilter
+        : true;
+      return matchesSearch && matchesGrade && matchesStatus;
     });
-  }, [searchTerm, selectedColumn]);
+  }, [searchTerm, gradeFilter, statusFilter]);
 
   const rowSelection = {
     selectedRowKeys,
     onChange: (selectedKeys: React.Key[]) => setSelectedRowKeys(selectedKeys),
   };
 
+  const resetFilters = () => {
+    setSearchTerm("");
+    setGradeFilter(null);
+    setStatusFilter(null);
+  };
+
   return (
     <div>
       {/* 🔹 Top Action Bar */}
       <TopActionBar
+        title={t("students")}
+        addBtnText={t("addStudent")}
         hasSelection={selectedRowKeys.length > 0}
         onRefresh={() => console.log("Refresh")}
         onAddUser={() => navigator("add")}
@@ -83,42 +107,54 @@ const AdminStudentsPage: React.FC = () => {
       {/* 🔹 Table Section */}
       <div className="flex min-h-screen">
         <div className="px-2 flex-1">
-          {/* 🔹 Filter and Search Section */}
-          <div className="flex flex-wrap items-center gap-3 px-3 py-2 border-b border-gray-200 ">
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-700">
-                Filter by:
-              </label>
-              <Select
-                value={selectedColumn}
-                onChange={(value) => setSelectedColumn(value)}
-                className="min-w-[160px]"
-              >
-                {columns.map((col) => (
-                  <Option key={col.dataIndex} value={col.dataIndex}>
-                    {col.title}
-                  </Option>
-                ))}
-              </Select>
-            </div>
+          {/* 🔹 Search & Filter Section */}
+          <div className="flex  items-center gap-3  py-2 border-b border-gray-200">
+            {/* Search by full name */}
+            <Input
+              placeholder={t("searchByStudentName")}
+              prefix={<SearchOutlined />}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              allowClear
+              className=""
+            />
 
-            <div className="flex items-center gap-2">
-              <Input
-                placeholder={`Search by ${selectedColumn}`}
-                prefix={<SearchOutlined />}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                allowClear
-                className="w-64"
-              />
-            </div>
+            {/* Grade filter */}
+            <Select
+              placeholder={t("filterByGrade")}
+              value={gradeFilter}
+              onChange={(value) => setGradeFilter(value)}
+              allowClear
+              className="min-w-[140px]"
+            >
+              <Option value="Grade 10">Grade 10</Option>
+              <Option value="Grade 11">Grade 11</Option>
+              <Option value="Grade 12">Grade 12</Option>
+            </Select>
+
+            {/* Status filter */}
+            <Select
+              placeholder={t("filterByStatus")}
+              value={statusFilter}
+              onChange={(value) => setStatusFilter(value)}
+              allowClear
+              className="min-w-[140px]"
+            >
+              <Option value="Active">Active</Option>
+              <Option value="Inactive">Inactive</Option>
+            </Select>
+
+            {/* Reset button */}
+            <Button icon={<ReloadOutlined />} onClick={resetFilters}>
+              {t("clearFilters")}
+            </Button>
           </div>
-          {/* table */}
+
+          {/* Table */}
           <Table
             rowSelection={rowSelection}
             dataSource={filteredData}
             columns={columns}
-            className=""
             onRow={(record, rowIndex) => ({
               onClick: () => {
                 navigator("detail");

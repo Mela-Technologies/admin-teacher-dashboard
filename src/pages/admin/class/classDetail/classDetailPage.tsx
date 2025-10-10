@@ -9,6 +9,7 @@ import {
 import ClassDetailCard from "./classDetailCard";
 import ClassStatsCard from "./classStatCard";
 import ClassTabs from "./classTab";
+import { useTranslation } from "react-i18next";
 
 const ClassDetailPage: React.FC = () => {
   const classInfo = {
@@ -28,25 +29,25 @@ const ClassDetailPage: React.FC = () => {
   const handleBack = () => window.history.back();
   const handleEdit = () => console.log("Edit Class");
   const handlePrint = () => console.log("Print Class");
-
+  const { t } = useTranslation();
   return (
     <div className="space-y-2 h-full">
       {/* Top Action Bar */}
       <div className="flex justify-between items-center p-2 border-b border-gray-200">
         <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
-          Back
+          {t("Back")}
         </Button>
 
         <div className="flex gap-4">
           <Button icon={<EditOutlined />} type="default" onClick={handleEdit}>
-            Edit Class
+            {t("editClass")}
           </Button>
           <Button
             icon={<PrinterOutlined />}
             type="primary"
             onClick={handlePrint}
           >
-            Print
+            {t("print")}
           </Button>
         </div>
       </div>
@@ -63,14 +64,14 @@ const ClassDetailPage: React.FC = () => {
           <Col xs={24} md={14} lg={16} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <ClassStatsCard
-                title="Total Sections"
+                title={t("totalSections")}
                 value={classInfo.totalSections}
               />
               <ClassStatsCard
-                title="Total Students"
+                title={t("totalStudents")}
                 value={classInfo.totalStudents}
               />
-              <ClassStatsCard title="Status" value={classInfo.status} />
+              <ClassStatsCard title={t("status")} value={classInfo.status} />
             </div>
 
             {/* Tabs Section */}
