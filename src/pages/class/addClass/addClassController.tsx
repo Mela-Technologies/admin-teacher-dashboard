@@ -9,20 +9,22 @@ export interface SectionType {
 }
 
 export interface ClassFormValues {
+  gradeId?: string; // optional for editing
   gradeLevel: string;
-  otherData?: string;
   sections: SectionType[];
 }
 
-export const useClassFormController = () => {
+export const useClassFormController = (editValues?: ClassFormValues) => {
   const [initialValues] = useState<ClassFormValues>({
     gradeLevel: "",
-    otherData: "",
     sections: [],
   });
   const [loading, setLoading] = useState(false);
-  const [sections, setSections] = useState<SectionType[]>([]);
+  const [sections, setSections] = useState<SectionType[]>(
+    editValues?.sections ?? []
+  );
 
+  /** 🔹 Add a new empty section */
   const addSection = () => {
     setSections((prev) => [
       ...prev,
@@ -30,23 +32,46 @@ export const useClassFormController = () => {
     ]);
   };
 
+  /** 🔹 Remove a section by key */
   const removeSection = (key: string) => {
     setSections((prev) => prev.filter((s) => s.key !== key));
   };
 
+  /** 🔹 Update a specific section field */
   const updateSection = (key: string, field: keyof SectionType, value: any) => {
     setSections((prev) =>
       prev.map((s) => (s.key === key ? { ...s, [field]: value } : s))
     );
   };
 
+  /** 🔹 Register (create) a new class */
   const registerClass = async (values: ClassFormValues) => {
     setLoading(true);
     try {
       console.log("Register Class:", { ...values, sections });
-      // call API here
+      // TODO: replace with API call
+      // await axios.post("/api/classes", { ...values, sections });
     } catch (error) {
-      console.error(error);
+      console.error("Error registering class:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /** 🔹 Update an existing class */
+  const updateClass = async (values: ClassFormValues) => {
+    if (!values.gradeId) {
+      console.warn("Missing class ID for update.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      console.log("Update Class:", { ...values, sections });
+      // TODO: replace with API call
+      // await axios.put(`/api/classes/${values.id}`, { ...values, sections });
+    } catch (error) {
+      console.error("Error updating class:", error);
     } finally {
       setLoading(false);
     }
@@ -59,6 +84,7 @@ export const useClassFormController = () => {
     removeSection,
     updateSection,
     registerClass,
+    updateClass, // ✅ new update method
     loading,
   };
 };

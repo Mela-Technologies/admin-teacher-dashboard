@@ -1,7 +1,12 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import TopActionBar from "../../components/topActionBar";
-import { Table, Input, Select, Button, Tag } from "antd";
-import { SearchOutlined, ReloadOutlined } from "@ant-design/icons";
+import { Table, Input, Select, Button, Tag, Card, Space } from "antd";
+import {
+  SearchOutlined,
+  ReloadOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { UserRole } from "../../types/user";
@@ -14,6 +19,7 @@ interface CourseType {
   code: string;
   creditHours: number;
   core: boolean;
+  grade: number;
 }
 
 const courses: CourseType[] = [
@@ -23,6 +29,7 @@ const courses: CourseType[] = [
     code: "MATH101",
     creditHours: 3,
     core: true,
+    grade: 10,
   },
   {
     key: 2,
@@ -30,19 +37,41 @@ const courses: CourseType[] = [
     code: "ENG102",
     creditHours: 2,
     core: true,
+    grade: 10,
   },
-  { key: 3, subject: "Physics", code: "PHY103", creditHours: 3, core: false },
-  { key: 4, subject: "History", code: "HIS104", creditHours: 2, core: false },
-  { key: 5, subject: "Biology", code: "BIO105", creditHours: 3, core: true },
+  {
+    key: 3,
+    subject: "Physics",
+    code: "PHY103",
+    creditHours: 3,
+    core: false,
+    grade: 11,
+  },
+  {
+    key: 4,
+    subject: "History",
+    code: "HIS104",
+    creditHours: 2,
+    core: false,
+    grade: 12,
+  },
+  {
+    key: 5,
+    subject: "Biology",
+    code: "BIO105",
+    creditHours: 3,
+    core: true,
+    grade: 11,
+  },
 ];
 
 const CoursePage = ({ role }: { role: UserRole }) => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filterCore, setFilterCore] = useState<string | null>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  // 🔹 Table columns
   const columns = [
     { title: t("subject"), dataIndex: "subject", key: "subject" },
     { title: t("code"), dataIndex: "code", key: "code" },
@@ -62,17 +91,26 @@ const CoursePage = ({ role }: { role: UserRole }) => {
       title: t("action"),
       key: "action",
       render: (_: any, record: CourseType) => (
-        <Button
-          type="link"
-          onClick={() => navigate(`/courses/${record.key}/assign-class`)}
-        >
-          {t("assignClass")}
-        </Button>
+        <Space>
+          <Button
+            type="link"
+            onClick={() => console.log("Edit course:", record)}
+          >
+            <EditOutlined />
+          </Button>
+          <Button
+            type="link"
+            danger
+            onClick={() => console.log("Delete course:", record)}
+          >
+            <DeleteOutlined />
+          </Button>
+        </Space>
       ),
     },
   ];
 
-  // 🔍 Filtered data based on search and filters
+  // 🔹 Filter and search logic
   const filteredData = useMemo(() => {
     return courses.filter((course) => {
       const matchesSearch =
@@ -88,10 +126,15 @@ const CoursePage = ({ role }: { role: UserRole }) => {
     });
   }, [searchTerm, filterCore]);
 
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: (selectedKeys: React.Key[]) => setSelectedRowKeys(selectedKeys),
-  };
+  // 🔹 Group courses by grade
+  const groupedCourses = useMemo(() => {
+    const groups: Record<number, CourseType[]> = {};
+    filteredData.forEach((course) => {
+      if (!groups[course.grade]) groups[course.grade] = [];
+      groups[course.grade].push(course);
+    });
+    return groups;
+  }, [filteredData]);
 
   const handleResetFilters = () => {
     setSearchTerm("");
@@ -99,67 +142,88 @@ const CoursePage = ({ role }: { role: UserRole }) => {
   };
 
   return (
-    <div>
+    <div className="h-full">
       {/* 🔹 Top Action Bar */}
       <TopActionBar
         addBtnText="Add New Course"
         title={t("courses")}
-        hasSelection={selectedRowKeys.length > 0}
         onRefresh={() => console.log("Refresh")}
         onAddUser={() => navigate("add")}
-        onEdit={() => console.log("Edit", role, selectedRowKeys)}
-        onDelete={() => console.log("Delete", selectedRowKeys)}
-        onExport={() => console.log("Export", selectedRowKeys)}
-        onPrint={() => console.log("Print", selectedRowKeys)}
+        onEdit={() => console.log("Edit", role)}
+        onDelete={() => console.log("Delete")}
+        onExport={() => console.log("Export")}
+        onPrint={() => console.log("Print")}
       />
 
-      {/* 🔹 Table Section */}
-      <div className="flex min-h-screen">
-        <div className="px-2 flex-1">
-          {/* 🔹 Search + Filters */}
-          <div className="flex items-center gap-3 py-2 border-b border-gray-200">
-            {/* Search Input */}
-            <Input
-              placeholder={t("searchBySubjectOrCode")}
-              prefix={<SearchOutlined />}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              allowClear
-              className="w-64"
+      {/* 🔹 Filters Section */}
+      <div className="flex items-center gap-3 py-2 px-3 border-b border-gray-200">
+        <Input
+          placeholder={t("searchBySubjectOrCode")}
+          prefix={<SearchOutlined />}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          allowClear
+          className="w-64"
+        />
+
+        <Select
+          placeholder={t("filterByCore")}
+          value={filterCore || undefined}
+          onChange={(value) => setFilterCore(value)}
+          allowClear
+          className="w-40"
+        >
+          <Option value="core">{t("core")}</Option>
+          <Option value="nonCore">{t("nonCore")}</Option>
+        </Select>
+
+        <Button
+          icon={<ReloadOutlined />}
+          onClick={handleResetFilters}
+          className="ml-auto"
+        >
+          {t("resetFilters")}
+        </Button>
+      </div>
+
+      {/* 🔹 Grade Cards Section */}
+      <div className="flex flex-col gap-4 p-4 pt-0  h-full overflow-y-auto">
+        {Object.entries(groupedCourses).map(([grade, gradeCourses]) => (
+          <Card
+            key={grade}
+            title={
+              <div className="flex justify-between items-center">
+                <span className="font-semibold text-lg text-gray-700">
+                  {t("grade")} {grade}
+                </span>
+                <div className="flex gap-2">
+                  <Button
+                    icon={<EditOutlined />}
+                    size="small"
+                    onClick={() => console.log("Edit Grade", grade)}
+                  />
+                  <Button
+                    icon={<DeleteOutlined />}
+                    danger
+                    size="small"
+                    onClick={() => console.log("Delete Grade", grade)}
+                  />
+                </div>
+              </div>
+            }
+            className="shadow-sm rounded-xl border border-gray-200"
+            bodyStyle={{ padding: "16px" }}
+          >
+            <h3 className="text-base font-semibold mb-2">{t("sections")}</h3>
+            <Table
+              size="small"
+              pagination={false}
+              dataSource={gradeCourses}
+              columns={columns}
+              rowKey="key"
             />
-
-            {/* Core Filter */}
-            <Select
-              placeholder={t("filterByCore")}
-              value={filterCore || undefined}
-              onChange={(value) => setFilterCore(value)}
-              allowClear
-              className="w-40"
-            >
-              <Option value="core">{t("core")}</Option>
-              <Option value="nonCore">{t("nonCore")}</Option>
-            </Select>
-
-            {/* Reset Button */}
-            <Button
-              icon={<ReloadOutlined />}
-              onClick={handleResetFilters}
-              className="ml-auto"
-            >
-              {t("resetFilters")}
-            </Button>
-          </div>
-
-          {/* Table */}
-          <Table
-            rowSelection={rowSelection}
-            dataSource={filteredData}
-            columns={columns}
-            rowKey="key"
-          />
-        </div>
-
-        <div className="w-50 border-l border-gray-200"></div>
+          </Card>
+        ))}
       </div>
     </div>
   );

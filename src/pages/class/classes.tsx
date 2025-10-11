@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import TopActionBar from "../../components/topActionBar";
 import { Table, Input, Select, Button, Card, Row, Col } from "antd";
 import {
@@ -10,6 +10,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { UserRole } from "../../types/user";
+import AddClassPage from "./addClass";
+import { ClassFormValues } from "./addClass/addClassController";
 
 const { Option } = Select;
 
@@ -18,11 +20,13 @@ interface SectionType {
   roomNumber: string;
   capacity: number;
   students: number;
+  sectionId: string;
 }
 
 interface ClassType {
   key: number;
-  grade: string;
+  gradeId: string;
+  gradeLevel: string;
   totalSections: number;
   totalStudents: number;
   status: string;
@@ -32,38 +36,95 @@ interface ClassType {
 const classes: ClassType[] = [
   {
     key: 1,
-    grade: "Grade 1",
+    gradeId: "1",
+    gradeLevel: "Grade 1",
     totalSections: 3,
     totalStudents: 90,
     status: "Active",
     sections: [
-      { name: "A", roomNumber: "101", capacity: 30, students: 28 },
-      { name: "B", roomNumber: "102", capacity: 30, students: 30 },
-      { name: "C", roomNumber: "103", capacity: 30, students: 32 },
+      {
+        name: "A",
+        roomNumber: "101",
+        capacity: 30,
+        students: 28,
+        sectionId: "1",
+      },
+      {
+        name: "B",
+        roomNumber: "102",
+        capacity: 30,
+        students: 30,
+        sectionId: "12",
+      },
+      {
+        name: "C",
+        roomNumber: "103",
+        capacity: 30,
+        students: 32,
+        sectionId: "21",
+      },
     ],
   },
   {
     key: 2,
-    grade: "Grade 2",
+    gradeId: "2",
+    gradeLevel: "Grade 2",
     totalSections: 2,
     totalStudents: 60,
     status: "Inactive",
     sections: [
-      { name: "A", roomNumber: "201", capacity: 30, students: 25 },
-      { name: "B", roomNumber: "202", capacity: 30, students: 35 },
+      {
+        name: "A",
+        roomNumber: "201",
+        capacity: 30,
+        students: 25,
+        sectionId: "7",
+      },
+      {
+        name: "B",
+        roomNumber: "202",
+        capacity: 30,
+        students: 35,
+        sectionId: "4",
+      },
     ],
   },
   {
     key: 3,
-    grade: "Grade 3",
+    gradeId: "3",
+    gradeLevel: "Grade 3",
     totalSections: 4,
     totalStudents: 120,
     status: "Active",
     sections: [
-      { name: "A", roomNumber: "301", capacity: 30, students: 28 },
-      { name: "B", roomNumber: "302", capacity: 30, students: 31 },
-      { name: "C", roomNumber: "303", capacity: 30, students: 30 },
-      { name: "D", roomNumber: "304", capacity: 30, students: 31 },
+      {
+        name: "A",
+        roomNumber: "301",
+        capacity: 30,
+        students: 28,
+        sectionId: "31",
+      },
+      {
+        name: "B",
+        roomNumber: "302",
+        capacity: 30,
+        students: 31,
+        sectionId: "32",
+      },
+      {
+        name: "C",
+        roomNumber: "303",
+        capacity: 30,
+        students: 30,
+        sectionId: "33",
+      },
+      {
+        name: "D",
+        roomNumber: "304",
+        capacity: 30,
+        students: 31,
+        sectionId: "34",
+      },
     ],
   },
 ];
@@ -82,14 +143,27 @@ const ClassPage = ({ role }: { role: UserRole }) => {
     { title: t("capacity"), dataIndex: "capacity", key: "capacity" },
     { title: t("students"), dataIndex: "students", key: "students" },
   ];
+  // Editing values
+  const [editingClass, setEditingClass] = useState<ClassFormValues>();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleEdit = (record: ClassType) => {
+    const data: ClassFormValues = {
+      gradeLevel: record.gradeLevel,
+      sections: record.sections.map((r, index) => ({ ...r, key: `${index}` })),
+      gradeId: record.gradeId,
+    };
+    setEditingClass(data);
+    setIsEditModalOpen(true);
+  };
 
   // 🔍 Filtered data based on search + dropdowns
   const filteredData = useMemo(() => {
     return classes.filter((cls) => {
-      const matchesSearch = cls.grade
+      const matchesSearch = cls.gradeLevel
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
-      const matchesGrade = filterGrade ? cls.grade === filterGrade : true;
+      const matchesGrade = filterGrade ? cls.gradeLevel === filterGrade : true;
       const matchesStatus = filterStatus ? cls.status === filterStatus : true;
       return matchesSearch && matchesGrade && matchesStatus;
     });
@@ -133,7 +207,7 @@ const ClassPage = ({ role }: { role: UserRole }) => {
           allowClear
           className="w-40"
         >
-          {[...new Set(classes.map((cls) => cls.grade))].map((grade) => (
+          {[...new Set(classes.map((cls) => cls.gradeLevel))].map((grade) => (
             <Option key={grade} value={grade}>
               {grade}
             </Option>
@@ -159,7 +233,7 @@ const ClassPage = ({ role }: { role: UserRole }) => {
               <Row justify="space-between" align="middle">
                 <Col>
                   <h2 className="text-lg font-semibold text-gray-700">
-                    {cls.grade}
+                    {cls.gradeLevel}
                   </h2>
                 </Col>
                 <Col>
@@ -167,7 +241,7 @@ const ClassPage = ({ role }: { role: UserRole }) => {
                     <Button
                       icon={<EditOutlined />}
                       size="small"
-                      onClick={() => console.log("Edit", cls)}
+                      onClick={() => handleEdit(cls)}
                     />
                     <Button
                       icon={<DeleteOutlined />}
@@ -194,6 +268,14 @@ const ClassPage = ({ role }: { role: UserRole }) => {
           </Card>
         ))}
       </div>
+      {isEditModalOpen && (
+        <AddClassPage
+          role={role}
+          isEditing={true}
+          editData={editingClass}
+          onClose={() => setIsEditModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

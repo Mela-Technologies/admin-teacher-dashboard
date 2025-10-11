@@ -14,7 +14,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 type TopActionBarProps = {
-  hasSelection: boolean;
+  hasSelection?: boolean;
   onRefresh: () => void;
   onAddUser?: () => void;
   onEdit?: () => void;

@@ -2,6 +2,7 @@ import AttendancePage from "../pages/attendance/attendance";
 import AddClassPage from "../pages/class/addClass";
 import ClassDetailPage from "../pages/class/classDetail/classDetailPage";
 import ClassPage from "../pages/class/classes";
+import AddCoursePage from "../pages/courses/addcourse";
 import CoursesPage from "../pages/courses/courses";
 import DashBoard from "../pages/dashboard/dashboard";
 import EventsPage from "../pages/events/events";
@@ -23,6 +24,7 @@ export const adminRoutes = [
   { path: "admission/permissions", element: <PermissionsAccessPage /> },
   { path: "academics/lessons", element: <LessonsPage role={role} /> },
   { path: "academics/courses", element: <CoursesPage role={role} /> },
+  { path: "academics/courses/add", element: <AddCoursePage role={role} /> },
   { path: "academics/class", element: <ClassPage role={role} /> },
   { path: "academics/class/add", element: <AddClassPage role={role} /> },
   { path: "academics/class/detail", element: <ClassDetailPage role={role} /> },

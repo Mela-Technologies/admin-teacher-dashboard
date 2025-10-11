@@ -9,20 +9,20 @@ const AntConfigurationProvider = ({
   <ConfigProvider
     theme={{
       components: {
-        // Button: {
-        //   colorPrimary: "#00b96b",
-        //   algorithm: true,
-        // },
-        // Input: {
-        //   colorPrimary: "#eb2f96",
-        //   algorithm: true,
-        // },
         Layout: {
           headerBg: "#0667AF",
           headerColor: "#fff",
           headerHeight: "50px",
         },
+        Modal: {
+          // ✅ Set default top spacing for all modals
+          margin: 20,
+        },
       },
+    }}
+    modal={{
+      // ✅ Global Modal configuration (works for v5+)
+      style: { top: 20 },
     }}
   >
     {children}
