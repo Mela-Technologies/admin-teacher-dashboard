@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Modal, message } from "antd";
+import { Button, message, Modal } from "antd";
 import {
   ClassFormValues,
   useClassFormController,
 } from "./addClass/addClassController";
 import AddClassForm from "./addClass/addClassForm";
 import { UserRole } from "../../types/user";
+import { ArrowLeftOutlined, SaveOutlined } from "@ant-design/icons";
 
 interface AddClassPageProps {
   role: UserRole;
@@ -22,8 +23,21 @@ const AddClassPage = ({
 }: AddClassPageProps) => {
   const controller = useClassFormController(editData);
   const [open, setOpen] = useState(isEditing);
-
-  const handleSubmit = async (values: ClassFormValues) => {
+  const handleSubmit = async () => {
+    try {
+      await controller.form.validateFields();
+      const validSections = controller.sections.filter(
+        (s) => s.name.trim() && s.capacity > 0 && s.roomNumber.trim()
+      );
+      onSubmit({
+        gradeLevel: controller.gradeLevel ?? "",
+        sections: validSections,
+      });
+    } catch (err) {
+      // Ant Design will highlight invalid inputs automatically
+    }
+  };
+  const onSubmit = async (values: ClassFormValues) => {
     try {
       if (isEditing) {
         // 🔹 Update existing class
@@ -45,24 +59,46 @@ const AddClassPage = ({
       message.error("Failed to save class.");
     }
   };
-
   return (
     <>
       {/* 🔹 Regular Add Page Mode */}
       {!isEditing && (
         <div className={`h-full ${role}`}>
-          <h2 className="p-2 text-xl font-semibold border-b border-gray-200">
-            Add New Class
-          </h2>
-          <div className="px-6 pb-12 h-full overflow-y-auto">
+          <div className="mb-1 p-2 px-4 flex gap-4 items-center justify-between border-b border-gray-200 w-full">
+            <div className="flex gap-4">
+              <Button
+                icon={<ArrowLeftOutlined />}
+                onClick={() => window.history.back()}
+                className="flex items-center"
+              >
+                Back
+              </Button>
+              <h2 className="m-0! text-lg font-semibold">Add New Class</h2>
+            </div>
+            {/* Save button */}
+            <Button
+              icon={<SaveOutlined />}
+              onClick={handleSubmit}
+              className="flex items-center"
+            >
+              Save
+            </Button>
+          </div>
+          <div className="px-4 pb-12 h-full overflow-y-auto">
             <AddClassForm
+              form={controller.form}
               initialValues={controller.initialValues}
               sections={controller.sections}
               addSection={controller.addSection}
               removeSection={controller.removeSection}
               updateSection={controller.updateSection}
-              onSubmit={handleSubmit}
               loading={controller.loading}
+              gradeLevel={controller.gradeLevel}
+              isEditable={controller.isEditable}
+              schoolSection={controller.schoolSection}
+              setGradeLevel={controller.setGradeLevel}
+              setIsEditable={controller.setIsEditable}
+              setSchoolSection={controller.setSchoolSection}
             />
           </div>
         </div>
@@ -87,8 +123,14 @@ const AddClassPage = ({
             addSection={controller.addSection}
             removeSection={controller.removeSection}
             updateSection={controller.updateSection}
-            onSubmit={handleSubmit}
             loading={controller.loading}
+            gradeLevel={controller.gradeLevel}
+            isEditable={controller.isEditable}
+            schoolSection={controller.schoolSection}
+            setGradeLevel={controller.setGradeLevel}
+            setIsEditable={controller.setIsEditable}
+            setSchoolSection={controller.setSchoolSection}
+            form={controller.form}
           />
         </Modal>
       )}

@@ -1,4 +1,4 @@
-// src/pages/class/addClass/useClassFormController.ts
+import { Form } from "antd";
 import { useState } from "react";
 
 export interface SectionType {
@@ -23,7 +23,10 @@ export const useClassFormController = (editValues?: ClassFormValues) => {
   const [sections, setSections] = useState<SectionType[]>(
     editValues?.sections ?? []
   );
-
+  const [form] = Form.useForm();
+  const [gradeLevel, setGradeLevel] = useState(editValues?.gradeLevel);
+  const [schoolSection, setSchoolSection] = useState<string>("");
+  const [isEditable, setIsEditable] = useState(editValues ? true : false);
   /** 🔹 Add a new empty section */
   const addSection = () => {
     setSections((prev) => [
@@ -86,5 +89,12 @@ export const useClassFormController = (editValues?: ClassFormValues) => {
     registerClass,
     updateClass, // ✅ new update method
     loading,
+    form,
+    gradeLevel,
+    setGradeLevel,
+    schoolSection,
+    setSchoolSection,
+    isEditable,
+    setIsEditable,
   };
 };

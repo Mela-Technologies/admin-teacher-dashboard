@@ -1,6 +1,5 @@
-// src/pages/class/addClass/AddClassForm.tsx
-import React, { useState } from "react";
-import { Input, Button, Table, Select, Form } from "antd";
+import React, { Dispatch, SetStateAction } from "react";
+import { Input, Button, Table, Select, Form, FormInstance } from "antd";
 import { ClassFormValues, SectionType } from "./addClassController";
 import { useTranslation } from "react-i18next";
 
@@ -12,26 +11,31 @@ interface Props {
   addSection: () => void;
   removeSection: (key: string) => void;
   updateSection: (key: string, field: keyof SectionType, value: any) => void;
-  onSubmit: (values: ClassFormValues) => void;
   loading?: boolean;
   editData?: ClassFormValues;
+  form: FormInstance<any>;
+  gradeLevel: string | undefined;
+  setGradeLevel: Dispatch<SetStateAction<string | undefined>>;
+  schoolSection: string;
+  setSchoolSection: Dispatch<SetStateAction<string>>;
+  isEditable: boolean;
+  setIsEditable: Dispatch<SetStateAction<boolean>>;
 }
 
 const AddClassForm: React.FC<Props> = ({
-  initialValues,
   sections,
   addSection,
   removeSection,
   updateSection,
-  onSubmit,
-  loading,
-  editData,
+  form,
+  gradeLevel,
+  setGradeLevel,
+  setSchoolSection,
+  schoolSection,
+  isEditable,
+  setIsEditable,
 }) => {
   const { t } = useTranslation();
-  const [form] = Form.useForm();
-  const [gradeLevel, setGradeLevel] = useState(initialValues.gradeLevel);
-  const [schoolSection, setSchoolSection] = useState<string>("");
-  const [isEditable, setIsEditable] = useState(!editData);
 
   // Grade grouping
   const gradeOptions = [
@@ -59,18 +63,6 @@ const AddClassForm: React.FC<Props> = ({
     setSchoolSection(getSchoolSection(value));
   };
 
-  const handleSubmit = async () => {
-    try {
-      await form.validateFields();
-      const validSections = sections.filter(
-        (s) => s.name.trim() && s.capacity > 0 && s.roomNumber.trim()
-      );
-      onSubmit({ gradeLevel, sections: validSections });
-    } catch (err) {
-      // Ant Design will highlight invalid inputs automatically
-    }
-  };
-
   const sectionColumns = [
     {
       title: t("Section Name"),
@@ -82,7 +74,6 @@ const AddClassForm: React.FC<Props> = ({
           rules={[{ required: true, message: t("Please enter section name") }]}
         >
           <Input
-            disabled={!isEditable}
             placeholder={t("Enter Section Name")}
             onChange={(e) => updateSection(record.key, "name", e.target.value)}
           />
@@ -106,7 +97,6 @@ const AddClassForm: React.FC<Props> = ({
           ]}
         >
           <Input
-            disabled={!isEditable}
             type="number"
             min={1}
             placeholder={t("Enter Capacity")}
@@ -131,7 +121,6 @@ const AddClassForm: React.FC<Props> = ({
           rules={[{ required: true, message: t("Please enter room number") }]}
         >
           <Input
-            disabled={!isEditable}
             placeholder={t("Enter Room Number")}
             onChange={(e) =>
               updateSection(record.key, "roomNumber", e.target.value)
@@ -168,7 +157,6 @@ const AddClassForm: React.FC<Props> = ({
             initialValue={gradeLevel}
           >
             <Select
-              disabled={!isEditable}
               placeholder={t("Select Grade")}
               value={gradeLevel}
               onChange={handleGradeChange}
@@ -199,11 +187,9 @@ const AddClassForm: React.FC<Props> = ({
       <div className="p-4 border-gray-200 rounded bg-white shadow-sm">
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-lg font-semibold">{t("Sections")}</h3>
-          {isEditable && (
-            <Button type="dashed" onClick={addSection}>
-              {t("Add Section")}
-            </Button>
-          )}
+          <Button type="dashed" onClick={addSection}>
+            {t("Add Section")}
+          </Button>
         </div>
 
         <Table
@@ -213,15 +199,6 @@ const AddClassForm: React.FC<Props> = ({
           rowKey="key"
         />
       </div>
-
-      {/* ✅ Submit */}
-      {isEditable && (
-        <div className="flex justify-end">
-          <Button type="primary" onClick={handleSubmit} loading={loading}>
-            {t("Submit")}
-          </Button>
-        </div>
-      )}
     </Form>
   );
 };
