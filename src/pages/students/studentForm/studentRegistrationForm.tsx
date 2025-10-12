@@ -43,8 +43,8 @@ const StudentRegistrationForm: React.FC<Props> = ({
     "border border-gray-200 rounded-lg p-5 shadow-sm bg-white space-y-4";
 
   const formLayout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 },
+    labelCol: { span: 6 },
+    wrapperCol: { span: 18 },
   };
 
   const uploadProps = {
@@ -60,6 +60,8 @@ const StudentRegistrationForm: React.FC<Props> = ({
     <div>
       <Form
         {...formLayout}
+        labelWrap={true}
+        labelAlign="right"
         form={form}
         layout="horizontal"
         initialValues={initialValues}
