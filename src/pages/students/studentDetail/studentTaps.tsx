@@ -90,9 +90,9 @@ const StudentTabs: React.FC<Props> = ({ student }) => {
     </div>
   );
 
-  const gradesContent = (
+  const resultContent = (
     <div className="space-y-4">
-      <h3 className="font-semibold text-gray-500">Grades Summary</h3>
+      <h3 className="font-semibold text-gray-500">Result Summary</h3>
       {student.grades && student.grades.length > 0 ? (
         <Table
           size="small"
@@ -134,12 +134,19 @@ const StudentTabs: React.FC<Props> = ({ student }) => {
       )}
     </div>
   );
+  const messagesContent = (
+    <div className="space-y-4">
+      <h3 className="font-semibold text-gray-500">Messages</h3>
+      <Empty description="No messages available" />
+    </div>
+  );
 
   const items = [
     { key: "overview", label: "Overview", children: overviewContent },
     { key: "attendance", label: "Attendance", children: attendanceContent },
-    { key: "grades", label: "Grades", children: gradesContent },
+    { key: "result", label: "Result", children: resultContent },
     { key: "documents", label: "Documents", children: documentsContent },
+    { key: "message", label: "Message", children: messagesContent },
   ];
 
   return (

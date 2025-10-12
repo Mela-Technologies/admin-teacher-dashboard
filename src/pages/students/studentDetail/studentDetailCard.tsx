@@ -1,21 +1,17 @@
-// src/components/student/StudentDetailCard.tsx
 import React from "react";
-import { Card } from "antd";
 import { Student } from "../../../types/student";
 
 interface Props {
   student: Student;
 }
 
-const gap = "gap-1"; // consistent spacing variable
-
 const StudentDetailCard: React.FC<Props> = ({ student }) => {
   const initials = `${student.firstName[0] || ""}${student.lastName[0] || ""}`;
 
   return (
-    <Card className="shadow-sm border border-gray-100 ">
+    <div className="flex items-center justify-start gap-6 w-full">
       {/* Avatar */}
-      <div className="flex flex-col items-center text-center mb-1">
+      <div className="flex-shrink-0">
         {student.picture ? (
           <img
             src={student.picture}
@@ -27,12 +23,15 @@ const StudentDetailCard: React.FC<Props> = ({ student }) => {
             {initials}
           </div>
         )}
+      </div>
 
-        <div>
-          <h2 className="text-lg font-semibold">{`${student.firstName} ${student.lastName}`}</h2>
-          <p className="text-gray-500">{`${student.grade} • ${student.section}`}</p>
+      {/* Student Basic Info */}
+      <div className="flex flex-col justify-center">
+        <p className="text-gray-500">{`${student.grade} • Section ${student.section}`}</p>
+        <h2 className="text-4xl uppercase">{`${student.firstName} ${student.lastName}`}</h2>
+        <div className="mt-2">
           <span
-            className={`inline-block px-3 py-1 rounded-2xl  ${
+            className={`px-3 py-1 rounded-2xl text-sm ${
               student.status === "Active"
                 ? "bg-green-100 text-green-700"
                 : "bg-gray-100 text-gray-500"
@@ -42,71 +41,7 @@ const StudentDetailCard: React.FC<Props> = ({ student }) => {
           </span>
         </div>
       </div>
-
-      {/* --- Details using flex row display --- */}
-      <div className={`flex flex-col  text-gray-700`}>
-        {/* Student Info */}
-        <div>
-          <h4 className="text-sm font-semibold mb-2">Student Information</h4>
-          <ul className={`flex flex-wrap ${gap}`}>
-            <li className="flex flex-row w-full justify-between">
-              <span className="text-gray-400 ">Student ID</span>
-              <span>{student.id}</span>
-            </li>
-            <li className="flex flex-row w-full justify-between">
-              <span className="text-gray-400 ">Admission Date</span>
-              <span>{student.admissionDate}</span>
-            </li>
-            <li className="flex flex-row w-full justify-between">
-              <span className="text-gray-400 ">Date of Birth</span>
-              <span>{student.dateOfBirth}</span>
-            </li>
-            <li className="flex flex-row w-full justify-between">
-              <span className="text-gray-400 ">Gender</span>
-              <span>{student.gender}</span>
-            </li>
-          </ul>
-        </div>
-
-        {/* Contact Info */}
-        <div>
-          <h4 className="text-sm font-semibold mb-2">Contact Information</h4>
-          <ul className={`flex flex-wrap ${gap}`}>
-            <li className="flex flex-row justify-between w-full">
-              <span className="text-gray-400 ">Email</span>
-              <span>{student.email}</span>
-            </li>
-            <li className="flex flex-row w-full justify-between">
-              <span className="text-gray-400 ">Phone</span>
-              <span>{student.phone}</span>
-            </li>
-            {/* <li className="flex flex-row w-full justify-between">
-              <span className="text-gray-400 ">Address</span>
-              <span>{student.address}</span>
-            </li> */}
-          </ul>
-        </div>
-
-        {/* Parent Info */}
-        <div>
-          <h4 className=" text-sm font-semibold mb-2">Parent Information</h4>
-          <ul className={`flex flex-wrap ${gap}`}>
-            <li className="flex flex-row w-full justify-between">
-              <span className="text-gray-400 ">Name</span>
-              <span>{student.parent.name}</span>
-            </li>
-            <li className="flex flex-row w-full justify-between">
-              <span className="text-gray-400 ">Email</span>
-              <span>{student.parent.email}</span>
-            </li>
-            <li className="flex flex-row w-full justify-between">
-              <span className="text-gray-400 ">Phone</span>
-              <span>{student.parent.phone}</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </Card>
+    </div>
   );
 };
 

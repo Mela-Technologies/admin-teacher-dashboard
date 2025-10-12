@@ -7,15 +7,18 @@ import {
   GlobalOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../contexts/auth/useAuthContext";
 
 const { Option } = Select;
 
 const Header: React.FC = () => {
   const { i18n } = useTranslation();
-
+  const navigator = useNavigate();
+  const authContext = useAuthContext();
   const user = {
-    name: "Mela Tech",
-    role: "admin",
+    name: authContext.user?.email ?? "Mela Tech",
+    role: authContext.user?.role ?? "admin",
   };
 
   const items: MenuProps["items"] = [
@@ -23,6 +26,7 @@ const Header: React.FC = () => {
       key: "1",
       label: "My Account",
       icon: <UserOutlined />,
+      onClick: () => navigator(`/${user.role}/account`),
     },
     {
       type: "divider",

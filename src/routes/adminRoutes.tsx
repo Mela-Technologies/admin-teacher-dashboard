@@ -11,6 +11,7 @@ import LessonsPage from "../pages/lessons/lessons";
 import MessagesPage from "../pages/messages/messages";
 import ParentsPage from "../pages/parents/parents";
 import PermissionsAccessPage from "../pages/permissionsAccess/permissionsAccess";
+import ProfilePage from "../pages/profile/profile";
 import UserRegistrationPage from "../pages/registration/registration";
 import SettingsPage from "../pages/settings/settings";
 import AddStudentsPage from "../pages/students/addStudent";
@@ -42,4 +43,5 @@ export const adminRoutes = [
   { path: "communication/events", element: <EventsPage role={role} /> },
   { path: "communication/message", element: <MessagesPage role={role} /> },
   { path: "settings", element: <SettingsPage role={role} /> },
+  { path: "account", element: <ProfilePage role={role} /> },
 ];

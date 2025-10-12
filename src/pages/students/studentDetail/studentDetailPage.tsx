@@ -1,13 +1,12 @@
-import { Button, Card, Row, Col } from "antd";
+import { Button, Card } from "antd";
 import {
   ArrowLeftOutlined,
   EditOutlined,
   PrinterOutlined,
 } from "@ant-design/icons";
 import StudentDetailCard from "./studentDetailCard";
-import StudentStatsCard from "./studentStatsCard";
-import StudentTabs from "./studentTaps";
 import { UserRole } from "../../../types/user";
+import StudentTabs from "./studentTaps";
 
 const StudentDetailPage = ({ role }: { role: UserRole }) => {
   const student = {
@@ -50,23 +49,14 @@ const StudentDetailPage = ({ role }: { role: UserRole }) => {
   return (
     <div className={`space-y-2 h-full ${role}`}>
       {/* 🔹 Top Action Bar */}
-      <div className="flex justify-between items-center p-2   border-b border-gray-200">
-        <Button
-          icon={<ArrowLeftOutlined />}
-          onClick={handleBack}
-          className="flex items-center"
-        >
+      <div className="flex justify-between items-center p-2 border-b border-gray-200">
+        <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
           Back
         </Button>
 
-        <div className="flex gap-4">
-          <Button
-            icon={<EditOutlined />}
-            type="default"
-            onClick={handleEdit}
-            className="border-gray-300"
-          >
-            Edit Profile
+        <div className="flex gap-3">
+          <Button icon={<EditOutlined />} onClick={handleEdit}>
+            Edit
           </Button>
           <Button
             icon={<PrinterOutlined />}
@@ -79,40 +69,16 @@ const StudentDetailPage = ({ role }: { role: UserRole }) => {
         </div>
       </div>
 
-      {/* 🔹 Detail Section */}
-      <div className="px-6  overflow-y-auto h-full">
-        <Row gutter={[16, 16]}>
-          {/* LEFT COLUMN */}
-          <Col xs={24} md={10} lg={8}>
-            <StudentDetailCard student={student} />
-          </Col>
+      <div className="px-2 flex flex-col gap-4">
+        {/* 🔹 Top Card */}
+        <Card className="w-full shadow-sm rounded-lg border border-gray-100">
+          <StudentDetailCard student={student} />
+        </Card>
 
-          {/* RIGHT COLUMN */}
-          <Col xs={24} md={14} lg={16} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <StudentStatsCard
-                title="Attendance"
-                value={`${student.attendance.percent}%`}
-                bottom={`${student.attendance.presentDays}/${student.attendance.totalDays} days`}
-              />
-              <StudentStatsCard
-                title="Current GPA"
-                value={student.gpa.value.toFixed(2)}
-                bottom={`Based on ${student.gpa.records} records`}
-              />
-              <StudentStatsCard
-                title="Status"
-                value={student.status}
-                bottom={`Since ${student.statusSince}`}
-              />
-            </div>
-
-            {/* 🔹 Tabs Section */}
-            <Card className="shadow-sm">
-              <StudentTabs student={student} />
-            </Card>
-          </Col>
-        </Row>
+        {/* 🔹 Tabs Section */}
+        <div className="bg-white shadow-sm rounded-lg p-4">
+          <StudentTabs student={student} />
+        </div>
       </div>
     </div>
   );
