@@ -10,21 +10,24 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { UserRole } from "../../types/user";
+import { CourseFormValues } from "./addCourse/addCourseController";
+import AddCoursePage from "./addcourse";
 
 const { Option } = Select;
 
-interface CourseType {
-  key: number;
+export interface CourseType {
+  key: string;
   subject: string;
   code: string;
   creditHours: number;
   core: boolean;
-  grade: number;
+  grade?: number;
+  courseId?: string;
 }
 
 const courses: CourseType[] = [
   {
-    key: 1,
+    key: "1",
     subject: "Mathematics I",
     code: "MATH101",
     creditHours: 3,
@@ -32,7 +35,7 @@ const courses: CourseType[] = [
     grade: 10,
   },
   {
-    key: 2,
+    key: "2",
     subject: "English Language",
     code: "ENG102",
     creditHours: 2,
@@ -40,7 +43,7 @@ const courses: CourseType[] = [
     grade: 10,
   },
   {
-    key: 3,
+    key: "3",
     subject: "Physics",
     code: "PHY103",
     creditHours: 3,
@@ -48,7 +51,7 @@ const courses: CourseType[] = [
     grade: 11,
   },
   {
-    key: 4,
+    key: "4",
     subject: "History",
     code: "HIS104",
     creditHours: 2,
@@ -56,7 +59,7 @@ const courses: CourseType[] = [
     grade: 12,
   },
   {
-    key: 5,
+    key: "5",
     subject: "Biology",
     code: "BIO105",
     creditHours: 3,
@@ -109,6 +112,18 @@ const CoursePage = ({ role }: { role: UserRole }) => {
       ),
     },
   ];
+  const [editingClass, setEditingClass] = useState<CourseFormValues>();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleEdit = (record: CourseFormValues) => {
+    const data: CourseFormValues = {
+      gradeLevel: record.gradeLevel,
+      courses: record.courses.map((r, index) => ({ ...r, key: `${index}` })),
+      gradeId: record.gradeId,
+    };
+    setEditingClass(data);
+    setIsEditModalOpen(true);
+  };
 
   // 🔹 Filter and search logic
   const filteredData = useMemo(() => {
@@ -130,8 +145,8 @@ const CoursePage = ({ role }: { role: UserRole }) => {
   const groupedCourses = useMemo(() => {
     const groups: Record<number, CourseType[]> = {};
     filteredData.forEach((course) => {
-      if (!groups[course.grade]) groups[course.grade] = [];
-      groups[course.grade].push(course);
+      if (!groups[course.grade!]) groups[course.grade!] = [];
+      groups[course.grade!].push(course);
     });
     return groups;
   }, [filteredData]);
@@ -200,7 +215,13 @@ const CoursePage = ({ role }: { role: UserRole }) => {
                   <Button
                     icon={<EditOutlined />}
                     size="small"
-                    onClick={() => console.log("Edit Grade", grade)}
+                    onClick={() =>
+                      handleEdit({
+                        gradeLevel: grade,
+                        gradeId: "",
+                        courses: gradeCourses,
+                      })
+                    }
                   />
                   <Button
                     icon={<DeleteOutlined />}
@@ -225,6 +246,14 @@ const CoursePage = ({ role }: { role: UserRole }) => {
           </Card>
         ))}
       </div>
+      {isEditModalOpen && (
+        <AddCoursePage
+          role={role}
+          isEditing={true}
+          editData={editingClass}
+          onClose={() => setIsEditModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

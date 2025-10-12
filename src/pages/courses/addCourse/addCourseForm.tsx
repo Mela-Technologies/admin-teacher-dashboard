@@ -1,40 +1,48 @@
 // src/pages/course/addCourse/AddCourseForm.tsx
-import React, { useState } from "react";
-import { Button, Table, Select, Form, Input } from "antd";
+import React, { Dispatch, SetStateAction } from "react";
+import { Button, Table, Select, Form, Input, FormInstance } from "antd";
 import { CourseFormValues, CourseType } from "./addCourseController";
 import { useTranslation } from "react-i18next";
 
 const { Option } = Select;
 
 interface Props {
-  initialValues: CourseFormValues;
+  initialValues?: CourseFormValues;
   courses: CourseType[];
   addCourse: () => void;
   removeCourse: (key: string) => void;
   updateCourse: (key: string, field: keyof CourseType, value: any) => void;
   fetchCoursesByGrade: (grade: string) => Promise<void>;
-  onSubmit: (values: CourseFormValues) => void;
   loading?: boolean;
   editData?: CourseFormValues;
+  gradeLevel: string | null;
+  setGradeLevel: Dispatch<SetStateAction<string | null>>;
+  schoolSection: string;
+  setSchoolSection: Dispatch<SetStateAction<string>>;
+  isFetching: boolean;
+  setIsFetching: Dispatch<SetStateAction<boolean>>;
+  isEditable: boolean;
+  setIsEditable: Dispatch<SetStateAction<boolean>>;
+  form: FormInstance<any>;
 }
 
 const AddCourseForm: React.FC<Props> = ({
-  initialValues,
   courses,
   addCourse,
   removeCourse,
   updateCourse,
   fetchCoursesByGrade,
-  onSubmit,
-  loading,
-  editData,
+  gradeLevel,
+  setGradeLevel,
+  schoolSection,
+  setSchoolSection,
+  isFetching,
+  setIsFetching,
+  isEditable,
+  setIsEditable,
+  form,
 }) => {
   const { t } = useTranslation();
-  const [gradeLevel, setGradeLevel] = useState(initialValues.gradeLevel);
-  const [schoolSection, setSchoolSection] = useState("");
-  const [isFetching, setIsFetching] = useState(false);
-  const [form] = Form.useForm();
-  const [isEditable, setIsEditable] = useState(!editData);
 
   // Grade options
   const gradeOptions = [
@@ -66,27 +74,6 @@ const AddCourseForm: React.FC<Props> = ({
       await fetchCoursesByGrade(value);
     } finally {
       setIsFetching(false);
-    }
-  };
-
-  // Validate and submit only valid data
-  const handleSubmit = async () => {
-    try {
-      await form.validateFields();
-      const validCourses = courses.filter(
-        (c) =>
-          c.subject.trim() &&
-          c.code.trim() &&
-          typeof c.creditHours === "number" &&
-          c.core
-      );
-
-      onSubmit({
-        gradeLevel,
-        courses: validCourses,
-      });
-    } catch (err) {
-      // Ant Design automatically highlights invalid inputs
     }
   };
 
@@ -245,15 +232,6 @@ const AddCourseForm: React.FC<Props> = ({
           rowKey="key"
         />
       </div>
-
-      {/* Submit */}
-      {isEditable && (
-        <div className="flex justify-end">
-          <Button type="primary" onClick={handleSubmit} loading={loading}>
-            {t("Submit")}
-          </Button>
-        </div>
-      )}
     </Form>
   );
 };

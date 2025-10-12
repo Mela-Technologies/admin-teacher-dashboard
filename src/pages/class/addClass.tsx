@@ -7,6 +7,7 @@ import {
 import AddClassForm from "./addClass/addClassForm";
 import { UserRole } from "../../types/user";
 import { ArrowLeftOutlined, SaveOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 interface AddClassPageProps {
   role: UserRole;
@@ -23,6 +24,7 @@ const AddClassPage = ({
 }: AddClassPageProps) => {
   const controller = useClassFormController(editData);
   const [open, setOpen] = useState(isEditing);
+  const { t } = useTranslation();
   const handleSubmit = async () => {
     try {
       await controller.form.validateFields();
@@ -71,9 +73,11 @@ const AddClassPage = ({
                 onClick={() => window.history.back()}
                 className="flex items-center"
               >
-                Back
+                {t("back")}
               </Button>
-              <h2 className="m-0! text-lg font-semibold">Add New Class</h2>
+              <h2 className="m-0! text-lg font-semibold">
+                {t("Add New Class")}
+              </h2>
             </div>
             {/* Save button */}
             <Button
@@ -81,7 +85,7 @@ const AddClassPage = ({
               onClick={handleSubmit}
               className="flex items-center"
             >
-              Save
+              {t("save")}
             </Button>
           </div>
           <div className="px-4 pb-12 h-full overflow-y-auto">
