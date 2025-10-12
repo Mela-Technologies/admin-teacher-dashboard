@@ -71,7 +71,7 @@ const courses: CourseType[] = [
 const CoursePage = ({ role }: { role: UserRole }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filterCore, setFilterCore] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const navigator = useNavigate();
   const { t } = useTranslation();
 
   // 🔹 Table columns
@@ -163,7 +163,7 @@ const CoursePage = ({ role }: { role: UserRole }) => {
         addBtnText="Add New Course"
         title={t("courses")}
         onRefresh={() => console.log("Refresh")}
-        onAddUser={() => navigate("add")}
+        onAddUser={() => navigator("add")}
         onEdit={() => console.log("Edit", role)}
         onDelete={() => console.log("Delete")}
         onExport={() => console.log("Export")}
@@ -242,6 +242,12 @@ const CoursePage = ({ role }: { role: UserRole }) => {
               dataSource={gradeCourses}
               columns={columns}
               rowKey="key"
+              onRow={(record, rowIndex) => ({
+                onClick: () => {
+                  navigator("detail");
+                  console.log(record, rowIndex);
+                },
+              })}
             />
           </Card>
         ))}
