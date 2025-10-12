@@ -8,7 +8,6 @@ import {
 
 import { useTranslation } from "react-i18next";
 import { UserRole } from "../../../types/user";
-import ClassStatsCard from "./classStatCard";
 import ClassDetailCard from "./classDetailCard";
 import ClassTabs from "./classTab";
 
