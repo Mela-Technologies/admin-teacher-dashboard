@@ -1,25 +1,41 @@
-// src/components/student/StudentRegistrationController.ts
 import { useState } from "react";
-import { message } from "antd";
+import { Form, message } from "antd";
 
 export interface StudentFormValues {
   firstName: string;
   lastName: string;
   gender: string;
+  nationalId: string;
   birthDate: string;
   birthPlace: string;
   role: string;
   title: string;
+  grade: string;
+  classSection: string;
   picture?: File | null;
 
-  mobile: string;
-  email: string;
+  mother?: {
+    firstName: string;
+    lastName: string;
+    title: string;
+    email: string;
+    mobile: string;
+  };
+  father?: {
+    firstName: string;
+    lastName: string;
+    title: string;
+    email: string;
+    mobile: string;
+  };
+
   address: {
     street: string;
     city: string;
     post: string;
   };
 
+  documents?: File[];
   usernamePreference: "phone" | "email";
   passwordPreference: "dob" | "otp";
   sendCredential: "none" | "email" | "sms";
@@ -27,20 +43,38 @@ export interface StudentFormValues {
 
 export const useStudentRegistrationController = () => {
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm<StudentFormValues>();
 
   const initialValues: StudentFormValues = {
     firstName: "",
     lastName: "",
     gender: "Male",
+    nationalId: "",
     birthDate: "",
     birthPlace: "",
-    role: "",
+    role: "Student",
     title: "",
+    grade: "",
+    classSection: "",
     picture: null,
 
-    mobile: "",
-    email: "",
+    mother: {
+      firstName: "",
+      lastName: "",
+      title: "",
+      email: "",
+      mobile: "",
+    },
+    father: {
+      firstName: "",
+      lastName: "",
+      title: "",
+      email: "",
+      mobile: "",
+    },
+
     address: { street: "", city: "", post: "" },
+    documents: [],
 
     usernamePreference: "phone",
     passwordPreference: "dob",
@@ -52,10 +86,6 @@ export const useStudentRegistrationController = () => {
       message.error("First name and last name are required!");
       return false;
     }
-    if (!values.mobile && !values.email) {
-      message.error("At least one contact (mobile or email) is required!");
-      return false;
-    }
     return true;
   };
 
@@ -63,15 +93,14 @@ export const useStudentRegistrationController = () => {
     if (!validateForm(values)) return;
     setLoading(true);
     try {
-      // Simulate registration API call
       await new Promise((res) => setTimeout(res, 1000));
       message.success("Student registered successfully!");
-    } catch (error) {
+    } catch {
       message.error("Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  return { initialValues, registerStudent, loading };
+  return { initialValues, registerStudent, loading, form };
 };
