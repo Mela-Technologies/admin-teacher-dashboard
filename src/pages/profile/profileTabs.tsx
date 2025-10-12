@@ -1,121 +1,102 @@
 import React from "react";
-import { Tabs, Table, Progress, Empty } from "antd";
+import { Tabs, Table, Empty, Tag } from "antd";
 
 interface Props {
-  student: any;
+  profile: any;
+  role: "admin" | "teacher";
 }
 
-const ProfileTabs: React.FC<Props> = ({ student }) => {
-  const overviewContent = (
-    <div className="grid md:grid-cols-2 gap-6 text-gray-700 text-sm">
-      <div>
-        <h3 className="font-semibold text-gray-500 mb-2">
-          Student Information
-        </h3>
-        <div className="space-y-1">
-          <p>
-            <strong>ID:</strong> {student.id || "N/A"}
-          </p>
-          <p>
-            <strong>Full Name:</strong> {student.firstName} {student.lastName}
-          </p>
-          <p>
-            <strong>Gender:</strong> {student.gender || "N/A"}
-          </p>
-          <p>
-            <strong>Date of Birth:</strong> {student.dateOfBirth || "N/A"}
-          </p>
-          <p>
-            <strong>Admission Date:</strong> {student.admissionDate || "N/A"}
-          </p>
+const ProfileTabs: React.FC<Props> = ({ profile, role }) => {
+  // Base tabs for all roles
+  const baseTabs = [
+    {
+      key: "overview",
+      label: "Overview",
+      children: (
+        <div className="grid md:grid-cols-2 gap-6 text-gray-700 text-sm">
+          <div>
+            <h3 className="font-semibold text-gray-500 mb-2">
+              Profile Information
+            </h3>
+            <div className="space-y-1">
+              <p>
+                <strong>ID:</strong> {profile.id || profile.teacherId}
+              </p>
+              <p>
+                <strong>Full Name:</strong> {profile.firstName}{" "}
+                {profile.lastName}
+              </p>
+              <p>
+                <strong>Gender:</strong> {profile.gender}
+              </p>
+              {role === "teacher" && (
+                <p>
+                  <strong>Hire Date:</strong> {profile.hireDate}
+                </p>
+              )}
+              {role === "admin" && (
+                <p>
+                  <strong>Role:</strong> {profile.roleName || "Admin"}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-gray-500 mb-2">
+              Contact Information
+            </h3>
+            <div className="space-y-1">
+              <p>
+                <strong>Email:</strong> {profile.email}
+              </p>
+              <p>
+                <strong>Phone:</strong> {profile.phone}
+              </p>
+              <p>
+                <strong>Address:</strong> {profile.address}
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
+      ),
+    },
+  ];
 
-      <div>
-        <h3 className="font-semibold text-gray-500 mb-2">
-          Contact Information
-        </h3>
-        <div className="space-y-1">
-          <p>
-            <strong>Email:</strong> {student.email || "N/A"}
-          </p>
-          <p>
-            <strong>Phone:</strong> {student.phone || "N/A"}
-          </p>
-          <p>
-            <strong>Address:</strong> {student.address || "N/A"}
-          </p>
-        </div>
-
-        <h3 className="font-semibold text-gray-500 mt-4 mb-2">
-          Parent Information
-        </h3>
-        <div className="space-y-1">
-          <p>
-            <strong>Parent Name:</strong> {student.parentName || "N/A"}
-          </p>
-          <p>
-            <strong>Parent Email:</strong> {student.parentEmail || "N/A"}
-          </p>
-          <p>
-            <strong>Parent Phone:</strong> {student.parentPhone || "N/A"}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-
-  const attendanceContent = (
-    <div className="space-y-4">
-      <h3 className="font-semibold text-gray-500">Attendance Summary</h3>
-      <Progress
-        percent={student.attendancePercent || 0}
-        status="active"
-        strokeColor="#0ea5e9"
-      />
-      <p className="text-sm text-gray-600">
-        {student.presentDays || 0} days present out of {student.totalDays || 0}{" "}
-        days.
-      </p>
-      <Table
-        size="small"
-        columns={[
-          { title: "Date", dataIndex: "date", key: "date" },
-          { title: "Status", dataIndex: "status", key: "status" },
-        ]}
-        dataSource={student.attendanceRecords || []}
-        pagination={false}
-      />
-    </div>
-  );
-
-  const gradesContent = (
-    <div className="space-y-4">
-      <h3 className="font-semibold text-gray-500">Grades Summary</h3>
-      {student.grades && student.grades.length > 0 ? (
+  // Teacher-specific tabs
+  const teacherTabs = [
+    {
+      key: "grades",
+      label: "Assigned Grades",
+      children: profile.assignedGrades?.length ? (
         <Table
           size="small"
+          dataSource={profile.assignedGrades.map((g: any, i: number) => ({
+            key: i,
+            course: g.course || "N/A",
+            grade: g.grade || "N/A",
+            section: g.section || "N/A",
+            term: g.term || "N/A",
+          }))}
+          pagination={false}
           columns={[
-            { title: "Subject", dataIndex: "subject", key: "subject" },
+            { title: "Course", dataIndex: "course", key: "course" },
             { title: "Grade", dataIndex: "grade", key: "grade" },
+            { title: "Section", dataIndex: "section", key: "section" },
             { title: "Term", dataIndex: "term", key: "term" },
           ]}
-          dataSource={student.grades}
-          pagination={false}
         />
       ) : (
-        <Empty description="No grade records available" />
-      )}
-    </div>
-  );
-
-  const documentsContent = (
-    <div className="space-y-4">
-      <h3 className="font-semibold text-gray-500">Uploaded Documents</h3>
-      {student.documents && student.documents.length > 0 ? (
+        <Empty description="No assigned grades" />
+      ),
+    },
+    {
+      key: "documents",
+      label: "Documents",
+      children: profile.documents?.length ? (
         <ul className="list-disc pl-6 space-y-1 text-sm text-gray-700">
-          {student.documents.map((doc: any, index: number) => (
-            <li key={index}>
+          {profile.documents.map((doc: any, i: number) => (
+            <li key={i}>
               <a
                 href={doc.url}
                 className="text-blue-600 hover:underline"
@@ -130,25 +111,107 @@ const ProfileTabs: React.FC<Props> = ({ student }) => {
         </ul>
       ) : (
         <Empty description="No documents uploaded" />
-      )}
-    </div>
-  );
-
-  const items = [
-    { key: "overview", label: "Overview", children: overviewContent },
-    { key: "attendance", label: "Attendance", children: attendanceContent },
-    { key: "grades", label: "Grades", children: gradesContent },
-    { key: "documents", label: "Documents", children: documentsContent },
+      ),
+    },
   ];
+
+  // Admin-specific tabs
+  const adminTabs = [
+    {
+      key: "roles",
+      label: "Roles & Permissions",
+      children: (
+        <Table
+          size="small"
+          dataSource={profile.roles || []}
+          pagination={false}
+          columns={[
+            { title: "Role Name", dataIndex: "name", key: "name" },
+            {
+              title: "Permissions",
+              dataIndex: "permissions",
+              key: "permissions",
+              render: (perms: string[]) =>
+                perms.map((p) => (
+                  <Tag key={p} color="blue">
+                    {p}
+                  </Tag>
+                )),
+            },
+          ]}
+        />
+      ),
+    },
+    {
+      key: "users",
+      label: "Managed Users",
+      children: profile.managedUsers?.length ? (
+        <Table
+          size="small"
+          dataSource={profile.managedUsers.map((u: any, i: number) => ({
+            key: i,
+            name: u.name,
+            email: u.email,
+            role: u.role,
+            status: u.status,
+          }))}
+          pagination={false}
+          columns={[
+            { title: "Name", dataIndex: "name", key: "name" },
+            { title: "Email", dataIndex: "email", key: "email" },
+            { title: "Role", dataIndex: "role", key: "role" },
+            {
+              title: "Status",
+              dataIndex: "status",
+              key: "status",
+              render: (status: string) => (
+                <Tag color={status === "Active" ? "green" : "red"}>
+                  {status}
+                </Tag>
+              ),
+            },
+          ]}
+        />
+      ) : (
+        <Empty description="No managed users" />
+      ),
+    },
+    {
+      key: "logs",
+      label: "System Logs",
+      children: profile.logs?.length ? (
+        <Table
+          size="small"
+          dataSource={profile.logs.map((log: any, i: number) => ({
+            key: i,
+            action: log.action,
+            date: log.date,
+            user: log.user,
+          }))}
+          pagination={false}
+          columns={[
+            { title: "Action", dataIndex: "action", key: "action" },
+            { title: "Date", dataIndex: "date", key: "date" },
+            { title: "Performed By", dataIndex: "user", key: "user" },
+          ]}
+        />
+      ) : (
+        <Empty description="No logs available" />
+      ),
+    },
+  ];
+
+  // Return tabs based on role
+  const items =
+    role === "teacher"
+      ? [...baseTabs, ...teacherTabs]
+      : role === "admin"
+      ? [...baseTabs, ...adminTabs]
+      : baseTabs;
 
   return (
     <div className="bg-white shadow-sm rounded-lg p-4">
-      <Tabs
-        defaultActiveKey="overview"
-        items={items}
-        className="student-tabs"
-        type="line"
-      />
+      <Tabs defaultActiveKey="overview" items={items} type="line" />
     </div>
   );
 };
