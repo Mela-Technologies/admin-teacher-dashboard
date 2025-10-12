@@ -51,18 +51,12 @@ const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
           label: t("students"),
           onClick: () => navigate("/admin/students"),
         },
-        {
-          key: "parents",
-          icon: <TeamOutlined />,
-          label: t("parents"),
-          onClick: () => navigate("/admin/students/parents"),
-        },
-        {
-          key: "attendance",
-          icon: <KeyOutlined />,
-          label: t("attendance"),
-          onClick: () => navigate("/admin/students/attendance"),
-        },
+        // {
+        //   key: "parents",
+        //   icon: <TeamOutlined />,
+        //   label: t("parents"),
+        //   onClick: () => navigate("/admin/students/parents"),
+        // },
       ],
     },
     {
@@ -74,6 +68,12 @@ const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
           icon: <TeamOutlined />,
           label: t("teachers"),
           onClick: () => navigate("/admin/staff/teachers"),
+        },
+        {
+          key: "attendance",
+          icon: <KeyOutlined />,
+          label: t("attendance"),
+          onClick: () => navigate("/admin/students/attendance"),
         },
       ],
     },

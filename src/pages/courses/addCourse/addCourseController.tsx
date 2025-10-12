@@ -12,7 +12,9 @@ export interface CourseFormValues {
 }
 
 export const useAddCourseController = (editValues?: CourseFormValues) => {
-  const [courses, setCourses] = useState<CourseType[]>([]);
+  const [courses, setCourses] = useState<CourseType[]>(
+    editValues?.courses || []
+  );
   const [loading, setLoading] = useState(false);
   const [gradeLevel, setGradeLevel] = useState<string | null>(
     editValues?.gradeLevel ?? null

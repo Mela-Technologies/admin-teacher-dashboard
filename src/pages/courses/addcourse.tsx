@@ -96,7 +96,6 @@ const AddCoursePage = ({
           </div>
           <div className="px-6 pb-12 h-full overflow-y-auto">
             <AddCourseForm
-              initialValues={{ gradeLevel: null, courses: [] }}
               courses={controller.courses}
               addCourse={controller.addCourse}
               removeCourse={controller.removeCourse}
@@ -131,7 +130,6 @@ const AddCoursePage = ({
           destroyOnClose
         >
           <AddCourseForm
-            initialValues={editData || { gradeLevel: "", courses: [] }}
             courses={controller.courses}
             addCourse={controller.addCourse}
             removeCourse={controller.removeCourse}

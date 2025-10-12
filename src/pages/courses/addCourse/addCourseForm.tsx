@@ -1,8 +1,9 @@
 // src/pages/course/addCourse/AddCourseForm.tsx
 import React, { Dispatch, SetStateAction } from "react";
 import { Button, Table, Select, Form, Input, FormInstance } from "antd";
-import { CourseFormValues, CourseType } from "./addCourseController";
+import { CourseFormValues } from "./addCourseController";
 import { useTranslation } from "react-i18next";
+import { CourseType } from "../courses";
 
 const { Option } = Select;
 
@@ -218,7 +219,7 @@ const AddCourseForm: React.FC<Props> = ({
       {/* Course Table */}
       <div className="p-4 border-gray-200 rounded bg-white shadow-sm">
         <div className="flex justify-between items-center mb-3">
-          <h3 className="text-lg font-semibold">{t("Sections")}</h3>
+          <h3 className="text-lg font-semibold">{t("Course")}</h3>
           {isEditable && (
             <Button type="dashed" onClick={addCourse}>
               {t("Add Course")}
