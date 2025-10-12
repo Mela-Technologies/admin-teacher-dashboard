@@ -1,6 +1,6 @@
 // src/pages/class/ClassDetailCard.tsx
 import React from "react";
-import { Card, Descriptions } from "antd";
+import { Card, Descriptions, Tag } from "antd";
 
 interface ClassDetail {
   gradeLevel: string;
@@ -15,20 +15,41 @@ interface Props {
 }
 
 const ClassDetailCard: React.FC<Props> = ({ classInfo }) => {
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "active":
+        return "green";
+      case "inactive":
+        return "red";
+      default:
+        return "blue";
+    }
+  };
+
   return (
-    <Card className="shadow-sm">
-      <h3 className="text-lg font-semibold mb-3">{classInfo.gradeLevel}</h3>
+    <Card
+      className="shadow-sm"
+      title={
+        <span className="text-lg font-semibold">{classInfo.gradeLevel}</span>
+      }
+      bordered
+    >
       <Descriptions column={1} bordered size="small">
         <Descriptions.Item label="Class ID">
           {classInfo.classId}
         </Descriptions.Item>
+
         <Descriptions.Item label="Total Sections">
           {classInfo.totalSections}
         </Descriptions.Item>
+
         <Descriptions.Item label="Total Students">
           {classInfo.totalStudents}
         </Descriptions.Item>
-        <Descriptions.Item label="Status">{classInfo.status}</Descriptions.Item>
+
+        <Descriptions.Item label="Status">
+          <Tag color={getStatusColor(classInfo.status)}>{classInfo.status}</Tag>
+        </Descriptions.Item>
       </Descriptions>
     </Card>
   );

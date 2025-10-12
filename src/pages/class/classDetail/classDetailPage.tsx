@@ -5,11 +5,12 @@ import {
   EditOutlined,
   PrinterOutlined,
 } from "@ant-design/icons";
-import ClassDetailCard from "./classDetailCard";
-import ClassStatsCard from "./classStatCard";
-import ClassTabs from "./classTab";
+
 import { useTranslation } from "react-i18next";
 import { UserRole } from "../../../types/user";
+import ClassStatsCard from "./classStatCard";
+import ClassDetailCard from "./classDetailCard";
+import ClassTabs from "./classTab";
 
 const ClassDetailPage = ({ role }: { role: UserRole }) => {
   const classInfo = {
@@ -30,6 +31,7 @@ const ClassDetailPage = ({ role }: { role: UserRole }) => {
   const handleEdit = () => console.log("Edit Class", role);
   const handlePrint = () => console.log("Print Class");
   const { t } = useTranslation();
+
   return (
     <div className="space-y-2 h-full">
       {/* Top Action Bar */}
@@ -52,30 +54,17 @@ const ClassDetailPage = ({ role }: { role: UserRole }) => {
         </div>
       </div>
 
-      {/* Detail Section */}
+      {/* Main Content */}
       <div className="px-6 overflow-y-auto h-full">
         <Row gutter={[16, 16]}>
           {/* LEFT COLUMN */}
-          <Col xs={24} md={10} lg={8}>
+          <Col xs={24} md={8} lg={6}>
             <ClassDetailCard classInfo={classInfo} />
           </Col>
 
-          {/* RIGHT COLUMN */}
-          <Col xs={24} md={14} lg={16} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <ClassStatsCard
-                title={t("totalSections")}
-                value={classInfo.totalSections}
-              />
-              <ClassStatsCard
-                title={t("totalStudents")}
-                value={classInfo.totalStudents}
-              />
-              <ClassStatsCard title={t("status")} value={classInfo.status} />
-            </div>
-
-            {/* Tabs Section */}
-            <Card className="shadow-sm">
+          {/* RIGHT COLUMN (Tabs Section) */}
+          <Col xs={24} md={16} lg={18}>
+            <Card className="shadow-sm h-full">
               <ClassTabs sections={sections} />
             </Card>
           </Col>

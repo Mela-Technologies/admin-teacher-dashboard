@@ -133,7 +133,7 @@ const ClassPage = ({ role }: { role: UserRole }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filterGrade, setFilterGrade] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const navigator = useNavigate();
   const { t } = useTranslation();
 
   // Section Table Columns
@@ -182,7 +182,7 @@ const ClassPage = ({ role }: { role: UserRole }) => {
         title={t("classes")}
         hasSelection={false}
         onRefresh={() => console.log("Refresh")}
-        onAddUser={() => navigate("add")}
+        onAddUser={() => navigator("add")}
         onEdit={() => console.log("Edit", role)}
         onDelete={() => console.log("Delete")}
         onExport={() => console.log("Export")}
@@ -264,6 +264,12 @@ const ClassPage = ({ role }: { role: UserRole }) => {
               rowKey="name"
               size="small"
               bordered
+              onRow={(record, rowIndex) => ({
+                onClick: () => {
+                  navigator("detail");
+                  console.log(record, rowIndex);
+                },
+              })}
             />
           </Card>
         ))}
