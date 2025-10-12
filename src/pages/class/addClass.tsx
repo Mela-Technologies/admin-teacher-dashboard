@@ -4,10 +4,11 @@ import {
   ClassFormValues,
   useClassFormController,
 } from "./addClass/addClassController";
-import AddClassForm from "./addClass/addClassForm";
+
 import { UserRole } from "../../types/user";
 import { ArrowLeftOutlined, SaveOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
+import AddClassForm from "./addClass/addClassForm";
 
 interface AddClassPageProps {
   role: UserRole;
@@ -25,6 +26,28 @@ const AddClassPage = ({
   const controller = useClassFormController(editData);
   const [open, setOpen] = useState(isEditing);
   const { t } = useTranslation();
+
+  const onSubmit = async (values: ClassFormValues) => {
+    try {
+      if (isEditing) {
+        await controller.updateClass({
+          gradeId: editData?.gradeId,
+          gradeLevel: editData?.gradeLevel ?? "",
+          sections: controller.sections,
+        });
+        message.success(t("Class updated successfully!"));
+      } else {
+        await controller.registerClass(values);
+        message.success(t("Class created successfully!"));
+      }
+      setOpen(false);
+      onClose?.();
+    } catch (error) {
+      console.error("Error saving class:", error);
+      message.error(t("Failed to save class."));
+    }
+  };
+
   const handleSubmit = async () => {
     try {
       await controller.form.validateFields();
@@ -35,108 +58,78 @@ const AddClassPage = ({
         gradeLevel: controller.gradeLevel ?? "",
         sections: validSections,
       });
-    } catch (err) {
-      // Ant Design will highlight invalid inputs automatically
+    } catch {
+      // Ant Design highlights errors automatically
     }
   };
-  const onSubmit = async (values: ClassFormValues) => {
-    try {
-      if (isEditing) {
-        // 🔹 Update existing class
-        await controller.updateClass({
-          gradeId: editData?.gradeId,
-          gradeLevel: editData?.gradeLevel ?? "",
-          sections: controller.sections,
-        });
-        message.success("Class updated successfully!");
-      } else {
-        // 🔹 Create new class
-        await controller.registerClass(values);
-        message.success("Class created successfully!");
-      }
-      setOpen(false);
-      onClose?.();
-    } catch (error) {
-      console.error("Error saving class:", error);
-      message.error("Failed to save class.");
-    }
-  };
+
+  // 🔹 Toolbar (Shared between modal and page)
+  const HeaderBar = (
+    <div className="mb-1 p-2 px-4 flex gap-4 items-center justify-between border-b border-gray-200 w-full">
+      <div className="flex gap-4">
+        <Button
+          icon={<ArrowLeftOutlined />}
+          onClick={() => (isEditing ? onClose?.() : window.history.back())}
+          className="flex items-center"
+        >
+          {t("back")}
+        </Button>
+        <h2 className="m-0! text-lg font-semibold">
+          {isEditing ? t("Edit Class") : t("Add New Class")}
+        </h2>
+      </div>
+      <Button
+        icon={<SaveOutlined />}
+        onClick={handleSubmit}
+        loading={controller.loading}
+        className="flex items-center"
+      >
+        {t("save")}
+      </Button>
+    </div>
+  );
+
+  // 🔹 Single unified form element
+  const formContent = (
+    <div className={`${!isEditing ? "px-4 pb-12 overflow-y-auto h-full" : ""}`}>
+      {HeaderBar}
+      <AddClassForm
+        form={controller.form}
+        initialValues={editData || controller.initialValues}
+        sections={controller.sections}
+        addSection={controller.addSection}
+        removeSection={controller.removeSection}
+        updateSection={controller.updateSection}
+        loading={controller.loading}
+        gradeLevel={controller.gradeLevel}
+        isEditable={controller.isEditable}
+        schoolSection={controller.schoolSection}
+        setGradeLevel={controller.setGradeLevel}
+        setIsEditable={controller.setIsEditable}
+        setSchoolSection={controller.setSchoolSection}
+      />
+    </div>
+  );
+
   return (
     <>
-      {/* 🔹 Regular Add Page Mode */}
-      {!isEditing && (
-        <div className={`h-full ${role}`}>
-          <div className="mb-1 p-2 px-4 flex gap-4 items-center justify-between border-b border-gray-200 w-full">
-            <div className="flex gap-4">
-              <Button
-                icon={<ArrowLeftOutlined />}
-                onClick={() => window.history.back()}
-                className="flex items-center"
-              >
-                {t("back")}
-              </Button>
-              <h2 className="m-0! text-lg font-semibold">
-                {t("Add New Class")}
-              </h2>
-            </div>
-            {/* Save button */}
-            <Button
-              icon={<SaveOutlined />}
-              onClick={handleSubmit}
-              className="flex items-center"
-            >
-              {t("save")}
-            </Button>
-          </div>
-          <div className="px-4 pb-12 h-full overflow-y-auto">
-            <AddClassForm
-              form={controller.form}
-              initialValues={controller.initialValues}
-              sections={controller.sections}
-              addSection={controller.addSection}
-              removeSection={controller.removeSection}
-              updateSection={controller.updateSection}
-              loading={controller.loading}
-              gradeLevel={controller.gradeLevel}
-              isEditable={controller.isEditable}
-              schoolSection={controller.schoolSection}
-              setGradeLevel={controller.setGradeLevel}
-              setIsEditable={controller.setIsEditable}
-              setSchoolSection={controller.setSchoolSection}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* 🔹 Popup Edit Mode */}
-      {isEditing && (
+      {/* If editing, render inside modal; otherwise, normal page */}
+      {isEditing ? (
         <Modal
-          title="Edit Class"
+          title={t("Edit Class")}
           open={open}
           onCancel={() => {
             setOpen(false);
             onClose?.();
           }}
           footer={null}
-          width={"80%"}
+          width="80%"
           destroyOnClose
         >
-          <AddClassForm
-            initialValues={editData || controller.initialValues}
-            sections={controller.sections}
-            addSection={controller.addSection}
-            removeSection={controller.removeSection}
-            updateSection={controller.updateSection}
-            loading={controller.loading}
-            gradeLevel={controller.gradeLevel}
-            isEditable={controller.isEditable}
-            schoolSection={controller.schoolSection}
-            setGradeLevel={controller.setGradeLevel}
-            setIsEditable={controller.setIsEditable}
-            setSchoolSection={controller.setSchoolSection}
-            form={controller.form}
-          />
+          {formContent}
         </Modal>
+      ) : (
+        <div className={`h-full ${role}`}>{formContent}</div>
       )}
     </>
   );

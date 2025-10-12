@@ -6,9 +6,9 @@ import {
   useAddCourseController,
 } from "./addCourse/addCourseController";
 import { UserRole } from "../../types/user";
-import AddCourseForm from "./addCourse/addCourseForm";
 import { useTranslation } from "react-i18next";
 import { ArrowLeftOutlined, SaveOutlined } from "@ant-design/icons";
+import AddCourseForm from "./addCourse/addCourseForm";
 
 interface AddCoursePageProps {
   role: UserRole;
@@ -26,7 +26,29 @@ const AddCoursePage = ({
   const controller = useAddCourseController(editData);
   const [open, setOpen] = useState(isEditing);
   const { t } = useTranslation();
-  // Validate and submit only valid data
+
+  /** 🔹 Submit Logic */
+  const onSubmit = async (values: CourseFormValues) => {
+    try {
+      if (isEditing) {
+        await controller.update({
+          gradeLevel: editData?.gradeLevel ?? "",
+          courses: controller.courses,
+        });
+        message.success(t("Courses updated successfully!"));
+      } else {
+        await controller.register(values);
+        message.success(t("Courses created successfully!"));
+      }
+      setOpen(false);
+      onClose?.();
+    } catch (err) {
+      console.error(err);
+      message.error(t("Error submitting courses"));
+    }
+  };
+
+  /** 🔹 Validation and save handler */
   const handleSubmit = async () => {
     try {
       await controller.form.validateFields();
@@ -37,116 +59,84 @@ const AddCoursePage = ({
           typeof c.creditHours === "number" &&
           c.core
       );
-
       onSubmit({
         gradeLevel: controller.gradeLevel,
         courses: validCourses,
       });
-    } catch (err) {
-      // Ant Design automatically highlights invalid inputs
+    } catch {
+      // AntD handles form errors automatically
     }
   };
-  const onSubmit = async (values: CourseFormValues) => {
-    try {
-      if (isEditing) {
-        // 🔹 Update existing course set
-        await controller.update({
-          gradeLevel: editData?.gradeLevel ?? "",
-          courses: controller.courses,
-        });
-        message.success("Courses updated successfully!");
-      } else {
-        // 🔹 Create new course set
-        await controller.register(values);
-        message.success("Courses created successfully!");
-      }
-      setOpen(false);
-      onClose?.();
-    } catch (err) {
-      message.error("Error submitting courses");
-    }
-  };
+
+  /** 🔹 Shared Toolbar */
+  const HeaderBar = (
+    <div className="mb-1 p-2 px-4 flex gap-4 items-center justify-between border-b border-gray-200 w-full">
+      <div className="flex gap-4">
+        <Button
+          icon={<ArrowLeftOutlined />}
+          onClick={() => (isEditing ? onClose?.() : window.history.back())}
+          className="flex items-center"
+        >
+          {t("back")}
+        </Button>
+        <h2 className="m-0! text-lg font-semibold">
+          {isEditing ? t("Edit Course") : t("Add New Course")}
+        </h2>
+      </div>
+      <Button
+        icon={<SaveOutlined />}
+        onClick={handleSubmit}
+        loading={controller.loading}
+        className="flex items-center"
+      >
+        {t("save")}
+      </Button>
+    </div>
+  );
+
+  /** 🔹 Shared Form Content */
+  const formContent = (
+    <div className={`${!isEditing ? "px-6 pb-12 overflow-y-auto h-full" : ""}`}>
+      {HeaderBar}
+      <AddCourseForm
+        courses={controller.courses}
+        addCourse={controller.addCourse}
+        removeCourse={controller.removeCourse}
+        updateCourse={controller.updateCourse}
+        fetchCoursesByGrade={controller.fetchCoursesByGrade}
+        loading={controller.loading}
+        form={controller.form}
+        gradeLevel={controller.gradeLevel}
+        isEditable={controller.isEditable}
+        isFetching={controller.isFetching}
+        setIsEditable={controller.setIsEditable}
+        schoolSection={controller.schoolSection}
+        setGradeLevel={controller.setGradeLevel}
+        setIsFetching={controller.setIsFetching}
+        setSchoolSection={controller.setSchoolSection}
+      />
+    </div>
+  );
+
+  /** 🔹 Conditional wrapper */
   return (
     <>
-      {/* 🧩 Regular Add Page Mode */}
-      {!isEditing && (
-        <div className={`h-full ${role}`}>
-          <div className="mb-1 p-2 px-4 flex gap-4 items-center justify-between border-b border-gray-200 w-full">
-            <div className="flex gap-4">
-              <Button
-                icon={<ArrowLeftOutlined />}
-                onClick={() => window.history.back()}
-                className="flex items-center"
-              >
-                {t("back")}
-              </Button>
-              <h2 className="m-0! text-lg font-semibold">
-                {t("Add New Course")}
-              </h2>
-            </div>
-            {/* Save button */}
-            <Button
-              icon={<SaveOutlined />}
-              onClick={handleSubmit}
-              className="flex items-center"
-              loading={controller.loading}
-            >
-              {t("save")}
-            </Button>
-          </div>
-          <div className="px-6 pb-12 h-full overflow-y-auto">
-            <AddCourseForm
-              courses={controller.courses}
-              addCourse={controller.addCourse}
-              removeCourse={controller.removeCourse}
-              updateCourse={controller.updateCourse}
-              fetchCoursesByGrade={controller.fetchCoursesByGrade}
-              loading={controller.loading}
-              form={controller.form}
-              gradeLevel={controller.gradeLevel}
-              isEditable={controller.isEditable}
-              isFetching={controller.isFetching}
-              setIsEditable={controller.setIsEditable}
-              schoolSection={controller.schoolSection}
-              setGradeLevel={controller.setGradeLevel}
-              setIsFetching={controller.setIsFetching}
-              setSchoolSection={controller.setSchoolSection}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* ✏️ Popup Edit Mode */}
-      {isEditing && (
+      {isEditing ? (
         <Modal
-          title="Edit Course"
+          title={t("Edit Course")}
           open={open}
           onCancel={() => {
             setOpen(false);
             onClose?.();
           }}
           footer={null}
-          width={"80%"}
+          width="80%"
           destroyOnClose
         >
-          <AddCourseForm
-            courses={controller.courses}
-            addCourse={controller.addCourse}
-            removeCourse={controller.removeCourse}
-            updateCourse={controller.updateCourse}
-            fetchCoursesByGrade={controller.fetchCoursesByGrade}
-            loading={controller.loading}
-            form={controller.form}
-            gradeLevel={controller.gradeLevel}
-            isEditable={controller.isEditable}
-            isFetching={controller.isFetching}
-            setIsEditable={controller.setIsEditable}
-            schoolSection={controller.schoolSection}
-            setGradeLevel={controller.setGradeLevel}
-            setIsFetching={controller.setIsFetching}
-            setSchoolSection={controller.setSchoolSection}
-          />
+          {formContent}
         </Modal>
+      ) : (
+        <div className={`h-full ${role}`}>{formContent}</div>
       )}
     </>
   );
