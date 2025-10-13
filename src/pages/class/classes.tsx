@@ -266,7 +266,11 @@ const ClassPage = ({ role }: { role: UserRole }) => {
               bordered
               onRow={(record, rowIndex) => ({
                 onClick: () => {
-                  navigator("detail");
+                  navigator(
+                    `detail?id=${encodeURIComponent(
+                      record.sectionId
+                    )}&type=section`
+                  );
                   console.log(record, rowIndex);
                 },
               })}

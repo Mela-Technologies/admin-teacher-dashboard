@@ -9,9 +9,15 @@ interface ClassDetail {
   status: string;
   classId: string;
 }
-
+interface SectionDetailProps {
+  sectionId: string;
+  gradeLevel: string;
+  roomNumber?: string;
+  capacity?: number;
+  totalStudents?: number;
+}
 interface Props {
-  classInfo: ClassDetail;
+  classInfo: ClassDetail | SectionDetailProps;
 }
 
 const ClassDetailCard: React.FC<Props> = ({ classInfo }) => {
@@ -32,25 +38,46 @@ const ClassDetailCard: React.FC<Props> = ({ classInfo }) => {
       title={
         <span className="text-lg font-semibold">{classInfo.gradeLevel}</span>
       }
-      bordered
     >
-      <Descriptions column={1} bordered size="small">
-        <Descriptions.Item label="Class ID">
-          {classInfo.classId}
-        </Descriptions.Item>
+      {"classId" in classInfo ? (
+        <Descriptions column={1} bordered size="small">
+          <Descriptions.Item label="Class ID">
+            {classInfo.classId}
+          </Descriptions.Item>
 
-        <Descriptions.Item label="Total Sections">
-          {classInfo.totalSections}
-        </Descriptions.Item>
+          <Descriptions.Item label="Total Sections">
+            {classInfo.totalSections}
+          </Descriptions.Item>
 
-        <Descriptions.Item label="Total Students">
-          {classInfo.totalStudents}
-        </Descriptions.Item>
+          <Descriptions.Item label="Total Students">
+            {classInfo.totalStudents}
+          </Descriptions.Item>
 
-        <Descriptions.Item label="Status">
+          <Descriptions.Item label="Status">
+            <Tag color={getStatusColor(classInfo.status)}>
+              {classInfo.status}
+            </Tag>
+          </Descriptions.Item>
+        </Descriptions>
+      ) : (
+        <Descriptions column={1} bordered size="small">
+          <Descriptions.Item label="Class ID">
+            {classInfo.sectionId}
+          </Descriptions.Item>
+
+          <Descriptions.Item label="Total Sections">
+            {classInfo.totalStudents}
+          </Descriptions.Item>
+
+          <Descriptions.Item label="Total Students">
+            {classInfo.capacity}
+          </Descriptions.Item>
+
+          {/* <Descriptions.Item label="Status">
           <Tag color={getStatusColor(classInfo.status)}>{classInfo.status}</Tag>
-        </Descriptions.Item>
-      </Descriptions>
+        </Descriptions.Item> */}
+        </Descriptions>
+      )}
     </Card>
   );
 };

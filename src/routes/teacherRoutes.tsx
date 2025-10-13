@@ -1,6 +1,6 @@
 import AttendancePage from "../pages/attendance/attendance";
 import AddClassPage from "../pages/class/addClass";
-import ClassDetailPage from "../pages/class/classDetail/classDetailPage";
+import ClassDetailPage from "../pages/class/classDetail/classDetail";
 import ClassPage from "../pages/class/classes";
 import CoursesPage from "../pages/courses/courses";
 import DashBoard from "../pages/dashboard/dashboard";

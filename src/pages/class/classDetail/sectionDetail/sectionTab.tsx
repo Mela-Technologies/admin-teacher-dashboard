@@ -1,22 +1,43 @@
-// src/pages/class/ClassTabs.tsx
-import React from "react";
-import { Tabs, Table, Tag, Modal, Select, DatePicker, Row, Col } from "antd";
-import type { ColumnsType } from "antd/es/table";
-import { Section, useClassDetailController } from "./classDetailController";
+import { useState } from "react";
+import {
+  Tabs,
+  Table,
+  Modal,
+  Button,
+  Row,
+  Col,
+  Select,
+  DatePicker,
+  Tag,
+} from "antd";
+import { useSectionDetailController } from "./sectionDetailController";
+import { ColumnsType } from "antd/es/table";
 
-const { Option } = Select;
-
-interface Props {
-  sections: Section[];
+interface Student {
+  key: string;
+  fullName: string;
+  gender: string;
 }
 
-const ClassTabs: React.FC<Props> = ({ sections }) => {
-  const controller = useClassDetailController();
+interface Timetable {
+  key: string;
+  day: string;
+  subject: string;
+  period: string;
+}
 
-  const sectionColumns: ColumnsType<Section> = [
-    { title: "Section Name", dataIndex: "name" },
-    { title: "Capacity", dataIndex: "capacity" },
-    { title: "Room Number", dataIndex: "roomNumber" },
+const { Option } = Select;
+const SectionTabs = ({ sectionId }: { sectionId: string }) => {
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const controller = useSectionDetailController();
+  const students: Student[] = [
+    { key: "1", fullName: "Abel Tesfaye", gender: "Male" },
+    { key: "2", fullName: "Liya Mekonnen", gender: "Female" },
+  ];
+
+  const timetable: Timetable[] = [
+    { key: "1", day: "Monday", subject: "Math", period: "1st" },
+    { key: "2", day: "Monday", subject: "English", period: "2nd" },
   ];
 
   const attendanceColumns: ColumnsType<any> = [
@@ -26,18 +47,6 @@ const ClassTabs: React.FC<Props> = ({ sections }) => {
     { title: "Subject", dataIndex: "subject" },
     { title: "Submitted By", dataIndex: "submittedBy" },
   ];
-
-  const sectionStudentColumns: ColumnsType<any> = [
-    {
-      title: "#",
-      render: (_, __, index) => index + 1,
-    },
-    { title: "Full Name", dataIndex: "fullName" },
-    { title: "Gender", dataIndex: "gender" },
-    { title: "Grade", dataIndex: "grade" },
-    { title: "Section", dataIndex: "section" },
-  ];
-
   const attendanceStudentColumns: ColumnsType<any> = [
     {
       title: "#",
@@ -55,22 +64,36 @@ const ClassTabs: React.FC<Props> = ({ sections }) => {
       ),
     },
   ];
-
+  console.log(sectionId);
   return (
     <>
-      <Tabs defaultActiveKey="1" className="w-full">
-        <Tabs.TabPane tab="Sections" key="1">
+      <Tabs defaultActiveKey="1">
+        <Tabs.TabPane tab="Students" key="1">
           <Table
-            columns={sectionColumns}
-            dataSource={sections}
+            columns={[
+              { title: "#", render: (_, __, index) => index + 1 },
+              { title: "Full Name", dataIndex: "fullName" },
+              { title: "Gender", dataIndex: "gender" },
+            ]}
+            dataSource={students}
             pagination={false}
-            rowKey="key"
-            onRow={(record) => ({
-              onClick: () => {
-                controller.setSelectedSection(record);
-                controller.setIsStudentModalVisible(true);
-              },
-            })}
+          />
+        </Tabs.TabPane>
+
+        <Tabs.TabPane tab="Timetable" key="3">
+          <div className="flex justify-end mb-2">
+            <Button onClick={() => setIsEditModalVisible(true)}>
+              Edit Timetable
+            </Button>
+          </div>
+          <Table
+            columns={[
+              { title: "Day", dataIndex: "day" },
+              { title: "Subject", dataIndex: "subject" },
+              { title: "Period", dataIndex: "period" },
+            ]}
+            dataSource={timetable}
+            pagination={false}
           />
         </Tabs.TabPane>
 
@@ -116,24 +139,15 @@ const ClassTabs: React.FC<Props> = ({ sections }) => {
         </Tabs.TabPane>
       </Tabs>
 
-      {/* Student List Modal */}
+      {/* Edit Timetable Modal */}
       <Modal
-        title={
-          controller.selectedSection
-            ? `Students in Section ${controller.selectedSection.name}`
-            : "Students"
-        }
-        open={controller.isStudentModalVisible}
-        onCancel={() => controller.setIsStudentModalVisible(false)}
+        title="Edit Timetable"
+        open={isEditModalVisible}
+        onCancel={() => setIsEditModalVisible(false)}
         footer={null}
-        width={750}
+        width={700}
       >
-        <Table
-          columns={sectionStudentColumns}
-          dataSource={controller.studentDetails}
-          pagination={false}
-          rowKey="key"
-        />
+        <p>Here you can add your timetable editing form.</p>
       </Modal>
 
       {/* Attendance Detail Modal */}
@@ -159,4 +173,4 @@ const ClassTabs: React.FC<Props> = ({ sections }) => {
   );
 };
 
-export default ClassTabs;
+export default SectionTabs;
