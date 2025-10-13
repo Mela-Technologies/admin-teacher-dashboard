@@ -15,7 +15,7 @@ const LoginPage = () => {
     <Layout className="h-screen flex-row!">
       {/* Left column - background / branding */}
       <div
-        className={`relative ml-5 h-[95%] rounded-4xl my-auto flex-2 flex flex-col justify-center items-center bg-[${bgColor}] text-white overflow-hidden`}
+        className={`relative ml-5 h-[95%] rounded-4xl my-auto flex-2 flex flex-col justify-center items-center bg-[#0667AF] text-white overflow-hidden`}
       >
         {/* Decorative circular grids */}
         {/* Decorative circular grids */}
