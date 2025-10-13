@@ -3,14 +3,13 @@ import Announcements from "../../components/dashboard/announcements";
 import AttendanceChart from "../../components/dashboard/attendanceChart";
 import CountChart from "../../components/dashboard/countChar";
 import EventCalendar from "../../components/dashboard/eventCalander";
-import FinanceChart from "../../components/dashboard/financeChart";
 import UserCard from "../../components/dashboard/userCard";
 
 const DashBoardAdmin = () => {
   const { t } = useTranslation();
   return (
-    <div className="h-full overflow-y-auto">
-      <div className="p-4 flex gap-4 flex-col md:flex-row">
+    <div className="h-full">
+      <div className="h-full p-4 flex gap-4 flex-col md:flex-row">
         {/* LEFT */}
         <div className="w-full lg:w-2/3 flex flex-col gap-8">
           {/* USER CARDS */}
@@ -32,12 +31,12 @@ const DashBoardAdmin = () => {
             </div>
           </div>
           {/* BOTTOM CHART */}
-          <div className="w-full h-[500px]">
+          {/* <div className="w-full h-[500px]">
             <FinanceChart />
-          </div>
+          </div> */}
         </div>
         {/* RIGHT */}
-        <div className="w-full lg:w-1/3 flex flex-col gap-8">
+        <div className="w-full lg:w-1/3 flex flex-col gap-8 h-full overflow-y-auto">
           <EventCalendar />
           <Announcements />
         </div>
