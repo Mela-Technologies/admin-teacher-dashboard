@@ -18,7 +18,9 @@ export const useSectionDetailController = () => {
   );
   const [selectedSectionFilter, setSelectedSectionFilter] = useState<string>();
   const [selectedDateFilter, setSelectedDateFilter] = useState<string>();
-
+  const queryParams = new URLSearchParams(location.search);
+  const id = queryParams.get("id");
+  console.log(id);
   const attendanceData = useMemo(
     () => [
       {
