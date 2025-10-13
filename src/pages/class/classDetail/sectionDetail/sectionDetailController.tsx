@@ -1,6 +1,6 @@
 import { useState, useMemo, Dispatch, SetStateAction } from "react";
 import dayjs from "dayjs";
-
+import { App } from "antd";
 export interface Section {
   key: string;
   name: string;
@@ -18,6 +18,7 @@ export const useSectionDetailController = () => {
   );
   const [selectedSectionFilter, setSelectedSectionFilter] = useState<string>();
   const [selectedDateFilter, setSelectedDateFilter] = useState<string>();
+  const { message } = App.useApp();
   const queryParams = new URLSearchParams(location.search);
   const id = queryParams.get("id");
   console.log(id);
@@ -81,6 +82,40 @@ export const useSectionDetailController = () => {
       status: "Present",
     },
   ];
+  //   ----------------------------------------
+  const [subjects, setSubjects] = useState<any[]>([]);
+
+  const getSubjects = async () => {
+    try {
+      //   const res = await axios.get("/api/subjects");
+      //   setSubjects(res.data || []);
+    } catch {
+      message.error("Failed to load subjects");
+    }
+  };
+
+  const fetchSchedule = async (sectionId: string) => {
+    try {
+      //   const res = await axios.get(`/api/sections/${sectionId}/schedule`);
+      //   return res.data?.schedule || {};
+    } catch {
+      message.error("Failed to fetch schedule");
+      return {};
+    }
+  };
+
+  const updateSchedule = async (
+    sectionId: string,
+    schedule: Record<string, Record<string, string>>
+  ) => {
+    try {
+      //   await axios.put(`/api/sections/${sectionId}/schedule`, { schedule });
+      return true;
+    } catch {
+      message.error("Error saving timetable");
+      return false;
+    }
+  };
 
   return {
     // state
@@ -100,6 +135,11 @@ export const useSectionDetailController = () => {
     setSelectedSectionFilter,
     setSelectedDateFilter,
     dayjs,
+    // edit time table
+    subjects,
+    getSubjects,
+    fetchSchedule,
+    updateSchedule,
   };
 };
 
@@ -133,4 +173,12 @@ export type SectionDetailCtrlType = {
   setSelectedSectionFilter: Dispatch<SetStateAction<string | undefined>>;
   setSelectedDateFilter: Dispatch<SetStateAction<string | undefined>>;
   dayjs: typeof dayjs;
+  //   edit timetable
+  subjects: any[];
+  getSubjects: () => Promise<void>;
+  fetchSchedule: (sectionId: string) => Promise<any>;
+  updateSchedule: (
+    sectionId: string,
+    schedule: Record<string, Record<string, string>>
+  ) => Promise<boolean>;
 };

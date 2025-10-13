@@ -12,6 +12,7 @@ import {
 } from "antd";
 import { SectionDetailCtrlType } from "./sectionDetailController";
 import { ColumnsType } from "antd/es/table";
+import EditTimetableModal from "./editTimeTable";
 
 interface Student {
   key: string;
@@ -70,22 +71,27 @@ const SectionTabs = ({
     },
   ];
   console.log(sectionId);
-  return (
-    <>
-      <Tabs defaultActiveKey="1">
-        <Tabs.TabPane tab="Students" key="1">
-          <Table
-            columns={[
-              { title: "#", render: (_, __, index) => index + 1 },
-              { title: "Full Name", dataIndex: "fullName" },
-              { title: "Gender", dataIndex: "gender" },
-            ]}
-            dataSource={students}
-            pagination={false}
-          />
-        </Tabs.TabPane>
-
-        <Tabs.TabPane tab="Timetable" key="3">
+  const tabItems = [
+    {
+      key: "1",
+      label: "Students",
+      children: (
+        <Table
+          columns={[
+            { title: "#", render: (_, __, index) => index + 1 },
+            { title: "Full Name", dataIndex: "fullName" },
+            { title: "Gender", dataIndex: "gender" },
+          ]}
+          dataSource={students}
+          pagination={false}
+        />
+      ),
+    },
+    {
+      key: "3",
+      label: "Timetable",
+      children: (
+        <>
           <div className="flex justify-end mb-2">
             <Button onClick={() => setIsEditModalVisible(true)}>
               Edit Timetable
@@ -100,9 +106,14 @@ const SectionTabs = ({
             dataSource={timetable}
             pagination={false}
           />
-        </Tabs.TabPane>
-
-        <Tabs.TabPane tab="Attendance" key="2">
+        </>
+      ),
+    },
+    {
+      key: "2",
+      label: "Attendance",
+      children: (
+        <>
           <Row gutter={16} style={{ marginBottom: 16 }}>
             <Col>
               <Select
@@ -129,6 +140,7 @@ const SectionTabs = ({
               />
             </Col>
           </Row>
+
           <Table
             columns={attendanceColumns}
             dataSource={controller.filteredAttendance}
@@ -141,19 +153,21 @@ const SectionTabs = ({
               },
             })}
           />
-        </Tabs.TabPane>
-      </Tabs>
+        </>
+      ),
+    },
+  ];
+
+  return (
+    <>
+      <Tabs defaultActiveKey="1" items={tabItems} />
 
       {/* Edit Timetable Modal */}
-      <Modal
-        title="Edit Timetable"
+      <EditTimetableModal
         open={isEditModalVisible}
-        onCancel={() => setIsEditModalVisible(false)}
-        footer={null}
-        width={700}
-      >
-        <p>Here you can add your timetable editing form.</p>
-      </Modal>
+        onClose={() => setIsEditModalVisible(false)}
+        sectionId={sectionId}
+      />
 
       {/* Attendance Detail Modal */}
       <Modal
