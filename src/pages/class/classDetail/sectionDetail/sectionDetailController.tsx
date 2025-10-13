@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, Dispatch, SetStateAction } from "react";
 import dayjs from "dayjs";
 
 export interface Section {
@@ -90,7 +90,6 @@ export const useSectionDetailController = () => {
     selectedDateFilter,
     filteredAttendance,
     studentDetails,
-
     // setters
     setIsStudentModalVisible,
     setIsAttendanceModalVisible,
@@ -98,7 +97,38 @@ export const useSectionDetailController = () => {
     setSelectedAttendance,
     setSelectedSectionFilter,
     setSelectedDateFilter,
-
     dayjs,
   };
+};
+
+export type SectionDetailCtrlType = {
+  isStudentModalVisible: boolean;
+  isAttendanceModalVisible: boolean;
+  selectedSection: any;
+  selectedAttendance: any;
+  selectedSectionFilter: string | undefined;
+  selectedDateFilter: string | undefined;
+  filteredAttendance: {
+    key: string;
+    date: string;
+    grade: string;
+    section: string;
+    subject: string;
+    submittedBy: string;
+  }[];
+  studentDetails: {
+    key: string;
+    fullName: string;
+    gender: string;
+    grade: string;
+    section: string;
+    status: string;
+  }[];
+  setIsStudentModalVisible: Dispatch<SetStateAction<boolean>>;
+  setIsAttendanceModalVisible: Dispatch<SetStateAction<boolean>>;
+  setSelectedSection: Dispatch<any>;
+  setSelectedAttendance: Dispatch<any>;
+  setSelectedSectionFilter: Dispatch<SetStateAction<string | undefined>>;
+  setSelectedDateFilter: Dispatch<SetStateAction<string | undefined>>;
+  dayjs: typeof dayjs;
 };

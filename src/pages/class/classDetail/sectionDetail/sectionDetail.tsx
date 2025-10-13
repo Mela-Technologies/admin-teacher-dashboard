@@ -8,12 +8,13 @@ import { useTranslation } from "react-i18next";
 import SectionTabs from "./sectionTab";
 import ClassDetailCard from "../classDetailCard";
 import { UserRole } from "../../../../types/user";
+import { useSectionDetailController } from "./sectionDetailController";
 
 const SectionDetail = ({ role }: { role: UserRole }) => {
   const queryParams = new URLSearchParams(location.search);
   const id = queryParams.get("id"); // ?id=SEC-001A
   const { t } = useTranslation();
-
+  const controller = useSectionDetailController();
   const handleBack = () => window.history.back();
   const handleEdit = () => console.log("Edit section", id);
   const handlePrint = () => console.log("Print section", id);
@@ -61,7 +62,10 @@ const SectionDetail = ({ role }: { role: UserRole }) => {
           {/* RIGHT: Section Tabs */}
           <Col xs={24} md={16} lg={18}>
             <Card className="shadow-sm h-full">
-              <SectionTabs sectionId={sectionInfo.sectionId} />
+              <SectionTabs
+                controller={controller}
+                sectionId={sectionInfo.sectionId}
+              />
             </Card>
           </Col>
         </Row>

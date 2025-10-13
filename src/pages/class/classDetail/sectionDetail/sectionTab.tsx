@@ -10,7 +10,7 @@ import {
   DatePicker,
   Tag,
 } from "antd";
-import { useSectionDetailController } from "./sectionDetailController";
+import { SectionDetailCtrlType } from "./sectionDetailController";
 import { ColumnsType } from "antd/es/table";
 
 interface Student {
@@ -27,9 +27,14 @@ interface Timetable {
 }
 
 const { Option } = Select;
-const SectionTabs = ({ sectionId }: { sectionId: string }) => {
+const SectionTabs = ({
+  sectionId,
+  controller,
+}: {
+  sectionId: string;
+  controller: SectionDetailCtrlType;
+}) => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const controller = useSectionDetailController();
   const students: Student[] = [
     { key: "1", fullName: "Abel Tesfaye", gender: "Male" },
     { key: "2", fullName: "Liya Mekonnen", gender: "Female" },
