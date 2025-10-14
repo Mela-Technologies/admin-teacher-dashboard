@@ -10,8 +10,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { UserRole } from "../../types/user";
-import { CourseFormValues } from "./addCourse/addCourseController";
-import AddCoursePage from "./addcourse";
+import AddCoursePage from "./addCourse/addCourse";
+import { CourseFormValues } from "./courseController";
 
 const { Option } = Select;
 

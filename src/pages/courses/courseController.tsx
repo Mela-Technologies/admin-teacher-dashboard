@@ -1,9 +1,9 @@
 // src/pages/course/addCourse/addCourseController.ts
-import { useState } from "react";
-import { Form, message } from "antd";
+import { Dispatch, SetStateAction, useState } from "react";
+import { Form, FormInstance, message } from "antd";
 import { v4 as uuidv4 } from "uuid";
-import { useAxios } from "../../../hooks/useAxios";
-import { CourseType } from "../courses";
+import { CourseType } from "./courses";
+import { useAxios } from "../../hooks/useAxios";
 
 export interface CourseFormValues {
   gradeLevel: string | null;
@@ -11,7 +11,7 @@ export interface CourseFormValues {
   gradeId?: string;
 }
 
-export const useAddCourseController = (editValues?: CourseFormValues) => {
+export const useCourseCtrl = (editValues?: CourseFormValues) => {
   const [courses, setCourses] = useState<CourseType[]>(
     editValues?.courses || []
   );
@@ -113,4 +113,23 @@ export const useAddCourseController = (editValues?: CourseFormValues) => {
     setIsEditable,
     form,
   };
+};
+
+export type CourseCtrlType = {
+  courses: CourseType[];
+  addCourse: () => void;
+  removeCourse: (key: string) => void;
+  updateCourse: (key: string, field: keyof CourseType, value: any) => void;
+  fetchCoursesByGrade: (grade: string) => Promise<void>;
+  loading?: boolean;
+  editData?: CourseFormValues;
+  gradeLevel: string | null;
+  setGradeLevel: Dispatch<SetStateAction<string | null>>;
+  schoolSection: string;
+  setSchoolSection: Dispatch<SetStateAction<string>>;
+  isFetching: boolean;
+  setIsFetching: Dispatch<SetStateAction<boolean>>;
+  isEditable: boolean;
+  setIsEditable: Dispatch<SetStateAction<boolean>>;
+  form: FormInstance<any>;
 };

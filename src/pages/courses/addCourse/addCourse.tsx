@@ -1,14 +1,12 @@
 // src/pages/course/AddCoursePage.tsx
 import { useState } from "react";
 import { Button, Modal, message } from "antd";
-import {
-  CourseFormValues,
-  useAddCourseController,
-} from "./addCourse/addCourseController";
-import { UserRole } from "../../types/user";
+
+import { UserRole } from "../../../types/user";
 import { useTranslation } from "react-i18next";
 import { ArrowLeftOutlined, SaveOutlined } from "@ant-design/icons";
-import AddCourseForm from "./addCourse/addCourseForm";
+import AddCourseForm from "./addCourseForm";
+import { CourseFormValues, useCourseCtrl } from "../courseController";
 
 interface AddCoursePageProps {
   role: UserRole;
@@ -23,7 +21,7 @@ const AddCoursePage = ({
   editData,
   onClose,
 }: AddCoursePageProps) => {
-  const controller = useAddCourseController(editData);
+  const controller = useCourseCtrl(editData);
   const [open, setOpen] = useState(isEditing);
   const { t } = useTranslation();
 
@@ -98,23 +96,7 @@ const AddCoursePage = ({
   const formContent = (
     <div className={`${!isEditing ? "px-6 pb-12 overflow-y-auto h-full" : ""}`}>
       {HeaderBar}
-      <AddCourseForm
-        courses={controller.courses}
-        addCourse={controller.addCourse}
-        removeCourse={controller.removeCourse}
-        updateCourse={controller.updateCourse}
-        fetchCoursesByGrade={controller.fetchCoursesByGrade}
-        loading={controller.loading}
-        form={controller.form}
-        gradeLevel={controller.gradeLevel}
-        isEditable={controller.isEditable}
-        isFetching={controller.isFetching}
-        setIsEditable={controller.setIsEditable}
-        schoolSection={controller.schoolSection}
-        setGradeLevel={controller.setGradeLevel}
-        setIsFetching={controller.setIsFetching}
-        setSchoolSection={controller.setSchoolSection}
-      />
+      <AddCourseForm ctrl={controller} />
     </div>
   );
 

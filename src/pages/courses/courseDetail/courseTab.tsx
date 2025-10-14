@@ -12,7 +12,8 @@ import {
   Space,
   Popconfirm,
 } from "antd";
-import { CourseFormValues } from "../addCourse/addCourseController";
+import { useTranslation } from "react-i18next";
+import { CourseFormValues } from "../courseController";
 
 const { Option } = Select;
 
@@ -24,7 +25,7 @@ const CourseTabs: React.FC<Props> = ({ course }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
-
+  const { t } = useTranslation();
   const [teachers, setTeachers] = useState([
     {
       key: "1",
@@ -37,10 +38,10 @@ const CourseTabs: React.FC<Props> = ({ course }) => {
 
   // Table Columns
   const columns = [
-    { title: "Full Name", dataIndex: "fullName" },
-    { title: "Section Assigned", dataIndex: "section" },
-    { title: "Subject", dataIndex: "subject" },
-    { title: "Grade", dataIndex: "grade" },
+    { title: t("fullName"), dataIndex: "fullName" },
+    { title: t("Section Assigned"), dataIndex: "section" },
+    { title: t("subject"), dataIndex: "subject" },
+    { title: t("grade"), dataIndex: "grade" },
   ];
 
   // Handle Delete / Unassign
@@ -81,116 +82,127 @@ const CourseTabs: React.FC<Props> = ({ course }) => {
       .catch(() => {});
   };
 
-  return (
-    <Tabs defaultActiveKey="1" className="w-full">
-      {/* ASSIGNED TEACHERS TAB */}
-      <Tabs.TabPane tab="Assigned Teachers" key="1">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: 12,
-          }}
-        >
-          <h3 style={{ margin: 0 }}>Assigned Teachers</h3>
-          {selectedRowKeys.length > 0 && (
-            <Space>
-              <Popconfirm
-                title="Are you sure to unassign selected teachers?"
-                okText="Yes"
-                cancelText="No"
-                onConfirm={handleDeleteSelected}
+  const tabItems = [
+    {
+      key: "1",
+      label: t("Assigned Teachers"),
+      children: (
+        <>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: 12,
+            }}
+          >
+            <h3 style={{ margin: 0 }}>Assigned Teachers</h3>
+            {selectedRowKeys.length > 0 && (
+              <Space>
+                <Popconfirm
+                  title="Are you sure to unassign selected teachers?"
+                  okText="Yes"
+                  cancelText="No"
+                  onConfirm={handleDeleteSelected}
+                >
+                  <Button danger>Unassign Selected</Button>
+                </Popconfirm>
+              </Space>
+            )}
+          </div>
+
+          <Table
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={teachers}
+            rowKey="key"
+            pagination={false}
+          />
+        </>
+      ),
+    },
+    {
+      key: "2",
+      label: t("Assign Teacher"),
+      children: (
+        <>
+          <Button
+            type="primary"
+            onClick={() => {
+              form.resetFields();
+              setIsModalVisible(true);
+            }}
+          >
+            Add New Teacher Assignment
+          </Button>
+
+          <Modal
+            title={t("Assign Teacher")}
+            open={isModalVisible}
+            onCancel={() => setIsModalVisible(false)}
+            onOk={handleSubmit}
+            okText={t("save")}
+          >
+            <Form form={form} layout="vertical">
+              <Form.Item
+                label={t("teacher")}
+                name="fullName"
+                rules={[{ required: true, message: "Please select a teacher" }]}
               >
-                <Button danger>Unassign Selected</Button>
-              </Popconfirm>
-            </Space>
-          )}
-        </div>
-
-        <Table
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={teachers}
-          rowKey="key"
-          pagination={false}
-        />
-      </Tabs.TabPane>
-
-      {/* ASSIGN NEW TEACHER TAB */}
-      <Tabs.TabPane tab="Assign Teacher" key="2">
-        <Button
-          type="primary"
-          onClick={() => {
-            form.resetFields();
-            setIsModalVisible(true);
-          }}
-        >
-          Add New Teacher Assignment
-        </Button>
-
-        <Modal
-          title="Assign Teacher"
-          open={isModalVisible}
-          onCancel={() => setIsModalVisible(false)}
-          onOk={handleSubmit}
-          okText="Save"
-        >
-          <Form form={form} layout="vertical">
-            <Form.Item
-              label="Teacher"
-              name="fullName"
-              rules={[{ required: true, message: "Please select a teacher" }]}
-            >
-              <Select showSearch placeholder="Select Teacher">
-                <Option value="Mr. Daniel Bekele">Mr. Daniel Bekele</Option>
-                <Option value="Ms. Rahel Yared">Ms. Rahel Yared</Option>
-                <Option value="Mr. Samuel Yohannes">Mr. Samuel Yohannes</Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              label="Section Assigned"
-              name="section"
-              rules={[{ required: true, message: "Please select a section" }]}
-            >
-              <Select placeholder="Select Section">
-                <Option value="A">Section A</Option>
-                <Option value="B">Section B</Option>
-                <Option value="C">Section C</Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              label="Subject"
-              name="subject"
-              initialValue={course.courses[0]?.subject}
-            >
-              <Select disabled>
-                {course.courses.map((c) => (
-                  <Option key={c.key} value={c.subject}>
-                    {c.subject}
+                <Select showSearch placeholder="Select Teacher">
+                  <Option value="Mr. Daniel Bekele">Mr. Daniel Bekele</Option>
+                  <Option value="Ms. Rahel Yared">Ms. Rahel Yared</Option>
+                  <Option value="Mr. Samuel Yohannes">
+                    Mr. Samuel Yohannes
                   </Option>
-                ))}
-              </Select>
-            </Form.Item>
+                </Select>
+              </Form.Item>
 
-            <Form.Item
-              label="Grade"
-              name="grade"
-              initialValue={course.gradeLevel}
-            >
-              <InputNumber
-                disabled
-                min={1}
-                max={12}
-                style={{ width: "100%" }}
-              />
-            </Form.Item>
-          </Form>
-        </Modal>
-      </Tabs.TabPane>
-    </Tabs>
-  );
+              <Form.Item
+                label={t("Section Assigned")}
+                name="section"
+                rules={[{ required: true, message: "Please select a section" }]}
+              >
+                <Select placeholder="Select Section" mode="multiple">
+                  <Option value="A">Section A</Option>
+                  <Option value="B">Section B</Option>
+                  <Option value="C">Section C</Option>
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                label={t("subject")}
+                name="subject"
+                initialValue={course.courses[0]?.subject}
+              >
+                <Select disabled>
+                  {course.courses.map((c) => (
+                    <Option key={c.key} value={c.subject}>
+                      {c.subject}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                label={t("grade")}
+                name="grade"
+                initialValue={course.gradeLevel}
+              >
+                <InputNumber
+                  disabled
+                  min={1}
+                  max={12}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </Form>
+          </Modal>
+        </>
+      ),
+    },
+  ];
+
+  return <Tabs defaultActiveKey="1" items={tabItems} className="w-full" />;
 };
 
 export default CourseTabs;

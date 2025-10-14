@@ -9,9 +9,9 @@ import {
 } from "@ant-design/icons";
 
 import CourseTabs from "./courseTab";
-import { CourseFormValues } from "../addCourse/addCourseController";
 import { UserRole } from "../../../types/user";
 import { useTranslation } from "react-i18next";
+import { CourseFormValues } from "../courseController";
 
 interface Props {
   course?: CourseFormValues;
@@ -41,7 +41,7 @@ const CourseDetailPage: React.FC<Props> = ({ role }) => {
       {/* Top Action Bar */}
       <div className="flex justify-between items-center p-2 border-b border-gray-200">
         <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
-          {t("Back")}
+          {t("back")}
         </Button>
 
         <div className="flex gap-4">
@@ -60,7 +60,7 @@ const CourseDetailPage: React.FC<Props> = ({ role }) => {
       <Row gutter={16}>
         {/* Left side – Course Information */}
         <Col xs={24} md={8} lg={6}>
-          <Card title="Course Information" bordered>
+          <Card title={t("Course Information")}>
             <CourseDetailCard course={course} />
           </Card>
         </Col>

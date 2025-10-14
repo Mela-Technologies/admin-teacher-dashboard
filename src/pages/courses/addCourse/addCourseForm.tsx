@@ -1,48 +1,18 @@
 // src/pages/course/addCourse/AddCourseForm.tsx
-import React, { Dispatch, SetStateAction } from "react";
-import { Button, Table, Select, Form, Input, FormInstance } from "antd";
-import { CourseFormValues } from "./addCourseController";
+import React from "react";
+import { Button, Table, Select, Form, Input } from "antd";
 import { useTranslation } from "react-i18next";
 import { CourseType } from "../courses";
+import { CourseCtrlType, CourseFormValues } from "../courseController";
 
 const { Option } = Select;
 
 interface Props {
   initialValues?: CourseFormValues;
-  courses: CourseType[];
-  addCourse: () => void;
-  removeCourse: (key: string) => void;
-  updateCourse: (key: string, field: keyof CourseType, value: any) => void;
-  fetchCoursesByGrade: (grade: string) => Promise<void>;
-  loading?: boolean;
-  editData?: CourseFormValues;
-  gradeLevel: string | null;
-  setGradeLevel: Dispatch<SetStateAction<string | null>>;
-  schoolSection: string;
-  setSchoolSection: Dispatch<SetStateAction<string>>;
-  isFetching: boolean;
-  setIsFetching: Dispatch<SetStateAction<boolean>>;
-  isEditable: boolean;
-  setIsEditable: Dispatch<SetStateAction<boolean>>;
-  form: FormInstance<any>;
+  ctrl: CourseCtrlType;
 }
 
-const AddCourseForm: React.FC<Props> = ({
-  courses,
-  addCourse,
-  removeCourse,
-  updateCourse,
-  fetchCoursesByGrade,
-  gradeLevel,
-  setGradeLevel,
-  schoolSection,
-  setSchoolSection,
-  isFetching,
-  setIsFetching,
-  isEditable,
-  setIsEditable,
-  form,
-}) => {
+const AddCourseForm: React.FC<Props> = ({ ctrl }) => {
   const { t } = useTranslation();
 
   // Grade options
@@ -66,15 +36,15 @@ const AddCourseForm: React.FC<Props> = ({
   };
 
   const handleGradeChange = async (value: string) => {
-    setGradeLevel(value);
+    ctrl.setGradeLevel(value);
     const section = getSchoolSection(value);
-    setSchoolSection(section);
+    ctrl.setSchoolSection(section);
 
-    setIsFetching(true);
+    ctrl.setIsFetching(true);
     try {
-      await fetchCoursesByGrade(value);
+      await ctrl.fetchCoursesByGrade(value);
     } finally {
-      setIsFetching(false);
+      ctrl.setIsFetching(false);
     }
   };
 
@@ -90,10 +60,10 @@ const AddCourseForm: React.FC<Props> = ({
           validateTrigger="onBlur"
         >
           <Input
-            disabled={!isEditable}
+            disabled={!ctrl.isEditable}
             placeholder={t("Enter subject")}
             onChange={(e) =>
-              updateCourse(record.key, "subject", e.target.value)
+              ctrl.updateCourse(record.key, "subject", e.target.value)
             }
           />
         </Form.Item>
@@ -110,9 +80,11 @@ const AddCourseForm: React.FC<Props> = ({
           validateTrigger="onBlur"
         >
           <Input
-            disabled={!isEditable}
+            disabled={!ctrl.isEditable}
             placeholder={t("Enter code")}
-            onChange={(e) => updateCourse(record.key, "code", e.target.value)}
+            onChange={(e) =>
+              ctrl.updateCourse(record.key, "code", e.target.value)
+            }
           />
         </Form.Item>
       ),
@@ -127,9 +99,11 @@ const AddCourseForm: React.FC<Props> = ({
           rules={[{ required: true, message: t("Select credit hours") }]}
         >
           <Select
-            disabled={!isEditable}
+            disabled={!ctrl.isEditable}
             placeholder={t("Credit Hours")}
-            onChange={(val) => updateCourse(record.key, "creditHours", val)}
+            onChange={(val) =>
+              ctrl.updateCourse(record.key, "creditHours", val)
+            }
           >
             {Array.from({ length: 9 }, (_, i) => (
               <Option key={i} value={i}>
@@ -150,9 +124,9 @@ const AddCourseForm: React.FC<Props> = ({
           rules={[{ required: true, message: t("Please select course type") }]}
         >
           <Select
-            disabled={!isEditable}
+            disabled={!ctrl.isEditable}
             placeholder={t("Select Type")}
-            onChange={(val) => updateCourse(record.key, "subject", val)}
+            onChange={(val) => ctrl.updateCourse(record.key, "subject", val)}
           >
             <Option value="Core">{t("Core")}</Option>
             <Option value="Elective">{t("Elective")}</Option>
@@ -164,12 +138,14 @@ const AddCourseForm: React.FC<Props> = ({
       title: t("Action"),
       render: (_: any, record: CourseType) => (
         <>
-          {isEditable ? (
-            <Button danger onClick={() => removeCourse(record.key)}>
+          {ctrl.isEditable ? (
+            <Button danger onClick={() => ctrl.removeCourse(record.key)}>
               {t("Remove")}
             </Button>
           ) : (
-            <Button onClick={() => setIsEditable(true)}>{t("Edit")}</Button>
+            <Button onClick={() => ctrl.setIsEditable(true)}>
+              {t("Edit")}
+            </Button>
           )}
         </>
       ),
@@ -177,7 +153,7 @@ const AddCourseForm: React.FC<Props> = ({
   ];
 
   return (
-    <Form form={form} layout="vertical" className="space-y-6">
+    <Form form={ctrl.form} layout="vertical" className="space-y-6">
       {/* Grade Info */}
       <div className="p-4 border-gray-200 rounded bg-white shadow-sm space-y-4">
         <h3 className="text-lg font-semibold">{t("Grade Information")}</h3>
@@ -188,15 +164,15 @@ const AddCourseForm: React.FC<Props> = ({
             rules={[
               { required: true, message: t("Please select grade level") },
             ]}
-            initialValue={gradeLevel}
+            initialValue={ctrl.gradeLevel}
             // validateTrigger="onChange"
           >
             <Select
               placeholder={t("Select Grade")}
-              value={gradeLevel}
+              value={ctrl.gradeLevel}
               onChange={handleGradeChange}
-              disabled={!isEditable}
-              loading={isFetching}
+              disabled={!ctrl.isEditable}
+              loading={ctrl.isFetching}
             >
               {gradeOptions.map((group) => (
                 <Select.OptGroup key={group.label} label={group.label}>
@@ -211,7 +187,7 @@ const AddCourseForm: React.FC<Props> = ({
           </Form.Item>
 
           <Form.Item label={t("School Section")}>
-            <Input value={schoolSection} disabled />
+            <Input value={ctrl.schoolSection} disabled />
           </Form.Item>
         </div>
       </div>
@@ -220,14 +196,14 @@ const AddCourseForm: React.FC<Props> = ({
       <div className="p-4 border-gray-200 rounded bg-white shadow-sm">
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-lg font-semibold">{t("Course")}</h3>
-          {isEditable && (
-            <Button type="dashed" onClick={addCourse}>
+          {ctrl.isEditable && (
+            <Button type="dashed" onClick={ctrl.addCourse}>
               {t("Add Course")}
             </Button>
           )}
         </div>
         <Table
-          dataSource={courses}
+          dataSource={ctrl.courses}
           columns={courseColumns}
           pagination={false}
           rowKey="key"
