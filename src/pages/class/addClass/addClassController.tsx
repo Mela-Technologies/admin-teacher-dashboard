@@ -1,5 +1,5 @@
-import { Form } from "antd";
-import { useState } from "react";
+import { Form, FormInstance } from "antd";
+import { Dispatch, SetStateAction, useState } from "react";
 
 export interface SectionType {
   key: string;
@@ -97,4 +97,21 @@ export const useClassFormController = (editValues?: ClassFormValues) => {
     isEditable,
     setIsEditable,
   };
+};
+
+export type AddClassCtrlType = {
+  initialValues: ClassFormValues;
+  sections: SectionType[];
+  addSection: () => void;
+  removeSection: (key: string) => void;
+  updateSection: (key: string, field: keyof SectionType, value: any) => void;
+  loading?: boolean;
+  editData?: ClassFormValues;
+  form: FormInstance<any>;
+  gradeLevel: string | undefined;
+  setGradeLevel: Dispatch<SetStateAction<string | undefined>>;
+  schoolSection: string;
+  setSchoolSection: Dispatch<SetStateAction<string>>;
+  isEditable: boolean;
+  setIsEditable: Dispatch<SetStateAction<boolean>>;
 };

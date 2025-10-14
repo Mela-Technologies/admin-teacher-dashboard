@@ -96,6 +96,7 @@ export const useSectionDetailController = () => {
 
   const fetchSchedule = async (sectionId: string) => {
     try {
+      console.log(sectionId);
       //   const res = await axios.get(`/api/sections/${sectionId}/schedule`);
       //   return res.data?.schedule || {};
     } catch {
@@ -109,6 +110,7 @@ export const useSectionDetailController = () => {
     schedule: Record<string, Record<string, string>>
   ) => {
     try {
+      console.log(sectionId, schedule);
       //   await axios.put(`/api/sections/${sectionId}/schedule`, { schedule });
       return true;
     } catch {
@@ -137,6 +139,7 @@ export const useSectionDetailController = () => {
     dayjs,
     // edit time table
     subjects,
+    setSubjects,
     getSubjects,
     fetchSchedule,
     updateSchedule,

@@ -13,6 +13,7 @@ import {
 import { SectionDetailCtrlType } from "./sectionDetailController";
 import { ColumnsType } from "antd/es/table";
 import EditTimetableModal from "./editTimeTable";
+import { useTranslation } from "react-i18next";
 
 interface Student {
   key: string;
@@ -35,6 +36,7 @@ const SectionTabs = ({
   sectionId: string;
   controller: SectionDetailCtrlType;
 }) => {
+  const { t } = useTranslation();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const students: Student[] = [
     { key: "1", fullName: "Abel Tesfaye", gender: "Male" },
@@ -47,23 +49,23 @@ const SectionTabs = ({
   ];
 
   const attendanceColumns: ColumnsType<any> = [
-    { title: "Date", dataIndex: "date" },
-    { title: "Grade", dataIndex: "grade" },
-    { title: "Section", dataIndex: "section" },
-    { title: "Subject", dataIndex: "subject" },
-    { title: "Submitted By", dataIndex: "submittedBy" },
+    { title: t("date"), dataIndex: "date" },
+    { title: t("grade"), dataIndex: "grade" },
+    { title: t("section"), dataIndex: "section" },
+    { title: t("subject"), dataIndex: "subject" },
+    { title: t("submittedBy"), dataIndex: "submittedBy" },
   ];
   const attendanceStudentColumns: ColumnsType<any> = [
     {
       title: "#",
       render: (_, __, index) => index + 1,
     },
-    { title: "Full Name", dataIndex: "fullName" },
-    { title: "Gender", dataIndex: "gender" },
-    { title: "Grade", dataIndex: "grade" },
-    { title: "Section", dataIndex: "section" },
+    { title: t("fullName"), dataIndex: "fullName" },
+    { title: t("gender"), dataIndex: "gender" },
+    { title: t("grade"), dataIndex: "grade" },
+    { title: t("section"), dataIndex: "section" },
     {
-      title: "Status",
+      title: t("status"),
       dataIndex: "status",
       render: (status: string) => (
         <Tag color={status === "Present" ? "green" : "red"}>{status}</Tag>
@@ -74,13 +76,13 @@ const SectionTabs = ({
   const tabItems = [
     {
       key: "1",
-      label: "Students",
+      label: t("students"),
       children: (
         <Table
           columns={[
             { title: "#", render: (_, __, index) => index + 1 },
-            { title: "Full Name", dataIndex: "fullName" },
-            { title: "Gender", dataIndex: "gender" },
+            { title: t("fullName"), dataIndex: "fullName" },
+            { title: t("gender"), dataIndex: "gender" },
           ]}
           dataSource={students}
           pagination={false}
@@ -89,7 +91,7 @@ const SectionTabs = ({
     },
     {
       key: "3",
-      label: "Timetable",
+      label: t("Timetable"),
       children: (
         <>
           <div className="flex justify-end mb-2">
@@ -99,9 +101,9 @@ const SectionTabs = ({
           </div>
           <Table
             columns={[
-              { title: "Day", dataIndex: "day" },
-              { title: "Subject", dataIndex: "subject" },
-              { title: "Period", dataIndex: "period" },
+              { title: t("day"), dataIndex: "day" },
+              { title: t("subject"), dataIndex: "subject" },
+              { title: t("period"), dataIndex: "period" },
             ]}
             dataSource={timetable}
             pagination={false}
@@ -111,14 +113,14 @@ const SectionTabs = ({
     },
     {
       key: "2",
-      label: "Attendance",
+      label: t("attendance"),
       children: (
         <>
           <Row gutter={16} style={{ marginBottom: 16 }}>
             <Col>
               <Select
                 allowClear
-                placeholder="Filter by Section"
+                placeholder={t("Filter by Section")}
                 style={{ width: 160 }}
                 onChange={(val) => controller.setSelectedSectionFilter(val)}
               >
@@ -129,7 +131,7 @@ const SectionTabs = ({
             <Col>
               <DatePicker
                 allowClear
-                placeholder="Filter by Date"
+                placeholder={t("Filter by Date")}
                 onChange={(date) =>
                   controller.setSelectedDateFilter(
                     date

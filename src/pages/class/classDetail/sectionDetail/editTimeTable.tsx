@@ -1,5 +1,4 @@
-// src/pages/class/section/EditTimetableModal.tsx
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal, Table, Select, Button, message, Spin } from "antd";
 import { useSectionDetailController } from "./sectionDetailController";
 
@@ -67,7 +66,7 @@ const EditTimetableModal = ({
       title: "Weekday",
       dataIndex: "day",
       key: "day",
-      fixed: "left",
+      fixed: "left" as const,
       width: 120,
     },
     ...timeSlots.map((time) => ({

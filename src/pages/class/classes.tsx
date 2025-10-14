@@ -180,6 +180,7 @@ const ClassPage = ({ role }: { role: UserRole }) => {
       {/* 🔹 Top Action Bar */}
       <TopActionBar
         title={t("classes")}
+        addBtnText={t("Add Class")}
         hasSelection={false}
         onRefresh={() => console.log("Refresh")}
         onAddUser={() => navigator("add")}

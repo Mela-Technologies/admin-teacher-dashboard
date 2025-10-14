@@ -3,6 +3,7 @@ import React from "react";
 import { Tabs, Table, Tag, Modal, Select, DatePicker, Row, Col } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { Section, useClassDetailController } from "./classDetailController";
+import { useTranslation } from "react-i18next";
 
 const { Option } = Select;
 
@@ -12,19 +13,19 @@ interface Props {
 
 const ClassTabs: React.FC<Props> = ({ sections }) => {
   const controller = useClassDetailController();
-
+  const { t } = useTranslation();
   const sectionColumns: ColumnsType<Section> = [
-    { title: "Section Name", dataIndex: "name" },
-    { title: "Capacity", dataIndex: "capacity" },
-    { title: "Room Number", dataIndex: "roomNumber" },
+    { title: t("sectionName"), dataIndex: "name" },
+    { title: t("capacity"), dataIndex: "capacity" },
+    { title: t("roomNumber"), dataIndex: "roomNumber" },
   ];
 
   const attendanceColumns: ColumnsType<any> = [
-    { title: "Date", dataIndex: "date" },
-    { title: "Grade", dataIndex: "grade" },
-    { title: "Section", dataIndex: "section" },
-    { title: "Subject", dataIndex: "subject" },
-    { title: "Submitted By", dataIndex: "submittedBy" },
+    { title: t("date"), dataIndex: "date" },
+    { title: t("grade"), dataIndex: "grade" },
+    { title: t("section"), dataIndex: "section" },
+    { title: t("subject"), dataIndex: "subject" },
+    { title: t("submittedBy"), dataIndex: "submittedBy" },
   ];
 
   const sectionStudentColumns: ColumnsType<any> = [
@@ -32,10 +33,10 @@ const ClassTabs: React.FC<Props> = ({ sections }) => {
       title: "#",
       render: (_, __, index) => index + 1,
     },
-    { title: "Full Name", dataIndex: "fullName" },
-    { title: "Gender", dataIndex: "gender" },
-    { title: "Grade", dataIndex: "grade" },
-    { title: "Section", dataIndex: "section" },
+    { title: t("fullName"), dataIndex: "fullName" },
+    { title: t("gender"), dataIndex: "gender" },
+    { title: t("grade"), dataIndex: "grade" },
+    { title: t("section"), dataIndex: "section" },
   ];
 
   const attendanceStudentColumns: ColumnsType<any> = [
@@ -43,12 +44,12 @@ const ClassTabs: React.FC<Props> = ({ sections }) => {
       title: "#",
       render: (_, __, index) => index + 1,
     },
-    { title: "Full Name", dataIndex: "fullName" },
-    { title: "Gender", dataIndex: "gender" },
-    { title: "Grade", dataIndex: "grade" },
-    { title: "Section", dataIndex: "section" },
+    { title: t("fullName"), dataIndex: "fullName" },
+    { title: t("gender"), dataIndex: "gender" },
+    { title: t("grade"), dataIndex: "grade" },
+    { title: t("section"), dataIndex: "section" },
     {
-      title: "Status",
+      title: t("status"),
       dataIndex: "status",
       render: (status: string) => (
         <Tag color={status === "Present" ? "green" : "red"}>{status}</Tag>
@@ -59,7 +60,7 @@ const ClassTabs: React.FC<Props> = ({ sections }) => {
   return (
     <>
       <Tabs defaultActiveKey="1" className="w-full">
-        <Tabs.TabPane tab="Sections" key="1">
+        <Tabs.TabPane tab={t("sections")} key="1">
           <Table
             columns={sectionColumns}
             dataSource={sections}
@@ -74,7 +75,7 @@ const ClassTabs: React.FC<Props> = ({ sections }) => {
           />
         </Tabs.TabPane>
 
-        <Tabs.TabPane tab="Attendance" key="2">
+        <Tabs.TabPane tab={t("attendance")} key="2">
           <Row gutter={16} style={{ marginBottom: 16 }}>
             <Col>
               <Select
@@ -90,7 +91,7 @@ const ClassTabs: React.FC<Props> = ({ sections }) => {
             <Col>
               <DatePicker
                 allowClear
-                placeholder="Filter by Date"
+                placeholder={t("Filter by Date")}
                 onChange={(date) =>
                   controller.setSelectedDateFilter(
                     date
@@ -140,8 +141,10 @@ const ClassTabs: React.FC<Props> = ({ sections }) => {
       <Modal
         title={
           controller.selectedAttendance
-            ? `Attendance Detail - ${controller.selectedAttendance.subject} (${controller.selectedAttendance.date})`
-            : "Attendance Detail"
+            ? `${t("Attendance Detail")} - ${
+                controller.selectedAttendance.subject
+              } (${controller.selectedAttendance.date})`
+            : t("Attendance Detail")
         }
         open={controller.isAttendanceModalVisible}
         onCancel={() => controller.setIsAttendanceModalVisible(false)}

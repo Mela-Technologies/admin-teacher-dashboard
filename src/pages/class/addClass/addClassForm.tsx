@@ -1,40 +1,13 @@
-import React, { Dispatch, SetStateAction } from "react";
-import { Input, Button, Table, Select, Form, FormInstance } from "antd";
-import { ClassFormValues, SectionType } from "./addClassController";
+import React from "react";
+import { Input, Button, Table, Select, Form } from "antd";
+import { AddClassCtrlType, SectionType } from "./addClassController";
 import { useTranslation } from "react-i18next";
 
 const { Option } = Select;
-
 interface Props {
-  initialValues: ClassFormValues;
-  sections: SectionType[];
-  addSection: () => void;
-  removeSection: (key: string) => void;
-  updateSection: (key: string, field: keyof SectionType, value: any) => void;
-  loading?: boolean;
-  editData?: ClassFormValues;
-  form: FormInstance<any>;
-  gradeLevel: string | undefined;
-  setGradeLevel: Dispatch<SetStateAction<string | undefined>>;
-  schoolSection: string;
-  setSchoolSection: Dispatch<SetStateAction<string>>;
-  isEditable: boolean;
-  setIsEditable: Dispatch<SetStateAction<boolean>>;
+  ctrl: AddClassCtrlType;
 }
-
-const AddClassForm: React.FC<Props> = ({
-  sections,
-  addSection,
-  removeSection,
-  updateSection,
-  form,
-  gradeLevel,
-  setGradeLevel,
-  setSchoolSection,
-  schoolSection,
-  isEditable,
-  setIsEditable,
-}) => {
+const AddClassForm: React.FC<Props> = ({ ctrl }) => {
   const { t } = useTranslation();
 
   // Grade grouping
@@ -59,13 +32,13 @@ const AddClassForm: React.FC<Props> = ({
   };
 
   const handleGradeChange = (value: string) => {
-    setGradeLevel(value);
-    setSchoolSection(getSchoolSection(value));
+    ctrl.setGradeLevel(value);
+    ctrl.setSchoolSection(getSchoolSection(value));
   };
 
   const sectionColumns = [
     {
-      title: t("Section Name"),
+      title: t("sectionName"),
       dataIndex: "name",
       render: (text: string, record: SectionType) => (
         <Form.Item
@@ -75,13 +48,15 @@ const AddClassForm: React.FC<Props> = ({
         >
           <Input
             placeholder={t("Enter Section Name")}
-            onChange={(e) => updateSection(record.key, "name", e.target.value)}
+            onChange={(e) =>
+              ctrl.updateSection(record.key, "name", e.target.value)
+            }
           />
         </Form.Item>
       ),
     },
     {
-      title: t("Capacity"),
+      title: t("capacity"),
       dataIndex: "capacity",
       render: (value: number, record: SectionType) => (
         <Form.Item
@@ -101,7 +76,7 @@ const AddClassForm: React.FC<Props> = ({
             min={1}
             placeholder={t("Enter Capacity")}
             onChange={(e) =>
-              updateSection(
+              ctrl.updateSection(
                 record.key,
                 "capacity",
                 parseInt(e.target.value) || 0
@@ -112,7 +87,7 @@ const AddClassForm: React.FC<Props> = ({
       ),
     },
     {
-      title: t("Room Number"),
+      title: t("roomNumber"),
       dataIndex: "roomNumber",
       render: (text: string, record: SectionType) => (
         <Form.Item
@@ -123,7 +98,7 @@ const AddClassForm: React.FC<Props> = ({
           <Input
             placeholder={t("Enter Room Number")}
             onChange={(e) =>
-              updateSection(record.key, "roomNumber", e.target.value)
+              ctrl.updateSection(record.key, "roomNumber", e.target.value)
             }
           />
         </Form.Item>
@@ -132,33 +107,33 @@ const AddClassForm: React.FC<Props> = ({
     {
       title: t("Action"),
       render: (_: any, record: SectionType) =>
-        isEditable ? (
-          <Button danger onClick={() => removeSection(record.key)}>
+        ctrl.isEditable ? (
+          <Button danger onClick={() => ctrl.removeSection(record.key)}>
             {t("Remove")}
           </Button>
         ) : (
-          <Button onClick={() => setIsEditable(true)}>{t("Edit")}</Button>
+          <Button onClick={() => ctrl.setIsEditable(true)}>{t("Edit")}</Button>
         ),
     },
   ];
 
   return (
-    <Form form={form} layout="vertical" className="space-y-6">
+    <Form form={ctrl.form} layout="vertical" className="space-y-6">
       {/* 🏫 Grade Info */}
       <div className="p-4 border-gray-200 rounded bg-white shadow-sm space-y-4">
         <h3 className="text-lg font-semibold">{t("Grade Information")}</h3>
         <div className="grid grid-cols-2 gap-4">
           <Form.Item
-            label={t("Grade Level")}
+            label={t("grade")}
             name="gradeLevel"
             rules={[
               { required: true, message: t("Please select grade level") },
             ]}
-            initialValue={gradeLevel}
+            initialValue={ctrl.gradeLevel}
           >
             <Select
               placeholder={t("Select Grade")}
-              value={gradeLevel}
+              value={ctrl.gradeLevel}
               onChange={handleGradeChange}
             >
               {gradeOptions.map((group) => (
@@ -173,9 +148,9 @@ const AddClassForm: React.FC<Props> = ({
             </Select>
           </Form.Item>
 
-          <Form.Item label={t("School Section")}>
+          <Form.Item label={t("section")}>
             <Input
-              value={schoolSection}
+              value={ctrl.schoolSection}
               disabled
               placeholder={t("Auto determined from grade")}
             />
@@ -186,14 +161,14 @@ const AddClassForm: React.FC<Props> = ({
       {/* 📋 Sections Table */}
       <div className="p-4 border-gray-200 rounded bg-white shadow-sm">
         <div className="flex justify-between items-center mb-3">
-          <h3 className="text-lg font-semibold">{t("Sections")}</h3>
-          <Button type="dashed" onClick={addSection}>
+          <h3 className="text-lg font-semibold">{t("sections")}</h3>
+          <Button type="dashed" onClick={ctrl.addSection}>
             {t("Add Section")}
           </Button>
         </div>
 
         <Table
-          dataSource={sections}
+          dataSource={ctrl.sections}
           columns={sectionColumns}
           pagination={false}
           rowKey="key"

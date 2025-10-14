@@ -1,6 +1,7 @@
 // src/pages/class/ClassDetailCard.tsx
 import React from "react";
 import { Card, Descriptions, Tag } from "antd";
+import { useTranslation } from "react-i18next";
 
 interface ClassDetail {
   gradeLevel: string;
@@ -21,6 +22,7 @@ interface Props {
 }
 
 const ClassDetailCard: React.FC<Props> = ({ classInfo }) => {
+  const { t } = useTranslation();
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "active":
@@ -41,19 +43,19 @@ const ClassDetailCard: React.FC<Props> = ({ classInfo }) => {
     >
       {"classId" in classInfo ? (
         <Descriptions column={1} bordered size="small">
-          <Descriptions.Item label="Class ID">
+          <Descriptions.Item label={t("Class ID")}>
             {classInfo.classId}
           </Descriptions.Item>
 
-          <Descriptions.Item label="Total Sections">
+          <Descriptions.Item label={t("Total Sections")}>
             {classInfo.totalSections}
           </Descriptions.Item>
 
-          <Descriptions.Item label="Total Students">
+          <Descriptions.Item label={t("Total Students")}>
             {classInfo.totalStudents}
           </Descriptions.Item>
 
-          <Descriptions.Item label="Status">
+          <Descriptions.Item label={t("status")}>
             <Tag color={getStatusColor(classInfo.status)}>
               {classInfo.status}
             </Tag>
@@ -61,15 +63,15 @@ const ClassDetailCard: React.FC<Props> = ({ classInfo }) => {
         </Descriptions>
       ) : (
         <Descriptions column={1} bordered size="small">
-          <Descriptions.Item label="Class ID">
+          <Descriptions.Item label={t("Class ID")}>
             {classInfo.sectionId}
           </Descriptions.Item>
 
-          <Descriptions.Item label="Total Sections">
+          <Descriptions.Item label={t("totalStudents")}>
             {classInfo.totalStudents}
           </Descriptions.Item>
 
-          <Descriptions.Item label="Total Students">
+          <Descriptions.Item label={t("capacity")}>
             {classInfo.capacity}
           </Descriptions.Item>
 

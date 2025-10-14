@@ -75,7 +75,7 @@ const AddClassPage = ({
           {t("back")}
         </Button>
         <h2 className="m-0! text-lg font-semibold">
-          {isEditing ? t("Edit Class") : t("Add New Class")}
+          {isEditing ? t("Edit Class") : t("addNewStudent")}
         </h2>
       </div>
       <Button
@@ -93,21 +93,7 @@ const AddClassPage = ({
   const formContent = (
     <div className={`${!isEditing ? "px-4 pb-12 overflow-y-auto h-full" : ""}`}>
       {HeaderBar}
-      <AddClassForm
-        form={controller.form}
-        initialValues={editData || controller.initialValues}
-        sections={controller.sections}
-        addSection={controller.addSection}
-        removeSection={controller.removeSection}
-        updateSection={controller.updateSection}
-        loading={controller.loading}
-        gradeLevel={controller.gradeLevel}
-        isEditable={controller.isEditable}
-        schoolSection={controller.schoolSection}
-        setGradeLevel={controller.setGradeLevel}
-        setIsEditable={controller.setIsEditable}
-        setSchoolSection={controller.setSchoolSection}
-      />
+      <AddClassForm ctrl={controller} />
     </div>
   );
 
