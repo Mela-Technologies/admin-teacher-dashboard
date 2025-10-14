@@ -1,8 +1,9 @@
+import AddAttendancePage from "../pages/attendance/addAttendance/addAttendance";
 import AttendancePage from "../pages/attendance/attendance";
 import AddClassPage from "../pages/class/addClass";
 import ClassDetailPage from "../pages/class/classDetail/classDetailPage";
 import ClassPage from "../pages/class/classes";
-import AddCoursePage from "../pages/courses/addcourse";
+import AddCoursePage from "../pages/courses/addCourse/addCourse";
 import CourseDetailPage from "../pages/courses/courseDetail/courseDetailPage";
 import CoursesPage from "../pages/courses/courses";
 import DashBoard from "../pages/dashboard/dashboard";
@@ -38,6 +39,10 @@ export const adminRoutes = [
   { path: "students/add", element: <AddStudentsPage role={role} /> },
   { path: "students/detail", element: <StudentDetailPage role={role} /> },
   { path: "students/attendance", element: <AttendancePage role={role} /> },
+  {
+    path: "students/attendance/add",
+    element: <AddAttendancePage role={role} />,
+  },
   { path: "students/parents", element: <ParentsPage role={role} /> },
   { path: "staff/teachers", element: <TeacherPage role={role} /> },
   { path: "communication/events", element: <EventsPage role={role} /> },
