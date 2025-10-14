@@ -1,5 +1,6 @@
 import React from "react";
 import { Student } from "../../../types/student";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   student: Student;
@@ -7,7 +8,7 @@ interface Props {
 
 const StudentDetailCard: React.FC<Props> = ({ student }) => {
   const initials = `${student.firstName[0] || ""}${student.lastName[0] || ""}`;
-
+  const { t } = useTranslation();
   return (
     <div className="flex items-center justify-start gap-6 w-full">
       {/* Avatar */}
@@ -27,7 +28,9 @@ const StudentDetailCard: React.FC<Props> = ({ student }) => {
 
       {/* Student Basic Info */}
       <div className="flex flex-col justify-center">
-        <p className="text-gray-500">{`${student.grade} • Section ${student.section}`}</p>
+        <p className="text-gray-500">{`${student.grade} ${t("section")} ${
+          student.section
+        }`}</p>
         <h2 className="text-4xl uppercase">{`${student.firstName} ${student.lastName}`}</h2>
         <div className="mt-2">
           <span

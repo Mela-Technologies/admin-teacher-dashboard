@@ -88,7 +88,9 @@ const StudentRegistrationForm: React.FC<Props> = ({
                   )}
                 </div>
                 <Upload {...uploadProps}>
-                  <Button icon={<UploadOutlined />}>Upload Picture</Button>
+                  <Button icon={<UploadOutlined />}>
+                    {t("Upload Picture")}
+                  </Button>
                 </Upload>
               </div>
             </Col>
@@ -98,7 +100,7 @@ const StudentRegistrationForm: React.FC<Props> = ({
                 <Col xs={24} md={12}>
                   <Form.Item
                     name="firstName"
-                    label={t("First Name")}
+                    label={t("firstName")}
                     rules={[{ required: true }]}
                   >
                     <Input placeholder="Enter first name" />
@@ -107,7 +109,7 @@ const StudentRegistrationForm: React.FC<Props> = ({
                 <Col xs={24} md={12}>
                   <Form.Item
                     name="lastName"
-                    label={t("Last Name")}
+                    label={t("lastName")}
                     rules={[{ required: true }]}
                   >
                     <Input placeholder="Enter last name" />
@@ -115,10 +117,10 @@ const StudentRegistrationForm: React.FC<Props> = ({
                 </Col>
 
                 <Col xs={24} md={12}>
-                  <Form.Item name="gender" label={t("Gender")}>
+                  <Form.Item name="gender" label={t("gender")}>
                     <Radio.Group>
-                      <Radio value="Male">{t("Male")}</Radio>
-                      <Radio value="Female">{t("Female")}</Radio>
+                      <Radio value="Male">{t("male")}</Radio>
+                      <Radio value="Female">{t("female")}</Radio>
                     </Radio.Group>
                   </Form.Item>
                 </Col>
@@ -136,7 +138,7 @@ const StudentRegistrationForm: React.FC<Props> = ({
                 </Col>
 
                 <Col xs={24} md={12}>
-                  <Form.Item name="birthPlace" label={t("Birth Place")}>
+                  <Form.Item name="birthPlace" label={t("birthPlace")}>
                     <Select placeholder="Select birth place">
                       <Option value="Addis Ababa">Addis Ababa</Option>
                       <Option value="Jimma">Jimma</Option>
@@ -152,15 +154,15 @@ const StudentRegistrationForm: React.FC<Props> = ({
                   </Form.Item>
                 </Col>
 
-                <Col xs={24} md={12}>
-                  <Form.Item name="title" label={t("Title")}>
+                {/* <Col xs={24} md={12}>
+                  <Form.Item name="title" label={t("nameTitle")}>
                     <Select placeholder="Select title">
                       <Option value="Mr">Mr.</Option>
                       <Option value="Ms">Ms.</Option>
                       <Option value="Mrs">Mrs.</Option>
                     </Select>
                   </Form.Item>
-                </Col>
+                </Col> */}
               </Row>
             </Col>
           </Row>
@@ -173,11 +175,11 @@ const StudentRegistrationForm: React.FC<Props> = ({
           </Divider>
           <Row gutter={[16, 8]} justify="space-between">
             <Col xs={24} md={12}>
-              <Form.Item name="grade" label={t("Grade")}>
+              <Form.Item name="grade" label={t("grade")}>
                 <Select placeholder="Select grade">
                   {Array.from({ length: 12 }, (_, i) => (
                     <Option key={i + 1} value={`Grade ${i + 1}`}>
-                      Grade {i + 1}
+                      {t("grade")} {i + 1}
                     </Option>
                   ))}
                 </Select>
@@ -186,7 +188,7 @@ const StudentRegistrationForm: React.FC<Props> = ({
             <Col xs={24} md={12}>
               <Form.Item name="classSection" label={t("Class Section")}>
                 <Select placeholder="Select section">
-                  {["A", "B", "C", "D"].map((s) => (
+                  {["A", "B", "C", "D", "E"].map((s) => (
                     <Option key={s} value={s}>
                       {s}
                     </Option>
@@ -200,55 +202,57 @@ const StudentRegistrationForm: React.FC<Props> = ({
         {/* PARENT / GUARDIAN INFO */}
         <div className={sectionClass}>
           <Divider orientation="left" className="text-gray-500 font-semibold">
-            {t("Parent / Guardian Information")}
+            {t("parent")}
+            {" / "}
+            {t("guardian")} {t("Information")}
           </Divider>
 
           <Row gutter={[12, 12]}>
             <Col xs={24} md={12}>
-              <Divider orientation="left">Mother Information</Divider>
-              <Form.Item name={["mother", "firstName"]} label="First Name">
+              <Divider orientation="left">{t("Mother Information")}</Divider>
+              <Form.Item name={["mother", "firstName"]} label={t("firstName")}>
                 <Input />
               </Form.Item>
-              <Form.Item name={["mother", "lastName"]} label="Last Name">
+              <Form.Item name={["mother", "lastName"]} label={t("lastName")}>
                 <Input />
               </Form.Item>
-              <Form.Item name={["mother", "title"]} label="Title">
+              <Form.Item name={["mother", "title"]} label={t("title")}>
                 <Select>
                   <Option value="Mrs">Mrs.</Option>
                   <Option value="Ms">Ms.</Option>
                 </Select>
               </Form.Item>
-              <Form.Item label="Gender">
+              {/* <Form.Item label={t("gender")}>
                 <Input value="Female" disabled />
-              </Form.Item>
-              <Form.Item name={["mother", "email"]} label="Email">
+              </Form.Item> */}
+              <Form.Item name={["mother", "email"]} label={t("email")}>
                 <Input />
               </Form.Item>
-              <Form.Item name={["mother", "mobile"]} label="Mobile">
+              <Form.Item name={["mother", "mobile"]} label={t("mobile")}>
                 <Input />
               </Form.Item>
             </Col>
 
             <Col xs={24} md={12}>
-              <Divider orientation="left">Father Information</Divider>
-              <Form.Item name={["father", "firstName"]} label="First Name">
+              <Divider orientation="left">{t("Father Information")}</Divider>
+              <Form.Item name={["father", "firstName"]} label={t("firstName")}>
                 <Input />
               </Form.Item>
-              <Form.Item name={["father", "lastName"]} label="Last Name">
+              <Form.Item name={["father", "lastName"]} label={t("lastName")}>
                 <Input />
               </Form.Item>
-              <Form.Item name={["father", "title"]} label="Title">
+              <Form.Item name={["father", "title"]} label={t("title")}>
                 <Select>
                   <Option value="Mr">Mr.</Option>
                 </Select>
               </Form.Item>
-              <Form.Item label="Gender">
+              {/* <Form.Item label={t("gender")}>
                 <Input value="Male" disabled />
-              </Form.Item>
-              <Form.Item name={["father", "email"]} label="Email">
+              </Form.Item> */}
+              <Form.Item name={["father", "email"]} label={t("email")}>
                 <Input />
               </Form.Item>
-              <Form.Item name={["father", "mobile"]} label="Mobile">
+              <Form.Item name={["father", "mobile"]} label={t("mobile")}>
                 <Input />
               </Form.Item>
             </Col>
@@ -257,17 +261,17 @@ const StudentRegistrationForm: React.FC<Props> = ({
           <Divider />
           <Row gutter={[16, 8]}>
             <Col xs={24} md={8}>
-              <Form.Item name={["address", "street"]} label="Street">
+              <Form.Item name={["address", "street"]} label={t("street")}>
                 <Input />
               </Form.Item>
             </Col>
             <Col xs={24} md={8}>
-              <Form.Item name={["address", "city"]} label="City">
+              <Form.Item name={["address", "city"]} label={t("city")}>
                 <Input />
               </Form.Item>
             </Col>
             <Col xs={24} md={8}>
-              <Form.Item name={["address", "post"]} label="Postcode">
+              <Form.Item name={["address", "post"]} label={t("Postcode")}>
                 <Input />
               </Form.Item>
             </Col>
@@ -279,9 +283,9 @@ const StudentRegistrationForm: React.FC<Props> = ({
           <Divider orientation="left" className="text-gray-500 font-semibold">
             {t("Documents")}
           </Divider>
-          <Form.Item name="documents" label="Upload Documents">
+          <Form.Item name="documents" label={t("Upload Documents")}>
             <Upload multiple beforeUpload={() => false}>
-              <Button icon={<UploadOutlined />}>Select Files</Button>
+              <Button icon={<UploadOutlined />}>{t("Select Files")}</Button>
             </Upload>
           </Form.Item>
         </div>
@@ -289,37 +293,37 @@ const StudentRegistrationForm: React.FC<Props> = ({
         {/* ACCESS INFO */}
         <div className={sectionClass}>
           <Divider orientation="left" className="text-gray-500 font-semibold">
-            {t("Access")}
+            {t("access")}
           </Divider>
           <Row gutter={[16, 8]}>
             <Col xs={24} md={12}>
               <Form.Item
-                label={t("Username Preference")}
+                label={t("usernamePreference")}
                 name="usernamePreference"
               >
                 <Radio.Group>
-                  <Radio value="phone">{t("Phone")}</Radio>
-                  <Radio value="email">{t("Email")}</Radio>
+                  <Radio value="phone">{t("phone")}</Radio>
+                  <Radio value="email">{t("email")}</Radio>
                 </Radio.Group>
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
               <Form.Item
-                label={t("Password Preference")}
+                label={t("passwordPreference")}
                 name="passwordPreference"
               >
                 <Radio.Group>
-                  <Radio value="dob">{t("Date of Birth")}</Radio>
-                  <Radio value="otp">{t("Generate OTP")}</Radio>
+                  <Radio value="dob">{t("dateOfBirth")}</Radio>
+                  <Radio value="otp">{t("generateOTP")}</Radio>
                 </Radio.Group>
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
-              <Form.Item label={t("Send Credentials")} name="sendCredential">
+              <Form.Item label={t("sendCredentials")} name="sendCredential">
                 <Checkbox.Group>
-                  <Checkbox value="none">Don't Send</Checkbox>
-                  <Checkbox value="email">Email</Checkbox>
-                  <Checkbox value="sms">SMS</Checkbox>
+                  <Checkbox value="none">{t("Don't Send")}</Checkbox>
+                  <Checkbox value="email">{t("email")}</Checkbox>
+                  <Checkbox value="sms">{t("SMS")}</Checkbox>
                 </Checkbox.Group>
               </Form.Item>
             </Col>

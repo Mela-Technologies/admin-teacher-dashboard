@@ -7,6 +7,7 @@ import {
 import StudentDetailCard from "./studentDetailCard";
 import { UserRole } from "../../../types/user";
 import StudentTabs from "./studentTaps";
+import { useTranslation } from "react-i18next";
 
 const StudentDetailPage = ({ role }: { role: UserRole }) => {
   const student = {
@@ -41,7 +42,7 @@ const StudentDetailPage = ({ role }: { role: UserRole }) => {
     statusSince: "2021-09-10",
     picture: "",
   };
-
+  const { t } = useTranslation();
   const handleBack = () => window.history.back();
   const handleEdit = () => console.log("Edit Profile");
   const handlePrint = () => console.log("Print Profile");
@@ -51,12 +52,12 @@ const StudentDetailPage = ({ role }: { role: UserRole }) => {
       {/* 🔹 Top Action Bar */}
       <div className="flex justify-between items-center p-2 border-b border-gray-200">
         <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
-          Back
+          {t("back")}
         </Button>
 
         <div className="flex gap-3">
           <Button icon={<EditOutlined />} onClick={handleEdit}>
-            Edit
+            {t("edit")}
           </Button>
           <Button
             icon={<PrinterOutlined />}
@@ -64,7 +65,7 @@ const StudentDetailPage = ({ role }: { role: UserRole }) => {
             className="bg-blue-600"
             onClick={handlePrint}
           >
-            Print
+            {t("print")}
           </Button>
         </div>
       </div>

@@ -1,65 +1,69 @@
 // src/components/student/StudentTabs.tsx
 import React from "react";
 import { Tabs, Table, Progress, Empty } from "antd";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   student: any;
 }
 
 const StudentTabs: React.FC<Props> = ({ student }) => {
+  const { t } = useTranslation();
   const overviewContent = (
     <div className="grid md:grid-cols-2 gap-6 text-gray-700 text-sm">
       <div>
         <h3 className="font-semibold text-gray-500 mb-2">
-          Student Information
+          {t("Student Information")}
         </h3>
         <div className="space-y-1">
           <p>
-            <strong>ID:</strong> {student.id || "N/A"}
+            <strong>{t("ID")}:</strong> {student.id || "N/A"}
           </p>
           <p>
-            <strong>Full Name:</strong> {student.firstName} {student.lastName}
+            <strong>{t("fullName")}:</strong> {student.firstName}{" "}
+            {student.lastName}
           </p>
           <p>
-            <strong>Gender:</strong> {student.gender || "N/A"}
+            <strong>{t("gender")}:</strong> {student.gender || "N/A"}
           </p>
           <p>
-            <strong>Date of Birth:</strong> {student.dateOfBirth || "N/A"}
+            <strong>{t("dateOfBirth")}:</strong> {student.dateOfBirth || "N/A"}
           </p>
           <p>
-            <strong>Admission Date:</strong> {student.admissionDate || "N/A"}
+            <strong>{t("Admission Date")}:</strong>{" "}
+            {student.admissionDate || "N/A"}
           </p>
         </div>
       </div>
 
       <div>
         <h3 className="font-semibold text-gray-500 mb-2">
-          Contact Information
+          {t("Contact Information")}
         </h3>
         <div className="space-y-1">
           <p>
-            <strong>Email:</strong> {student.email || "N/A"}
+            <strong>{t("email")}:</strong> {student.email || "N/A"}
           </p>
           <p>
-            <strong>Phone:</strong> {student.phone || "N/A"}
+            <strong>{t("phone")}:</strong> {student.phone || "N/A"}
           </p>
           <p>
-            <strong>Address:</strong> {student.address || "N/A"}
+            <strong>{t("address")}:</strong> {student.address || "N/A"}
           </p>
         </div>
 
         <h3 className="font-semibold text-gray-500 mt-4 mb-2">
-          Parent Information
+          {t("Parent Information")}
         </h3>
         <div className="space-y-1">
           <p>
-            <strong>Parent Name:</strong> {student.parentName || "N/A"}
+            <strong>{t("Parent Name")}:</strong> {student.parentName || "N/A"}
           </p>
           <p>
-            <strong>Parent Email:</strong> {student.parentEmail || "N/A"}
+            <strong>{t("Parent Email")}:</strong> {student.parentEmail || "N/A"}
           </p>
           <p>
-            <strong>Parent Phone:</strong> {student.parentPhone || "N/A"}
+            <strong>{t("Parent Phone")}:</strong> {student.parentPhone || "N/A"}
           </p>
         </div>
       </div>
@@ -68,21 +72,21 @@ const StudentTabs: React.FC<Props> = ({ student }) => {
 
   const attendanceContent = (
     <div className="space-y-4">
-      <h3 className="font-semibold text-gray-500">Attendance Summary</h3>
+      <h3 className="font-semibold text-gray-500">{t("Attendance Summary")}</h3>
       <Progress
         percent={student.attendancePercent || 0}
         status="active"
         strokeColor="#0ea5e9"
       />
       <p className="text-sm text-gray-600">
-        {student.presentDays || 0} days present out of {student.totalDays || 0}{" "}
-        days.
+        {student.presentDays || 0} {t("days present out of")}{" "}
+        {student.totalDays || 0} {t("days")}.
       </p>
       <Table
         size="small"
         columns={[
-          { title: "Date", dataIndex: "date", key: "date" },
-          { title: "Status", dataIndex: "status", key: "status" },
+          { title: t("date"), dataIndex: "date", key: "date" },
+          { title: t("status"), dataIndex: "status", key: "status" },
         ]}
         dataSource={student.attendanceRecords || []}
         pagination={false}
@@ -97,22 +101,22 @@ const StudentTabs: React.FC<Props> = ({ student }) => {
         <Table
           size="small"
           columns={[
-            { title: "Subject", dataIndex: "subject", key: "subject" },
-            { title: "Grade", dataIndex: "grade", key: "grade" },
-            { title: "Term", dataIndex: "term", key: "term" },
+            { title: t("subject"), dataIndex: "subject", key: "subject" },
+            { title: t("grade"), dataIndex: "grade", key: "grade" },
+            { title: t("term"), dataIndex: "term", key: "term" },
           ]}
           dataSource={student.grades}
           pagination={false}
         />
       ) : (
-        <Empty description="No grade records available" />
+        <Empty description={t("No grade records available")} />
       )}
     </div>
   );
 
   const documentsContent = (
     <div className="space-y-4">
-      <h3 className="font-semibold text-gray-500">Uploaded Documents</h3>
+      <h3 className="font-semibold text-gray-500">{t("Uploaded Documents")}</h3>
       {student.documents && student.documents.length > 0 ? (
         <ul className="list-disc pl-6 space-y-1 text-sm text-gray-700">
           {student.documents.map((doc: any, index: number) => (
@@ -136,17 +140,17 @@ const StudentTabs: React.FC<Props> = ({ student }) => {
   );
   const messagesContent = (
     <div className="space-y-4">
-      <h3 className="font-semibold text-gray-500">Messages</h3>
+      <h3 className="font-semibold text-gray-500">{t("messages")}</h3>
       <Empty description="No messages available" />
     </div>
   );
 
   const items = [
-    { key: "overview", label: "Overview", children: overviewContent },
-    { key: "attendance", label: "Attendance", children: attendanceContent },
-    { key: "result", label: "Result", children: resultContent },
-    { key: "documents", label: "Documents", children: documentsContent },
-    { key: "message", label: "Message", children: messagesContent },
+    { key: "overview", label: t("Overview"), children: overviewContent },
+    { key: "attendance", label: t("attendance"), children: attendanceContent },
+    { key: "result", label: t("result"), children: resultContent },
+    { key: "documents", label: t("Documents"), children: documentsContent },
+    { key: "message", label: t("message"), children: messagesContent },
   ];
 
   return (

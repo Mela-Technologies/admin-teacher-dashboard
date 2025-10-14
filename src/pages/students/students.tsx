@@ -164,7 +164,7 @@ const StudentsPage = ({ role }: { role: UserRole }) => {
             })}
           />
         </div>
-
+        {/* summary */}
         <div className="w-50 border-l border-gray-200"></div>
       </div>
     </div>
