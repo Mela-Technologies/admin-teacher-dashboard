@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, message, Modal } from "antd";
+import { App, Button, Modal } from "antd";
 import {
   ClassFormValues,
   useClassFormController,
@@ -26,7 +26,7 @@ const AddClassPage = ({
   const controller = useClassFormController(editData);
   const [open, setOpen] = useState(isEditing);
   const { t } = useTranslation();
-
+  const { message } = App.useApp();
   const onSubmit = async (values: ClassFormValues) => {
     try {
       if (isEditing) {
