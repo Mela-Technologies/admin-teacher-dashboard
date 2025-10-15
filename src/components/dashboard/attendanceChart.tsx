@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
+const customData = [
   {
     name: "Mon",
     present: 60,
@@ -39,8 +39,17 @@ const data = [
   },
 ];
 
-const AttendanceChart = () => {
-  const {t} = useTranslation()
+const AttendanceChart = ({
+  data,
+}: {
+  data?: {
+    name: string;
+    present: number;
+    absent: number;
+  }[];
+}) => {
+  const chartData = data ?? customData;
+  const { t } = useTranslation();
   return (
     <div className="bg-white rounded-lg p-4 h-full">
       <div className="flex justify-between items-center">
@@ -48,7 +57,7 @@ const AttendanceChart = () => {
         <img src="/moreDark.png" alt="" width={20} height={20} />
       </div>
       <ResponsiveContainer width="100%" height="90%">
-        <BarChart width={500} height={300} data={data} barSize={20}>
+        <BarChart width={500} height={300} data={chartData} barSize={20}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ddd" />
           <XAxis
             dataKey="name"

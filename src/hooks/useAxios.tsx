@@ -19,10 +19,9 @@ export const useAxios = (): AxiosInstance => {
 
     instance.interceptors.request.use(
       (config) => {
-        const storedUser = localStorage.getItem("user");
-        console.log(storedUser);
-        const token = storedUser ? JSON.parse(storedUser).token : null;
-
+        const storedUser = secureStorage.getItem("user");
+        // console.log(storedUser);
+        const token = storedUser ? storedUser.token : null;
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
