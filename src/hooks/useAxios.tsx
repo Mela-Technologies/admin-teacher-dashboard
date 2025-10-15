@@ -1,11 +1,16 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 import { useMemo } from "react";
-import { message } from "antd";
-import { useNavigate } from "react-router-dom";
+import { secureStorage } from "../utils/secureStorage";
 const BASE_URL = "http://localhost:8000";
-
+export class ApiError extends Error {
+  status?: number;
+  constructor(message: string, status?: number) {
+    super(message);
+    this.status = status;
+    Object.setPrototypeOf(this, ApiError.prototype);
+  }
+}
 export const useAxios = (): AxiosInstance => {
-  const navigator = useNavigate();
   const axiosInstance = useMemo(() => {
     const instance = axios.create({
       baseURL: BASE_URL,
@@ -15,7 +20,9 @@ export const useAxios = (): AxiosInstance => {
     instance.interceptors.request.use(
       (config) => {
         const storedUser = localStorage.getItem("user");
+        console.log(storedUser);
         const token = storedUser ? JSON.parse(storedUser).token : null;
+
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -32,55 +39,93 @@ export const useAxios = (): AxiosInstance => {
           _retry?: boolean;
         };
 
+        // Network / timeout errors
+        if (!error.response) {
+          if (error.message.includes("Network Error")) {
+            return Promise.reject(
+              new ApiError("No network connection. Please check your internet.")
+            );
+          }
+          if (error.code === "ECONNABORTED") {
+            return Promise.reject(
+              new ApiError("Request timed out. Please try again.")
+            );
+          }
+          return Promise.reject(new ApiError(error.message));
+        }
+        const isAuthRequest = originalRequest.url?.includes("/api/users/login");
+        const status = error.response.status;
+
         // Handle 401 Unauthorized — attempt refresh token if available
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (status === 401 && !originalRequest._retry && !isAuthRequest) {
           originalRequest._retry = true;
 
           try {
             const refreshResponse = await axios.post(
-              `${BASE_URL}/auth/refresh`,
+              `${BASE_URL}/api/auth/refresh`,
               {},
               { withCredentials: true }
             );
             const newToken = refreshResponse.data?.token;
 
             if (newToken) {
-              // Store new token
-              const currentUser = JSON.parse(
-                localStorage.getItem("user") || "{}"
-              );
+              const currentUser = secureStorage.getItem("user");
               currentUser.token = newToken;
-              localStorage.setItem("user", JSON.stringify(currentUser));
-              // Update header and retry original request
-              axiosInstance.defaults.headers.common.Authorization = `Bearer ${newToken}`;
+              secureStorage.setItem("user", currentUser);
+
+              instance.defaults.headers.common.Authorization = `Bearer ${newToken}`;
               originalRequest.headers!.Authorization = `Bearer ${newToken}`;
-              return axiosInstance(originalRequest);
+              return instance(originalRequest);
             }
-          } catch (refreshError) {
-            console.error("Token refresh failed:", refreshError);
-            message.error("Token refresh faild");
-            navigator("/login");
+          } catch {
+            return Promise.reject(
+              new ApiError("Session expired. Please log in again.", 401)
+            );
           }
         }
+        // Backend message if exists
+        const backendMessage = (error.response.data as any)?.message;
+        // Default fallback messages
+        let errorMessage =
+          backendMessage || "An error occurred. Please try again.";
 
-        // Handle other errors
-        switch (error.response?.status) {
+        switch (status) {
           case 400:
-            message.error("Bad request. Please check your input.");
+            errorMessage =
+              backendMessage || "Bad request. Please check your input.";
             break;
           case 403:
-            message.error("You don't have permission to perform this action.");
+            errorMessage =
+              backendMessage ||
+              "You don't have permission to perform this action.";
+            break;
+          case 404:
+            errorMessage = backendMessage || "Resource not found.";
+            break;
+          case 408:
+            errorMessage =
+              backendMessage || "Request timeout. Please try again.";
             break;
           case 500:
-            message.error("Server error. Please try again later.");
+            errorMessage =
+              backendMessage || "Server error. Please try again later.";
             break;
-          default:
-            message.error("An error occurred. Please try again.");
+          case 502:
+            errorMessage = backendMessage || "Bad gateway. Server may be down.";
+            break;
+          case 503:
+            errorMessage =
+              backendMessage || "Service unavailable. Please try again later.";
+            break;
+          case 504:
+            errorMessage =
+              backendMessage || "Gateway timeout. Please try again later.";
+            break;
         }
-        return Promise.reject(error);
+
+        return Promise.reject(new ApiError(errorMessage, status));
       }
     );
-
     return instance;
   }, []);
 

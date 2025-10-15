@@ -3,10 +3,11 @@ import useLogin from "../../hooks/useLogin";
 import SchoolLogo from "../../components/schoolLogo";
 import { LoginProps } from "../../types/login";
 import DecorativeGrid from "../../components/decorativeGrid";
+import { useTranslation } from "react-i18next";
 const LoginPage = () => {
   const [form] = Form.useForm();
   const { login, loading } = useLogin();
-
+  const { t } = useTranslation();
   const onFinish = (values: LoginProps) => {
     login(values);
   };
@@ -56,7 +57,7 @@ const LoginPage = () => {
       <div className="flex-3 flex justify-center items-center bg-gray-50">
         <Card className="w-full max-w-md  rounded-2xl border-none p-6">
           <h2 className="text-3xl font-semibold text-center text-[#343F56] mb-2">
-            Log In
+            {t("Log In")}
           </h2>
           <p className="text-center text-gray-500 mb-6">Welcome back!</p>
 
@@ -66,24 +67,37 @@ const LoginPage = () => {
             onFinish={onFinish}
             initialValues={{ role: "admin" }}
           >
-            <Form.Item name={"role"} label="Role">
+            <Form.Item name={"role"} label={t("role")}>
               <Select>
                 <Select.Option value="admin">Admin</Select.Option>
                 <Select.Option value="teacher">Teacher</Select.Option>
               </Select>
             </Form.Item>
 
-            <Form.Item
+            {/* <Form.Item
               name="email"
               label="Email"
               rules={[{ required: true, message: "Please enter your email" }]}
             >
               <Input placeholder="Enter your email" />
+            </Form.Item> */}
+            <Form.Item
+              name="phone_number"
+              label={t("phoneNumber")}
+              rules={[
+                { required: true, message: "Please enter your phone number" },
+                {
+                  pattern: /^(9|7)\d{8}$/,
+                  message: "Please enter a valid phone number (e.g. 912345678)",
+                },
+              ]}
+            >
+              <Input placeholder="912345678" addonBefore="+251" />
             </Form.Item>
 
             <Form.Item
               name="password"
-              label="Password"
+              label={t("Password")}
               rules={[
                 { required: true, message: "Please enter your password" },
               ]}
@@ -93,7 +107,7 @@ const LoginPage = () => {
 
             <div className="text-right mb-3">
               <a href="#" className="text-[#343F56] hover:underline text-sm">
-                Forgot password?
+                {t("Forgot password?")}
               </a>
             </div>
 
@@ -108,7 +122,7 @@ const LoginPage = () => {
                   borderColor: bgColor,
                 }}
               >
-                Log In
+                {t("Log In")}
               </Button>
             </Form.Item>
           </Form>
