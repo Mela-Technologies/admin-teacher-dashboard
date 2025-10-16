@@ -1,5 +1,5 @@
 import AttendancePage from "../pages/attendance/attendance";
-import AddClassPage from "../pages/class/addClass";
+import AddClassPage from "../pages/class/addClass/addClass";
 import ClassDetailPage from "../pages/class/classDetail/classDetail";
 import ClassPage from "../pages/class/classes";
 import CoursesPage from "../pages/courses/courses";

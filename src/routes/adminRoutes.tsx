@@ -1,6 +1,6 @@
 import AddAttendancePage from "../pages/attendance/addAttendance/addAttendance";
 import AttendancePage from "../pages/attendance/attendance";
-import AddClassPage from "../pages/class/addClass";
+import AddClassPage from "../pages/class/addClass/addClass";
 import ClassDetailPage from "../pages/class/classDetail/classDetailPage";
 import ClassPage from "../pages/class/classes";
 import AddCoursePage from "../pages/courses/addCourse/addCourse";

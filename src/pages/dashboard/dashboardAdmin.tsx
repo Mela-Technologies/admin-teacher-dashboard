@@ -84,6 +84,7 @@ const DashBoardAdmin = () => {
     };
 
     fetchSummary();
+    console.log(eventSummary, noticeSummary);
   }, []);
 
   return (
