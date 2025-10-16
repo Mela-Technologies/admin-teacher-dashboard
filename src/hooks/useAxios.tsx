@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 import { useMemo } from "react";
 import { secureStorage } from "../utils/secureStorage";
+import { useNavigate } from "react-router-dom";
 const BASE_URL = "http://localhost:8000";
 export class ApiError extends Error {
   status?: number;
@@ -11,6 +12,7 @@ export class ApiError extends Error {
   }
 }
 export const useAxios = (): AxiosInstance => {
+  const navigator = useNavigate();
   const axiosInstance = useMemo(() => {
     const instance = axios.create({
       baseURL: BASE_URL,
@@ -77,6 +79,7 @@ export const useAxios = (): AxiosInstance => {
               return instance(originalRequest);
             }
           } catch {
+            navigator("/login");
             return Promise.reject(
               new ApiError("Session expired. Please log in again.", 401)
             );
