@@ -1,27 +1,22 @@
-// src/pages/class/ClassDetailCard.tsx
 import React from "react";
 import { Card, Descriptions, Tag } from "antd";
 import { useTranslation } from "react-i18next";
+import { SectionDetailProps } from "./sectionDetail/sectionDetailController";
 
-interface ClassDetail {
+export interface ClassDetail {
   gradeLevel: string;
   totalSections: number;
   totalStudents: number;
   status: string;
   classId: string;
 }
-interface SectionDetailProps {
-  sectionId: string;
-  gradeLevel: string;
-  roomNumber?: string;
-  capacity?: number;
-  totalStudents?: number;
-}
+
 interface Props {
   classInfo: ClassDetail | SectionDetailProps;
+  loading: boolean;
 }
 
-const ClassDetailCard: React.FC<Props> = ({ classInfo }) => {
+const ClassDetailCard: React.FC<Props> = ({ classInfo, loading = false }) => {
   const { t } = useTranslation();
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -38,8 +33,11 @@ const ClassDetailCard: React.FC<Props> = ({ classInfo }) => {
     <Card
       className="shadow-sm"
       title={
-        <span className="text-lg font-semibold">{classInfo.gradeLevel}</span>
+        <span className="text-lg font-semibold">
+          {classInfo.gradeLevel} {"name" in classInfo ? classInfo.name : ""}
+        </span>
       }
+      loading={loading}
     >
       {"classId" in classInfo ? (
         <Descriptions column={1} bordered size="small">

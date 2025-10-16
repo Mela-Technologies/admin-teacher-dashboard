@@ -15,19 +15,6 @@ import { ColumnsType } from "antd/es/table";
 import EditTimetableModal from "./editTimeTable";
 import { useTranslation } from "react-i18next";
 
-interface Student {
-  key: string;
-  fullName: string;
-  gender: string;
-}
-
-interface Timetable {
-  key: string;
-  day: string;
-  subject: string;
-  period: string;
-}
-
 const { Option } = Select;
 const SectionTabs = ({
   sectionId,
@@ -38,15 +25,6 @@ const SectionTabs = ({
 }) => {
   const { t } = useTranslation();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const students: Student[] = [
-    { key: "1", fullName: "Abel Tesfaye", gender: "Male" },
-    { key: "2", fullName: "Liya Mekonnen", gender: "Female" },
-  ];
-
-  const timetable: Timetable[] = [
-    { key: "1", day: "Monday", subject: "Math", period: "1st" },
-    { key: "2", day: "Monday", subject: "English", period: "2nd" },
-  ];
 
   const attendanceColumns: ColumnsType<any> = [
     { title: t("date"), dataIndex: "date" },
@@ -84,8 +62,9 @@ const SectionTabs = ({
             { title: t("fullName"), dataIndex: "fullName" },
             { title: t("gender"), dataIndex: "gender" },
           ]}
-          dataSource={students}
+          dataSource={controller.students}
           pagination={false}
+          loading={controller.isLoading}
         />
       ),
     },
@@ -105,7 +84,7 @@ const SectionTabs = ({
               { title: t("subject"), dataIndex: "subject" },
               { title: t("period"), dataIndex: "period" },
             ]}
-            dataSource={timetable}
+            dataSource={controller.timetable}
             pagination={false}
           />
         </>

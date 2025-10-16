@@ -19,16 +19,6 @@ const SectionDetail = ({ role }: { role: UserRole }) => {
   const handleEdit = () => console.log("Edit section", id);
   const handlePrint = () => console.log("Print section", id);
 
-  const sectionInfo = {
-    name: "Section A",
-    gradeLevel: "Grade 10",
-    capacity: 30,
-    roomNumber: "101",
-    totalStudents: 30,
-    status: "Active",
-    sectionId: id || "SEC-001A",
-  };
-
   return (
     <div className={`space-y-2 h-full ${role}`}>
       {/* Top Action Bar */}
@@ -56,7 +46,10 @@ const SectionDetail = ({ role }: { role: UserRole }) => {
         <Row gutter={[16, 16]}>
           {/* LEFT: Section Info */}
           <Col xs={24} md={8} lg={6}>
-            <ClassDetailCard classInfo={sectionInfo} />
+            <ClassDetailCard
+              classInfo={controller.sectionInfo}
+              loading={controller.isLoading}
+            />
           </Col>
 
           {/* RIGHT: Section Tabs */}
@@ -64,7 +57,7 @@ const SectionDetail = ({ role }: { role: UserRole }) => {
             <Card className="shadow-sm h-full">
               <SectionTabs
                 controller={controller}
-                sectionId={sectionInfo.sectionId}
+                sectionId={controller.sectionInfo.sectionId}
               />
             </Card>
           </Col>

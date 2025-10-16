@@ -1,13 +1,27 @@
-import { useState, useMemo, Dispatch, SetStateAction } from "react";
+import { useState, useMemo, Dispatch, SetStateAction, useEffect } from "react";
 import dayjs from "dayjs";
 import { App } from "antd";
-export interface Section {
+import { useAxios } from "../../../../hooks/useAxios";
+interface Student {
   key: string;
-  name: string;
-  capacity: number;
-  roomNumber: string;
+  fullName: string;
+  gender: string;
 }
 
+interface Timetable {
+  key: string;
+  day: string;
+  subject: string;
+  period: string;
+}
+export interface SectionDetailProps {
+  sectionId: string;
+  gradeLevel: string;
+  roomNumber?: string;
+  capacity?: number;
+  totalStudents?: number;
+  name: string;
+}
 export const useSectionDetailController = () => {
   const [isStudentModalVisible, setIsStudentModalVisible] = useState(false);
   const [isAttendanceModalVisible, setIsAttendanceModalVisible] =
@@ -18,10 +32,54 @@ export const useSectionDetailController = () => {
   );
   const [selectedSectionFilter, setSelectedSectionFilter] = useState<string>();
   const [selectedDateFilter, setSelectedDateFilter] = useState<string>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [timetable, setTimetable] = useState<Timetable[]>([]);
+  const [sectionInfo, setSectionInfo] = useState<SectionDetailProps>({
+    gradeLevel: "",
+    name: "",
+    sectionId: "",
+  });
   const { message } = App.useApp();
+  const axios = useAxios();
   const queryParams = new URLSearchParams(location.search);
-  const id = queryParams.get("id");
-  console.log(id);
+  const sectionId = queryParams.get("id");
+  // const students: Student[] = [
+  //   { key: "1", fullName: "Abel Tesfaye", gender: "Male" },
+  //   { key: "2", fullName: "Liya Mekonnen", gender: "Female" },
+  // ];
+
+  // const timetable: Timetable[] = [
+  //   { key: "1", day: "Monday", subject: "Math", period: "1st" },
+  //   { key: "2", day: "Monday", subject: "English", period: "2nd" },
+  // ];
+  // fetching data
+  useEffect(() => {
+    fetchSectionDetail();
+  }, []);
+  const fetchSectionDetail = async () => {
+    try {
+      setIsLoading(true);
+      const res1 = await axios.get(`/api/classes/${sectionId}/statistics`);
+      const res2 = await axios.get(`/api/classes/${sectionId}/students`);
+      const sectionData = res1.data.data;
+      setSectionInfo({
+        gradeLevel: sectionData.grade,
+        name: sectionData.section_name,
+        sectionId: sectionId!,
+        capacity: 0,
+        roomNumber: "",
+        totalStudents: sectionData.student_count,
+      });
+      console.log(sectionData);
+      const sectionStudents = res2.data.data;
+      console.log(sectionStudents);
+    } catch (e: any) {
+      message.error(e?.message || "Failed to fetch classes");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const attendanceData = useMemo(
     () => [
       {
@@ -129,6 +187,9 @@ export const useSectionDetailController = () => {
     selectedDateFilter,
     filteredAttendance,
     studentDetails,
+    students,
+    timetable,
+    sectionInfo,
     // setters
     setIsStudentModalVisible,
     setIsAttendanceModalVisible,
@@ -137,12 +198,15 @@ export const useSectionDetailController = () => {
     setSelectedSectionFilter,
     setSelectedDateFilter,
     dayjs,
+    setStudents,
+    setTimetable,
     // edit time table
     subjects,
     setSubjects,
     getSubjects,
     fetchSchedule,
     updateSchedule,
+    isLoading,
   };
 };
 
@@ -169,6 +233,10 @@ export type SectionDetailCtrlType = {
     section: string;
     status: string;
   }[];
+  students: Student[];
+  timetable: Timetable[];
+  sectionInfo: SectionDetailProps | undefined;
+  //
   setIsStudentModalVisible: Dispatch<SetStateAction<boolean>>;
   setIsAttendanceModalVisible: Dispatch<SetStateAction<boolean>>;
   setSelectedSection: Dispatch<any>;
@@ -176,6 +244,8 @@ export type SectionDetailCtrlType = {
   setSelectedSectionFilter: Dispatch<SetStateAction<string | undefined>>;
   setSelectedDateFilter: Dispatch<SetStateAction<string | undefined>>;
   dayjs: typeof dayjs;
+  setStudents: Dispatch<SetStateAction<Student[]>>;
+  setTimetable: Dispatch<SetStateAction<Timetable[]>>;
   //   edit timetable
   subjects: any[];
   getSubjects: () => Promise<void>;
@@ -184,4 +254,5 @@ export type SectionDetailCtrlType = {
     sectionId: string,
     schedule: Record<string, Record<string, string>>
   ) => Promise<boolean>;
+  isLoading: boolean;
 };

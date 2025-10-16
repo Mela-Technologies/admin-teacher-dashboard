@@ -60,7 +60,7 @@ const ClassDetail = ({ role }: { role: UserRole }) => {
         <Row gutter={[16, 16]}>
           {/* LEFT COLUMN */}
           <Col xs={24} md={8} lg={6}>
-            <ClassDetailCard classInfo={classInfo} />
+            <ClassDetailCard classInfo={classInfo} loading={false} />
           </Col>
 
           {/* RIGHT COLUMN (Tabs Section) */}

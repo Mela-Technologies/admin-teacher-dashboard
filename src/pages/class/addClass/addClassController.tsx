@@ -1,11 +1,14 @@
-import { Form, FormInstance } from "antd";
-import { Dispatch, SetStateAction, useState } from "react";
+import { App, Form, FormInstance } from "antd";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useAxios } from "../../../hooks/useAxios";
 
 export interface SectionType {
   key: string;
   name: string;
   capacity: number;
   roomNumber: string;
+  existing?: boolean;
+  id?: string;
 }
 
 export interface ClassFormValues {
@@ -27,11 +30,46 @@ export const useClassFormController = (editValues?: ClassFormValues) => {
   const [gradeLevel, setGradeLevel] = useState(editValues?.gradeLevel);
   const [schoolSection, setSchoolSection] = useState<string>("");
   const [isEditable, setIsEditable] = useState(editValues ? true : false);
+  const { message } = App.useApp();
+  const axios = useAxios();
+  useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(
+          `api/classes/class/sections/bygrade/${gradeLevel}`
+        );
+        const sectionData = res.data.sections;
+        setSections(
+          sectionData.map((s: any, index: number) => ({
+            key: Date.now().toString() + `${index}`,
+            name: s.sectionName,
+            capacity: s.max_students,
+            roomNumber: s.room_number,
+            existing: true,
+            id: s.id,
+          }))
+        );
+      } catch (e) {
+        message.error(`${e}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (gradeLevel) fetchSections();
+  }, [gradeLevel]);
+
   /** 🔹 Add a new empty section */
   const addSection = () => {
     setSections((prev) => [
       ...prev,
-      { key: Date.now().toString(), name: "", capacity: 0, roomNumber: "" },
+      {
+        key: Date.now().toString(),
+        name: "",
+        capacity: 0,
+        roomNumber: "",
+        existing: false,
+      },
     ]);
   };
 
@@ -41,19 +79,35 @@ export const useClassFormController = (editValues?: ClassFormValues) => {
   };
 
   /** 🔹 Update a specific section field */
-  const updateSection = (key: string, field: keyof SectionType, value: any) => {
+  const updateSection = (
+    key: string,
+    field: keyof SectionType,
+    value: string | number
+  ) => {
+    console.log(sections.filter((s) => s.key == key));
     setSections((prev) =>
       prev.map((s) => (s.key === key ? { ...s, [field]: value } : s))
     );
   };
 
   /** 🔹 Register (create) a new class */
-  const registerClass = async (values: ClassFormValues) => {
+  const registerClass = async () => {
+    if (!sections) return;
     setLoading(true);
     try {
-      console.log("Register Class:", { ...values, sections });
-      // TODO: replace with API call
-      // await axios.post("/api/classes", { ...values, sections });
+      const data = sections
+        .filter((s) => !s.existing)
+        .map((s) => {
+          return {
+            grade: gradeLevel,
+            sectionName: s.name,
+            roomNumber: s.roomNumber,
+            capacity: s.capacity,
+            action: "add",
+          };
+        });
+      // console.log(data);
+      await axios.post("/api/classes/sections/bulk", data);
     } catch (error) {
       console.error("Error registering class:", error);
     } finally {
@@ -67,12 +121,37 @@ export const useClassFormController = (editValues?: ClassFormValues) => {
       console.warn("Missing class ID for update.");
       return;
     }
-
     setLoading(true);
     try {
       console.log("Update Class:", { ...values, sections });
       // TODO: replace with API call
-      // await axios.put(`/api/classes/${values.id}`, { ...values, sections });
+      const data = sections.map((s) => {
+        return {
+          grade: gradeLevel,
+          sectionName: s.name,
+          roomNumber: s.roomNumber,
+          capacity: s.capacity,
+          action: "edit",
+        };
+      });
+      await axios.post("/api/classes/sections/bulk", data);
+    } catch (error) {
+      console.error("Error updating class:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const deleteClass = async (s: SectionType) => {
+    setLoading(true);
+    try {
+      console.log("delete Class:", { sections });
+      // TODO: replace with API call
+      const data = {
+        id: s.id,
+        action: "delete",
+      };
+      await axios.post("/api/classes/sections/bulk", [data]);
+      setSections((prev) => prev.filter((p) => p.id !== s.id));
     } catch (error) {
       console.error("Error updating class:", error);
     } finally {
@@ -87,7 +166,8 @@ export const useClassFormController = (editValues?: ClassFormValues) => {
     removeSection,
     updateSection,
     registerClass,
-    updateClass, // ✅ new update method
+    updateClass,
+    deleteClass,
     loading,
     form,
     gradeLevel,
@@ -105,6 +185,7 @@ export type AddClassCtrlType = {
   addSection: () => void;
   removeSection: (key: string) => void;
   updateSection: (key: string, field: keyof SectionType, value: any) => void;
+  deleteClass: (section: SectionType) => Promise<void>;
   loading?: boolean;
   editData?: ClassFormValues;
   form: FormInstance<any>;

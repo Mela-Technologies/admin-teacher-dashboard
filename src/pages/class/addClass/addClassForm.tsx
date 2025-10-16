@@ -1,15 +1,16 @@
 import React from "react";
-import { Input, Button, Table, Select, Form } from "antd";
+import { Input, Button, Table, Select, Form, InputNumber, App } from "antd";
 import { AddClassCtrlType, SectionType } from "./addClassController";
 import { useTranslation } from "react-i18next";
 
 const { Option } = Select;
 interface Props {
   ctrl: AddClassCtrlType;
+  isEditing?: boolean;
 }
-const AddClassForm: React.FC<Props> = ({ ctrl }) => {
+const AddClassForm: React.FC<Props> = ({ ctrl, isEditing = false }) => {
   const { t } = useTranslation();
-
+  const { modal } = App.useApp();
   // Grade grouping
   const gradeOptions = [
     { label: "Kindergarten", grades: ["KG 1", "KG 2", "KG 3"] },
@@ -46,12 +47,26 @@ const AddClassForm: React.FC<Props> = ({ ctrl }) => {
           initialValue={text}
           rules={[{ required: true, message: t("Please enter section name") }]}
         >
-          <Input
-            placeholder={t("Enter Section Name")}
-            onChange={(e) =>
-              ctrl.updateSection(record.key, "name", e.target.value)
-            }
-          />
+          <Select
+            disabled={!isEditing && record.existing}
+            placeholder={t("Select Section")}
+            // value={text}
+            onChange={(value) => ctrl.updateSection(record.key, "name", value)}
+            style={{ width: "100%" }}
+          >
+            {Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)) // A–Z
+              .filter(
+                (letter) =>
+                  !ctrl.sections.some(
+                    (s) => s.name === letter && s.key !== record.key
+                  )
+              )
+              .map((letter) => (
+                <Option key={letter} value={letter}>
+                  {letter}
+                </Option>
+              ))}
+          </Select>
         </Form.Item>
       ),
     },
@@ -71,16 +86,12 @@ const AddClassForm: React.FC<Props> = ({ ctrl }) => {
             },
           ]}
         >
-          <Input
-            type="number"
+          <InputNumber
+            disabled={!isEditing && record.existing}
             min={1}
             placeholder={t("Enter Capacity")}
-            onChange={(e) =>
-              ctrl.updateSection(
-                record.key,
-                "capacity",
-                parseInt(e.target.value) || 0
-              )
+            onChange={(val) =>
+              ctrl.updateSection(record.key, "capacity", val || 0)
             }
           />
         </Form.Item>
@@ -96,6 +107,7 @@ const AddClassForm: React.FC<Props> = ({ ctrl }) => {
           rules={[{ required: true, message: t("Please enter room number") }]}
         >
           <Input
+            disabled={!isEditing && record.existing}
             placeholder={t("Enter Room Number")}
             onChange={(e) =>
               ctrl.updateSection(record.key, "roomNumber", e.target.value)
@@ -107,12 +119,33 @@ const AddClassForm: React.FC<Props> = ({ ctrl }) => {
     {
       title: t("Action"),
       render: (_: any, record: SectionType) =>
-        ctrl.isEditable ? (
-          <Button danger onClick={() => ctrl.removeSection(record.key)}>
-            {t("Remove")}
+        isEditing ? (
+          <Button
+            danger
+            onClick={() => {
+              modal.confirm({
+                title: t("Are you sure you want to delete this class?"),
+                content: t("This action cannot be undone."),
+                okText: t("Yes, Delete"),
+                okType: "danger",
+                cancelText: t("Cancel"),
+                centered: true,
+                onOk: () => ctrl.deleteClass(record),
+              });
+            }}
+            disabled={!isEditing && record.existing}
+            loading={ctrl.loading}
+          >
+            {t("delete")}
           </Button>
         ) : (
-          <Button onClick={() => ctrl.setIsEditable(true)}>{t("Edit")}</Button>
+          <Button
+            danger
+            onClick={() => ctrl.removeSection(record.key)}
+            disabled={!isEditing && record.existing}
+          >
+            {t("Remove")}
+          </Button>
         ),
     },
   ];
@@ -162,7 +195,7 @@ const AddClassForm: React.FC<Props> = ({ ctrl }) => {
       <div className="p-4 border-gray-200 rounded bg-white shadow-sm">
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-lg font-semibold">{t("sections")}</h3>
-          <Button type="dashed" onClick={ctrl.addSection}>
+          <Button disabled={isEditing} type="dashed" onClick={ctrl.addSection}>
             {t("Add Section")}
           </Button>
         </div>
@@ -172,6 +205,7 @@ const AddClassForm: React.FC<Props> = ({ ctrl }) => {
           columns={sectionColumns}
           pagination={false}
           rowKey="key"
+          loading={ctrl.loading}
         />
       </div>
     </Form>
