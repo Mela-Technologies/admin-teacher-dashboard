@@ -11,7 +11,7 @@ import {
 import CourseTabs from "./courseTab";
 import { UserRole } from "../../../types/user";
 import { useTranslation } from "react-i18next";
-import { CourseFormValues } from "../courseController";
+import { CourseFormValues } from "../addCourse/addCourseController";
 
 interface Props {
   course?: CourseFormValues;

@@ -2,7 +2,7 @@
 import React from "react";
 import { Descriptions, Tag } from "antd";
 import { useTranslation } from "react-i18next";
-import { CourseFormValues } from "../courseController";
+import { CourseFormValues } from "../addCourse/addCourseController";
 
 const CourseDetailCard: React.FC<{ course: CourseFormValues }> = ({
   course,

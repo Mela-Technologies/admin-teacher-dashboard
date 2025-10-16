@@ -1,31 +1,19 @@
-// src/pages/course/addCourse/AddCourseForm.tsx
 import React from "react";
-import { Button, Table, Select, Form, Input } from "antd";
+import { Button, Table, Select, Form, Input, App } from "antd";
 import { useTranslation } from "react-i18next";
-import { CourseType } from "../courses";
-import { CourseCtrlType, CourseFormValues } from "../courseController";
+import { AddCourseCtrlType } from "./addCourseController";
+import { CourseType } from "../courseController";
 
 const { Option } = Select;
 
 interface Props {
-  initialValues?: CourseFormValues;
-  ctrl: CourseCtrlType;
+  ctrl: AddCourseCtrlType;
+  isEditing: boolean;
 }
 
-const AddCourseForm: React.FC<Props> = ({ ctrl }) => {
+const AddCourseForm: React.FC<Props> = ({ ctrl, isEditing }) => {
   const { t } = useTranslation();
-
-  // Grade options
-  const gradeOptions = [
-    { label: "Kindergarten", grades: ["KG 1", "KG 2", "KG 3"] },
-    {
-      label: "Elementary",
-      grades: Array.from({ length: 8 }, (_, i) => `Grade ${i + 1}`),
-    },
-    { label: "High School", grades: ["Grade 9", "Grade 10"] },
-    { label: "Preparatory", grades: ["Grade 11", "Grade 12"] },
-  ];
-
+  const { modal } = App.useApp();
   const getSchoolSection = (grade: string): string => {
     if (grade.startsWith("KG")) return "Kindergarten";
     const num = parseInt(grade.replace("Grade ", ""));
@@ -34,20 +22,10 @@ const AddCourseForm: React.FC<Props> = ({ ctrl }) => {
     if (num >= 11 && num <= 12) return "Preparatory";
     return "";
   };
-
   const handleGradeChange = async (value: string) => {
     ctrl.setGradeLevel(value);
-    const section = getSchoolSection(value);
-    ctrl.setSchoolSection(section);
-
-    ctrl.setIsFetching(true);
-    try {
-      await ctrl.fetchCoursesByGrade(value);
-    } finally {
-      ctrl.setIsFetching(false);
-    }
+    ctrl.setSchoolSection(getSchoolSection(value));
   };
-
   const courseColumns = [
     {
       title: t("Subject"),
@@ -60,7 +38,7 @@ const AddCourseForm: React.FC<Props> = ({ ctrl }) => {
           validateTrigger="onBlur"
         >
           <Input
-            disabled={!ctrl.isEditable}
+            disabled={!isEditing && record.existing}
             placeholder={t("Enter subject")}
             onChange={(e) =>
               ctrl.updateCourse(record.key, "subject", e.target.value)
@@ -80,7 +58,7 @@ const AddCourseForm: React.FC<Props> = ({ ctrl }) => {
           validateTrigger="onBlur"
         >
           <Input
-            disabled={!ctrl.isEditable}
+            disabled={!isEditing && record.existing}
             placeholder={t("Enter code")}
             onChange={(e) =>
               ctrl.updateCourse(record.key, "code", e.target.value)
@@ -99,7 +77,7 @@ const AddCourseForm: React.FC<Props> = ({ ctrl }) => {
           rules={[{ required: true, message: t("Select credit hours") }]}
         >
           <Select
-            disabled={!ctrl.isEditable}
+            disabled={!isEditing && record.existing}
             placeholder={t("Credit Hours")}
             onChange={(val) =>
               ctrl.updateCourse(record.key, "creditHours", val)
@@ -121,12 +99,12 @@ const AddCourseForm: React.FC<Props> = ({ ctrl }) => {
         <Form.Item
           name={["courses", record.key, "coreType"]}
           initialValue={text}
-          rules={[{ required: true, message: t("Please select course type") }]}
+          // rules={[{ required: true, message: t("Please select course type") }]}
         >
           <Select
-            disabled={!ctrl.isEditable}
+            disabled={!isEditing && record.existing}
             placeholder={t("Select Type")}
-            onChange={(val) => ctrl.updateCourse(record.key, "subject", val)}
+            onChange={(val) => ctrl.updateCourse(record.key, "core", val)}
           >
             <Option value="Core">{t("Core")}</Option>
             <Option value="Elective">{t("Elective")}</Option>
@@ -138,13 +116,30 @@ const AddCourseForm: React.FC<Props> = ({ ctrl }) => {
       title: t("Action"),
       render: (_: any, record: CourseType) => (
         <>
-          {ctrl.isEditable ? (
-            <Button danger onClick={() => ctrl.removeCourse(record.key)}>
-              {t("Remove")}
+          {record.existing ? (
+            <Button
+              disabled={!isEditing && record.existing}
+              danger
+              onClick={() =>
+                modal.confirm({
+                  title: t("Are you sure you want to delete this class?"),
+                  content: t("This action cannot be undone."),
+                  okText: t("Yes, Delete"),
+                  okType: "danger",
+                  cancelText: t("Cancel"),
+                  centered: true,
+                  onOk: () => ctrl.deleteCourse(record),
+                })
+              }
+            >
+              {t("delete")}
             </Button>
           ) : (
-            <Button onClick={() => ctrl.setIsEditable(true)}>
-              {t("Edit")}
+            <Button
+              disabled={!isEditing && record.existing}
+              onClick={() => ctrl.removeCourse(record.key)}
+            >
+              {t("Remove")}
             </Button>
           )}
         </>
@@ -172,9 +167,9 @@ const AddCourseForm: React.FC<Props> = ({ ctrl }) => {
               value={ctrl.gradeLevel}
               onChange={handleGradeChange}
               disabled={!ctrl.isEditable}
-              loading={ctrl.isFetching}
+              loading={ctrl.isFetching || ctrl.loading}
             >
-              {gradeOptions.map((group) => (
+              {ctrl.gradeOption.map((group) => (
                 <Select.OptGroup key={group.label} label={group.label}>
                   {group.grades.map((grade) => (
                     <Option key={grade} value={grade}>
@@ -197,7 +192,11 @@ const AddCourseForm: React.FC<Props> = ({ ctrl }) => {
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-lg font-semibold">{t("Course")}</h3>
           {ctrl.isEditable && (
-            <Button type="dashed" onClick={ctrl.addCourse}>
+            <Button
+              type="dashed"
+              disabled={isEditing || ctrl.loading}
+              onClick={ctrl.addCourse}
+            >
               {t("Add Course")}
             </Button>
           )}
@@ -207,6 +206,7 @@ const AddCourseForm: React.FC<Props> = ({ ctrl }) => {
           columns={courseColumns}
           pagination={false}
           rowKey="key"
+          loading={ctrl.loading}
         />
       </div>
     </Form>

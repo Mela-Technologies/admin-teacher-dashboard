@@ -1,135 +1,133 @@
-// src/pages/course/addCourse/addCourseController.ts
-import { Dispatch, SetStateAction, useState } from "react";
-import { Form, FormInstance, message } from "antd";
-import { v4 as uuidv4 } from "uuid";
-import { CourseType } from "./courses";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { message } from "antd";
 import { useAxios } from "../../hooks/useAxios";
-
-export interface CourseFormValues {
-  gradeLevel: string | null;
-  courses: CourseType[];
-  gradeId?: string;
+import { CourseFormValues } from "./addCourse/addCourseController";
+export interface CourseType {
+  key: string;
+  subject: string;
+  code: string;
+  creditHours: number;
+  core: boolean;
+  grade?: number | string;
+  courseId?: string;
+  existing?: boolean;
 }
 
-export const useCourseCtrl = (editValues?: CourseFormValues) => {
-  const [courses, setCourses] = useState<CourseType[]>(
-    editValues?.courses || []
-  );
+export const useCourseCtrl = () => {
+  const [courses, setCourses] = useState<CourseType[]>([]);
   const [loading, setLoading] = useState(false);
-  const [gradeLevel, setGradeLevel] = useState<string | null>(
-    editValues?.gradeLevel ?? null
-  );
-  const [schoolSection, setSchoolSection] = useState("");
-  const [isFetching, setIsFetching] = useState(false);
-  const [form] = Form.useForm();
-  const [isEditable, setIsEditable] = useState<boolean>(true);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [filterCore, setFilterCore] = useState<string | null>(null);
   const axios = useAxios();
-
-  const addCourse = () => {
-    setCourses((prev) => [
-      ...prev,
-      { key: uuidv4(), subject: "", code: "", creditHours: 0, core: false },
-    ]);
-  };
-
-  const removeCourse = (key: string) => {
-    setCourses((prev) => prev.filter((course) => course.key !== key));
-  };
-
-  const updateCourse = (key: string, field: keyof CourseType, value: any) => {
-    setCourses((prev) =>
-      prev.map((course) =>
-        course.key === key ? { ...course, [field]: value } : course
-      )
-    );
-  };
-
-  const fetchCoursesByGrade = async (grade: string) => {
+  const [editingClass, setEditingClass] = useState<CourseFormValues>();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+  useEffect(() => {
+    fetchCourses();
+  }, [refresh]);
+  const fetchCourses = async () => {
     try {
-      const res = await axios.get(`/api/courses?grade=${grade}`);
-      const fetchedCourses = res.data.map((item: any) => ({
-        key: uuidv4(),
-        subject: item.subject,
-        code: item.code,
-        creditHours: item.creditHours,
-        course: item.course,
-      }));
-      setCourses(fetchedCourses);
+      setLoading(true);
+      const res = await axios.get(`/api/courses/viewall`);
+      console.log(res.data);
+      const courseData = res.data.data.data;
+      setCourses(
+        courseData.map((c: any, index: number) => ({
+          key: Date.now().toString() + index,
+          subject: c.course_name,
+          code: c.course_code,
+          creditHours: c.credit_hours,
+          core: true,
+          grade: c.class.grade || "-",
+          courseId: c.id,
+          existing: true,
+        }))
+      );
     } catch (err) {
-      message.error("Failed to fetch courses");
-      throw err;
-    }
-  };
-
-  /** 🔹 Register (create) a new course */
-  const register = async (values: CourseFormValues) => {
-    setLoading(true);
-    try {
-      console.log("Register course:", { ...values });
-      // TODO: replace with API call
-      // await axios.post("/api/courses", { ...values, sections });
-    } catch (error) {
-      console.error("Error registering course:", error);
+      message.error(`Failed to fetch courses: ${err}`);
     } finally {
       setLoading(false);
     }
   };
+  const handleEdit = (record: CourseFormValues) => {
+    const data: CourseFormValues = {
+      gradeLevel: record.gradeLevel,
+      courses: record.courses.map((r, index) => ({ ...r, key: `${index}` })),
+      gradeId: record.gradeId,
+    };
+    setEditingClass(data);
+    setIsEditModalOpen(true);
+  };
+  // 🔹 Filter and search logic
+  const filteredData = useMemo(() => {
+    return courses.filter((course) => {
+      const matchesSearch =
+        course.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.code.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCore =
+        filterCore === "core"
+          ? course.core
+          : filterCore === "nonCore"
+          ? !course.core
+          : true;
+      return matchesSearch && matchesCore;
+    });
+  }, [searchTerm, filterCore, courses]);
 
-  /** 🔹 Update an existing course */
-  const update = async (values: CourseFormValues) => {
-    if (!values.gradeId) {
-      console.warn("Missing grade ID for update.");
-      return;
-    }
+  // 🔹 Group courses by grade
+  const groupedCourses = useMemo(() => {
+    const groups: Record<string, CourseType[]> = {};
+    filteredData.forEach((course) => {
+      const gradeNum = course.grade!;
+      if (!groups[gradeNum]) groups[gradeNum] = [];
+      groups[gradeNum].push(course);
+    });
+    return groups;
+  }, [filteredData]);
 
-    setLoading(true);
-    try {
-      console.log("Update course:", { ...values });
-      // TODO: replace with API call
-      // await axios.put(`/api/courses/${values.id}`, { ...values, sections });
-    } catch (error) {
-      console.error("Error updating course:", error);
-    } finally {
-      setLoading(false);
-    }
+  const handleResetFilters = () => {
+    setSearchTerm("");
+    setFilterCore(null);
   };
 
   return {
     courses,
-    addCourse,
-    removeCourse,
-    updateCourse,
-    fetchCoursesByGrade,
     loading,
-    update,
-    register,
-    gradeLevel,
-    setGradeLevel,
-    schoolSection,
-    setSchoolSection,
-    isFetching,
-    setIsFetching,
-    isEditable,
-    setIsEditable,
-    form,
+    searchTerm,
+    filterCore,
+    editingClass,
+    isEditModalOpen,
+    refresh,
+    //
+    setCourses,
+    setLoading,
+    setSearchTerm,
+    setFilterCore,
+    setRefresh,
+    groupedCourses,
+    handleResetFilters,
+    setEditingClass,
+    setIsEditModalOpen,
+    handleEdit,
   };
 };
 
 export type CourseCtrlType = {
   courses: CourseType[];
-  addCourse: () => void;
-  removeCourse: (key: string) => void;
-  updateCourse: (key: string, field: keyof CourseType, value: any) => void;
-  fetchCoursesByGrade: (grade: string) => Promise<void>;
-  loading?: boolean;
-  editData?: CourseFormValues;
-  gradeLevel: string | null;
-  setGradeLevel: Dispatch<SetStateAction<string | null>>;
-  schoolSection: string;
-  setSchoolSection: Dispatch<SetStateAction<string>>;
-  isFetching: boolean;
-  setIsFetching: Dispatch<SetStateAction<boolean>>;
-  isEditable: boolean;
-  setIsEditable: Dispatch<SetStateAction<boolean>>;
-  form: FormInstance<any>;
+  loading: boolean;
+  searchTerm: string;
+  filterCore: string | null;
+  editingClass: CourseFormValues | undefined;
+  isEditModalOpen: boolean;
+  //
+  setCourses: Dispatch<SetStateAction<CourseType[]>>;
+  setLoading: Dispatch<SetStateAction<boolean>>;
+  setSearchTerm: Dispatch<SetStateAction<string>>;
+  setFilterCore: Dispatch<SetStateAction<string | null>>;
+  setRefresh: Dispatch<SetStateAction<boolean>>;
+  groupedCourses: Record<number, CourseType[]>;
+  handleResetFilters: () => void;
+  setEditingClass: Dispatch<SetStateAction<CourseFormValues | undefined>>;
+  setIsEditModalOpen: Dispatch<SetStateAction<boolean>>;
+  handleEdit: (record: CourseFormValues) => void;
 };

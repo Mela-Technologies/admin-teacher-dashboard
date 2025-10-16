@@ -1,12 +1,10 @@
-// src/pages/course/AddCoursePage.tsx
 import { useState } from "react";
 import { Button, Modal, message } from "antd";
-
 import { UserRole } from "../../../types/user";
 import { useTranslation } from "react-i18next";
 import { ArrowLeftOutlined, SaveOutlined } from "@ant-design/icons";
 import AddCourseForm from "./addCourseForm";
-import { CourseFormValues, useCourseCtrl } from "../courseController";
+import { CourseFormValues, useAddCourseCtrl } from "./addCourseController";
 
 interface AddCoursePageProps {
   role: UserRole;
@@ -21,12 +19,12 @@ const AddCoursePage = ({
   editData,
   onClose,
 }: AddCoursePageProps) => {
-  const controller = useCourseCtrl(editData);
+  const controller = useAddCourseCtrl(editData);
   const [open, setOpen] = useState(isEditing);
   const { t } = useTranslation();
 
   /** 🔹 Submit Logic */
-  const onSubmit = async (values: CourseFormValues) => {
+  const onSubmit = async () => {
     try {
       if (isEditing) {
         await controller.update({
@@ -35,7 +33,7 @@ const AddCoursePage = ({
         });
         message.success(t("Courses updated successfully!"));
       } else {
-        await controller.register(values);
+        await controller.register();
         message.success(t("Courses created successfully!"));
       }
       setOpen(false);
@@ -50,17 +48,7 @@ const AddCoursePage = ({
   const handleSubmit = async () => {
     try {
       await controller.form.validateFields();
-      const validCourses = controller.courses.filter(
-        (c) =>
-          c.subject.trim() &&
-          c.code.trim() &&
-          typeof c.creditHours === "number" &&
-          c.core
-      );
-      onSubmit({
-        gradeLevel: controller.gradeLevel,
-        courses: validCourses,
-      });
+      onSubmit();
     } catch {
       // AntD handles form errors automatically
     }
@@ -96,7 +84,7 @@ const AddCoursePage = ({
   const formContent = (
     <div className={`${!isEditing ? "px-6 pb-12 overflow-y-auto h-full" : ""}`}>
       {HeaderBar}
-      <AddCourseForm ctrl={controller} />
+      <AddCourseForm ctrl={controller} isEditing={isEditing} />
     </div>
   );
 

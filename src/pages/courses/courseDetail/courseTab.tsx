@@ -13,7 +13,7 @@ import {
   Popconfirm,
 } from "antd";
 import { useTranslation } from "react-i18next";
-import { CourseFormValues } from "../courseController";
+import { CourseFormValues } from "../addCourse/addCourseController";
 
 const { Option } = Select;
 
