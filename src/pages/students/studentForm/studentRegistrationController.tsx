@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, message } from "antd";
+import { App, Form } from "antd";
 
 export interface StudentFormValues {
   firstName: string;
@@ -44,7 +44,7 @@ export interface StudentFormValues {
 export const useStudentRegistrationController = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm<StudentFormValues>();
-
+  const { message } = App.useApp();
   const initialValues: StudentFormValues = {
     firstName: "",
     lastName: "",
@@ -93,6 +93,7 @@ export const useStudentRegistrationController = () => {
     if (!validateForm(values)) return;
     setLoading(true);
     try {
+      console.log(values);
       await new Promise((res) => setTimeout(res, 1000));
       message.success("Student registered successfully!");
     } catch {

@@ -1,21 +1,22 @@
 import React from "react";
-import { Student } from "../../../types/student";
-import { useTranslation } from "react-i18next";
+import { StudentType } from "../../../types/student";
 
 interface Props {
-  student: Student;
+  student?: StudentType;
 }
 
 const StudentDetailCard: React.FC<Props> = ({ student }) => {
-  const initials = `${student.firstName[0] || ""}${student.lastName[0] || ""}`;
-  const { t } = useTranslation();
+  const initials = `${student?.firstName[0] || ""}${
+    student?.lastName[0] || ""
+  }`;
+
   return (
     <div className="flex items-center justify-start gap-6 w-full">
       {/* Avatar */}
       <div className="flex-shrink-0">
-        {student.picture ? (
+        {student?.picture ? (
           <img
-            src={student.picture}
+            src={student?.picture}
             alt="profile"
             className="w-28 h-28 rounded-full object-cover shadow-sm"
           />
@@ -28,19 +29,17 @@ const StudentDetailCard: React.FC<Props> = ({ student }) => {
 
       {/* Student Basic Info */}
       <div className="flex flex-col justify-center">
-        <p className="text-gray-500">{`${student.grade} ${t("section")} ${
-          student.section
-        }`}</p>
-        <h2 className="text-4xl uppercase">{`${student.firstName} ${student.lastName}`}</h2>
+        <p className="text-gray-500">{`${student?.grade} ${student?.section}`}</p>
+        <h2 className="text-4xl uppercase">{`${student?.firstName} ${student?.lastName}`}</h2>
         <div className="mt-2">
           <span
             className={`px-3 py-1 rounded-2xl text-sm ${
-              student.status === "Active"
+              student?.status === "Active"
                 ? "bg-green-100 text-green-700"
                 : "bg-gray-100 text-gray-500"
             }`}
           >
-            {student.status}
+            {student?.status}
           </span>
         </div>
       </div>

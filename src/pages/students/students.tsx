@@ -1,56 +1,17 @@
-import React, { useState, useMemo } from "react";
 import { Table, Input, Select, Button } from "antd";
 import { SearchOutlined, ReloadOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { UserRole } from "../../types/user";
 import TopActionBar from "../../components/topActionBar";
+import { useStudentController } from "./studentController";
 
 const { Option } = Select;
 
-const students = [
-  {
-    key: 1,
-    firstName: "Saba",
-    lastName: "Elias",
-    grade: "Grade 10",
-    status: "Active",
-    gender: "Female",
-    dob: "11-06-2001",
-    birthPlace: "Addis Ababa",
-    address: "address",
-  },
-  {
-    key: 2,
-    firstName: "Jane",
-    lastName: "Yirga",
-    grade: "Grade 11",
-    status: "Inactive",
-    gender: "Male",
-    dob: "09-03-2000",
-    birthPlace: "Jimma",
-    address: "address",
-  },
-  {
-    key: 3,
-    firstName: "Kirubel",
-    lastName: "Samuel",
-    grade: "Grade 10",
-    status: "Active",
-    gender: "Male",
-    dob: "23-02-2000",
-    birthPlace: "Addis Ababa",
-    address: "address",
-  },
-];
-
 const StudentsPage = ({ role }: { role: UserRole }) => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [gradeFilter, setGradeFilter] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const navigator = useNavigate();
   const { t } = useTranslation();
+  const controller = useStudentController();
   // Define columns
   const columns = [
     {
@@ -66,43 +27,19 @@ const StudentsPage = ({ role }: { role: UserRole }) => {
     { title: t("address"), dataIndex: "address" },
   ];
 
-  // Filter data by full name, grade, and status
-  const filteredData = useMemo(() => {
-    return students.filter((student) => {
-      const fullName = `${student.firstName} ${student.lastName}`.toLowerCase();
-      const matchesSearch = fullName.includes(searchTerm.toLowerCase());
-      const matchesGrade = gradeFilter ? student.grade === gradeFilter : true;
-      const matchesStatus = statusFilter
-        ? student.status === statusFilter
-        : true;
-      return matchesSearch && matchesGrade && matchesStatus;
-    });
-  }, [searchTerm, gradeFilter, statusFilter]);
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: (selectedKeys: React.Key[]) => setSelectedRowKeys(selectedKeys),
-  };
-
-  const resetFilters = () => {
-    setSearchTerm("");
-    setGradeFilter(null);
-    setStatusFilter(null);
-  };
-
   return (
     <div className={`${role}`}>
       {/* 🔹 Top Action Bar */}
       <TopActionBar
         title={t("students")}
         addBtnText={t("addStudent")}
-        hasSelection={selectedRowKeys.length > 0}
-        onRefresh={() => console.log("Refresh")}
+        hasSelection={controller.selectedRowKeys.length > 0}
+        onRefresh={() => controller.setRefresh((prev) => !prev)}
         onAddUser={() => navigator("add")}
-        onEdit={() => console.log("Edit", selectedRowKeys)}
-        onDelete={() => console.log("Delete", selectedRowKeys)}
-        onExport={() => console.log("Export", selectedRowKeys)}
-        onPrint={() => console.log("Print", selectedRowKeys)}
+        onEdit={() => console.log("Edit", controller.selectedRowKeys)}
+        onDelete={() => console.log("Delete", controller.selectedRowKeys)}
+        onExport={() => console.log("Export", controller.selectedRowKeys)}
+        onPrint={() => console.log("Print", controller.selectedRowKeys)}
       />
 
       {/* 🔹 Table Section */}
@@ -114,8 +51,8 @@ const StudentsPage = ({ role }: { role: UserRole }) => {
             <Input
               placeholder={t("searchByStudentName")}
               prefix={<SearchOutlined />}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={controller.searchTerm}
+              onChange={(e) => controller.setSearchTerm(e.target.value)}
               allowClear
               className=""
             />
@@ -123,8 +60,8 @@ const StudentsPage = ({ role }: { role: UserRole }) => {
             {/* Grade filter */}
             <Select
               placeholder={t("filterByGrade")}
-              value={gradeFilter}
-              onChange={(value) => setGradeFilter(value)}
+              value={controller.gradeFilter}
+              onChange={(value) => controller.setGradeFilter(value)}
               allowClear
               className="min-w-[140px]"
             >
@@ -136,8 +73,8 @@ const StudentsPage = ({ role }: { role: UserRole }) => {
             {/* Status filter */}
             <Select
               placeholder={t("filterByStatus")}
-              value={statusFilter}
-              onChange={(value) => setStatusFilter(value)}
+              value={controller.statusFilter}
+              onChange={(value) => controller.setStatusFilter(value)}
               allowClear
               className="min-w-[140px]"
             >
@@ -146,19 +83,24 @@ const StudentsPage = ({ role }: { role: UserRole }) => {
             </Select>
 
             {/* Reset button */}
-            <Button icon={<ReloadOutlined />} onClick={resetFilters}>
+            <Button icon={<ReloadOutlined />} onClick={controller.resetFilters}>
               {t("clearFilters")}
             </Button>
           </div>
 
           {/* Table */}
           <Table
-            rowSelection={rowSelection}
-            dataSource={filteredData}
+            rowSelection={controller.rowSelection}
+            dataSource={controller.filteredData}
             columns={columns}
+            loading={controller.loading}
             onRow={(record, rowIndex) => ({
               onClick: () => {
-                navigator("detail");
+                navigator(
+                  `detail?id=${encodeURIComponent(
+                    record.studentId!
+                  )}&type=student`
+                );
                 console.log(record, rowIndex);
               },
             })}

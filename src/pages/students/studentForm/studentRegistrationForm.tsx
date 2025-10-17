@@ -21,14 +21,14 @@ const { Option } = Select;
 
 interface Props {
   initialValues: StudentFormValues;
-  onSubmit: (values: StudentFormValues) => void;
+  registerStudent: (values: StudentFormValues) => void;
   loading?: boolean;
   form: FormInstance<StudentFormValues>;
 }
 
 const StudentRegistrationForm: React.FC<Props> = ({
   initialValues,
-  onSubmit,
+  registerStudent,
   form,
 }) => {
   const [pictureFile, setPictureFile] = useState<File | null>(null);
@@ -36,7 +36,7 @@ const StudentRegistrationForm: React.FC<Props> = ({
   const { t } = useTranslation();
 
   const handleSubmit = (values: StudentFormValues) => {
-    onSubmit({ ...values, picture: pictureFile });
+    registerStudent({ ...values, picture: pictureFile });
   };
 
   const sectionClass =

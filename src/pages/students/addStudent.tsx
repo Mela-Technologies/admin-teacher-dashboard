@@ -23,7 +23,7 @@ const AddStudentsPage = ({
   const rgsController = useStudentRegistrationController();
   const { t } = useTranslation();
   const [open, setOpen] = useState(isEditing);
-  console.log(editData, open, setOpen);
+  // console.log(editData, open, setOpen);
   return (
     <div className={`h-full ${role}`}>
       {/*  */}
@@ -54,7 +54,7 @@ const AddStudentsPage = ({
         <StudentRegistrationForm
           form={rgsController.form}
           initialValues={rgsController.initialValues}
-          onSubmit={rgsController.registerStudent}
+          registerStudent={rgsController.registerStudent}
           loading={rgsController.loading}
         />
       </div>

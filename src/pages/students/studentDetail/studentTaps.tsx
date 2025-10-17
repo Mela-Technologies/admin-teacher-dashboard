@@ -2,13 +2,16 @@
 import React from "react";
 import { Tabs, Table, Progress, Empty } from "antd";
 import { useTranslation } from "react-i18next";
+import { StudentDetailCtrlType } from "./studentDetailController";
 
 interface Props {
-  student: any;
+  ctrl:StudentDetailCtrlType
 }
 
-const StudentTabs: React.FC<Props> = ({ student }) => {
+const StudentTabs: React.FC<Props> = ({ ctrl }) => {
   const { t } = useTranslation();
+  const student = ctrl.student
+
   const overviewContent = (
     <div className="grid md:grid-cols-2 gap-6 text-gray-700 text-sm">
       <div>
@@ -17,21 +20,21 @@ const StudentTabs: React.FC<Props> = ({ student }) => {
         </h3>
         <div className="space-y-1">
           <p>
-            <strong>{t("ID")}:</strong> {student.id || "N/A"}
+            <strong>{t("ID")}:</strong> {student?.studentId || "N/A"}
           </p>
           <p>
-            <strong>{t("fullName")}:</strong> {student.firstName}{" "}
-            {student.lastName}
+            <strong>{t("fullName")}:</strong> {student?.firstName}{" "}
+            {student?.lastName}
           </p>
           <p>
-            <strong>{t("gender")}:</strong> {student.gender || "N/A"}
+            <strong>{t("gender")}:</strong> {student?.gender || "N/A"}
           </p>
           <p>
-            <strong>{t("dateOfBirth")}:</strong> {student.dateOfBirth || "N/A"}
+            <strong>{t("dateOfBirth")}:</strong> {student?.dateOfBirth || "N/A"}
           </p>
           <p>
             <strong>{t("Admission Date")}:</strong>{" "}
-            {student.admissionDate || "N/A"}
+            {student?.admissionDate || "N/A"}
           </p>
         </div>
       </div>
@@ -42,13 +45,13 @@ const StudentTabs: React.FC<Props> = ({ student }) => {
         </h3>
         <div className="space-y-1">
           <p>
-            <strong>{t("email")}:</strong> {student.email || "N/A"}
+            <strong>{t("email")}:</strong> {student?.email || "N/A"}
           </p>
           <p>
-            <strong>{t("phone")}:</strong> {student.phone || "N/A"}
+            <strong>{t("phone")}:</strong> {student?.phone || "N/A"}
           </p>
           <p>
-            <strong>{t("address")}:</strong> {student.address || "N/A"}
+            <strong>{t("address")}:</strong> {student?.address || "N/A"}
           </p>
         </div>
 
@@ -57,13 +60,13 @@ const StudentTabs: React.FC<Props> = ({ student }) => {
         </h3>
         <div className="space-y-1">
           <p>
-            <strong>{t("Parent Name")}:</strong> {student.parentName || "N/A"}
+            <strong>{t("Parent Name")}:</strong> {student?.parent.name || "N/A"}
           </p>
           <p>
-            <strong>{t("Parent Email")}:</strong> {student.parentEmail || "N/A"}
+            <strong>{t("Parent Email")}:</strong> {student?.parent.email || "N/A"}
           </p>
           <p>
-            <strong>{t("Parent Phone")}:</strong> {student.parentPhone || "N/A"}
+            <strong>{t("Parent Phone")}:</strong> {student?.parent.phone || "N/A"}
           </p>
         </div>
       </div>
@@ -74,13 +77,13 @@ const StudentTabs: React.FC<Props> = ({ student }) => {
     <div className="space-y-4">
       <h3 className="font-semibold text-gray-500">{t("Attendance Summary")}</h3>
       <Progress
-        percent={student.attendancePercent || 0}
+        percent={student?.attendance?.percent || 0}
         status="active"
         strokeColor="#0ea5e9"
       />
       <p className="text-sm text-gray-600">
-        {student.presentDays || 0} {t("days present out of")}{" "}
-        {student.totalDays || 0} {t("days")}.
+        {student?.attendance?.presentDays || 0} {t("days present out of")}{" "}
+        {student?.attendance?.totalDays || 0} {t("days")}.
       </p>
       <Table
         size="small"
@@ -88,7 +91,7 @@ const StudentTabs: React.FC<Props> = ({ student }) => {
           { title: t("date"), dataIndex: "date", key: "date" },
           { title: t("status"), dataIndex: "status", key: "status" },
         ]}
-        dataSource={student.attendanceRecords || []}
+        dataSource={[]}
         pagination={false}
       />
     </div>
@@ -97,7 +100,7 @@ const StudentTabs: React.FC<Props> = ({ student }) => {
   const resultContent = (
     <div className="space-y-4">
       <h3 className="font-semibold text-gray-500">Result Summary</h3>
-      {student.grades && student.grades.length > 0 ? (
+      {student?.grades && student?.grades.length > 0 ? (
         <Table
           size="small"
           columns={[
@@ -105,7 +108,7 @@ const StudentTabs: React.FC<Props> = ({ student }) => {
             { title: t("grade"), dataIndex: "grade", key: "grade" },
             { title: t("term"), dataIndex: "term", key: "term" },
           ]}
-          dataSource={student.grades}
+          dataSource={student?.grades}
           pagination={false}
         />
       ) : (
@@ -117,9 +120,9 @@ const StudentTabs: React.FC<Props> = ({ student }) => {
   const documentsContent = (
     <div className="space-y-4">
       <h3 className="font-semibold text-gray-500">{t("Uploaded Documents")}</h3>
-      {student.documents && student.documents.length > 0 ? (
+      {student?.documents && student?.documents.length > 0 ? (
         <ul className="list-disc pl-6 space-y-1 text-sm text-gray-700">
-          {student.documents.map((doc: any, index: number) => (
+          {student?.documents.map((doc: any, index: number) => (
             <li key={index}>
               <a
                 href={doc.url}

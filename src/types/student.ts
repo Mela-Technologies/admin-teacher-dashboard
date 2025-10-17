@@ -1,4 +1,3 @@
-// src/types/student.ts
 export interface ParentInfo {
   name: string;
   email: string;
@@ -16,8 +15,8 @@ export interface GPAInfo {
   records: number;
 }
 
-export interface Student {
-  id: string;
+export interface StudentType {
+  studentId: string;
   firstName: string;
   lastName: string;
   gender: "Male" | "Female";
