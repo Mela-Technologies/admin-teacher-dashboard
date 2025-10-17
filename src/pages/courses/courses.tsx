@@ -158,7 +158,11 @@ const CoursePage = ({ role }: { role: UserRole }) => {
                   rowKey="key"
                   onRow={(record, rowIndex) => ({
                     onClick: () => {
-                      navigator("detail");
+                      navigator(
+                        `detail?id=${encodeURIComponent(
+                          record.courseId!
+                        )}&type=course`
+                      );
                       console.log(record, rowIndex);
                     },
                   })}

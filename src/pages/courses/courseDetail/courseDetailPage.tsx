@@ -12,6 +12,7 @@ import CourseTabs from "./courseTab";
 import { UserRole } from "../../../types/user";
 import { useTranslation } from "react-i18next";
 import { CourseFormValues } from "../addCourse/addCourseController";
+import { useCourseDetailCtrl } from "./courseDetailController";
 
 interface Props {
   course?: CourseFormValues;
@@ -20,22 +21,11 @@ interface Props {
 
 const CourseDetailPage: React.FC<Props> = ({ role }) => {
   const { t } = useTranslation();
+  const controller = useCourseDetailCtrl();
   const handleBack = () => window.history.back();
   const handleEdit = () => console.log("Edit Class", role);
   const handlePrint = () => console.log("Print Class");
-  const course: CourseFormValues = {
-    courses: [
-      {
-        key: "1",
-        subject: "Mathematics I",
-        code: "MATH101",
-        creditHours: 3,
-        core: true,
-        grade: 10,
-      },
-    ],
-    gradeLevel: "Grade 10",
-  };
+
   return (
     <div className={`px-2 ${role}`}>
       {/* Top Action Bar */}
@@ -60,15 +50,16 @@ const CourseDetailPage: React.FC<Props> = ({ role }) => {
       <Row gutter={16}>
         {/* Left side – Course Information */}
         <Col xs={24} md={8} lg={6}>
-          <Card title={t("Course Information")}>
-            <CourseDetailCard course={course} />
-          </Card>
+          <CourseDetailCard
+            course={controller.course}
+            loading={controller.isLoading}
+          />
         </Col>
 
         {/* Right side – Tabs for Sections, Teachers, etc. */}
         <Col xs={24} md={16} lg={18}>
           <Card className="shadow-sm h-full">
-            <CourseTabs course={course} />
+            <CourseTabs ctrl={controller} />
           </Card>
         </Col>
       </Row>

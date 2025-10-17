@@ -1,33 +1,42 @@
-// src/pages/course/CourseDetailCard.tsx
 import React from "react";
-import { Descriptions, Tag } from "antd";
+import { Card, Descriptions, Tag } from "antd";
 import { useTranslation } from "react-i18next";
-import { CourseFormValues } from "../addCourse/addCourseController";
+import { CourseType } from "../courseController";
 
-const CourseDetailCard: React.FC<{ course: CourseFormValues }> = ({
+const CourseDetailCard: React.FC<{ course?: CourseType; loading: boolean }> = ({
   course,
+  loading,
 }) => {
   const { t } = useTranslation();
   return (
-    <Descriptions column={1} bordered>
-      <Descriptions.Item label={t("Grade Level")}>
-        {course.gradeLevel || "N/A"}
-      </Descriptions.Item>
-      {course.courses.map((c, index) => (
-        <React.Fragment key={c.key}>
-          <Descriptions.Item label={`${t("subject")} ${index + 1}`}>
-            {c.subject}
+    <Card
+      className="shadow-sm"
+      title={<span className="text-lg font-semibold">{course?.grade}</span>}
+      loading={loading}
+    >
+      <Descriptions column={1} bordered>
+        <Descriptions.Item label={t("Grade Level")}>
+          {course?.grade || "N/A"}
+        </Descriptions.Item>
+
+        <React.Fragment>
+          <Descriptions.Item label={`${t("subject")}`}>
+            {course?.subject}
           </Descriptions.Item>
-          <Descriptions.Item label={t("code")}>{c.code}</Descriptions.Item>
+          <Descriptions.Item label={t("code")}>
+            {course?.code}
+          </Descriptions.Item>
           <Descriptions.Item label={t("creditHours")}>
-            {c.creditHours}
+            {course?.creditHours}
           </Descriptions.Item>
           <Descriptions.Item label={t("core")}>
-            <Tag color={c.core ? "green" : "red"}>{c.core ? "Yes" : "No"}</Tag>
+            <Tag color={course?.core ? "green" : "red"}>
+              {course?.core ? "Yes" : "No"}
+            </Tag>
           </Descriptions.Item>
         </React.Fragment>
-      ))}
-    </Descriptions>
+      </Descriptions>
+    </Card>
   );
 };
 

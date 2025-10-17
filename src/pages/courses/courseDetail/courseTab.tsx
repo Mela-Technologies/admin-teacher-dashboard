@@ -1,5 +1,4 @@
-// src/pages/course/CourseTabs.tsx
-import React, { useState } from "react";
+import React from "react";
 import {
   Tabs,
   Table,
@@ -13,29 +12,16 @@ import {
   Popconfirm,
 } from "antd";
 import { useTranslation } from "react-i18next";
-import { CourseFormValues } from "../addCourse/addCourseController";
+import { CourseDetailCtrlType } from "./courseDetailController";
 
 const { Option } = Select;
 
 interface Props {
-  course: CourseFormValues;
+  ctrl: CourseDetailCtrlType;
 }
 
-const CourseTabs: React.FC<Props> = ({ course }) => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [form] = Form.useForm();
+const CourseTabs: React.FC<Props> = ({ ctrl }) => {
   const { t } = useTranslation();
-  const [teachers, setTeachers] = useState([
-    {
-      key: "1",
-      fullName: "Mr. Daniel Bekele",
-      section: "A",
-      subject: course.courses[0]?.subject || "Mathematics",
-      grade: course.gradeLevel,
-    },
-  ]);
-
   // Table Columns
   const columns = [
     { title: t("fullName"), dataIndex: "fullName" },
@@ -52,10 +38,10 @@ const CourseTabs: React.FC<Props> = ({ course }) => {
       okText: "Yes, Unassign",
       cancelText: "Cancel",
       onOk: () => {
-        setTeachers((prev) =>
-          prev.filter((t) => !selectedRowKeys.includes(t.key))
+        ctrl.setTeachers((prev) =>
+          prev.filter((t) => !ctrl.selectedRowKeys.includes(t.key))
         );
-        setSelectedRowKeys([]);
+        ctrl.setSelectedRowKeys([]);
         message.success("Selected teachers unassigned successfully");
       },
     });
@@ -63,21 +49,21 @@ const CourseTabs: React.FC<Props> = ({ course }) => {
 
   // Row Selection Config
   const rowSelection = {
-    selectedRowKeys,
-    onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
+    selectedRowKeys: ctrl.selectedRowKeys,
+    onChange: (keys: React.Key[]) => ctrl.setSelectedRowKeys(keys),
   };
 
   // Handle Assign Teacher Form Submit
   const handleSubmit = () => {
-    form
+    ctrl.form
       .validateFields()
       .then((values) => {
-        setTeachers((prev) => [
+        ctrl.setTeachers((prev) => [
           ...prev,
           { key: Date.now().toString(), ...values },
         ]);
         message.success("Teacher assigned successfully");
-        setIsModalVisible(false);
+        ctrl.setIsModalVisible(false);
       })
       .catch(() => {});
   };
@@ -96,7 +82,7 @@ const CourseTabs: React.FC<Props> = ({ course }) => {
             }}
           >
             <h3 style={{ margin: 0 }}>Assigned Teachers</h3>
-            {selectedRowKeys.length > 0 && (
+            {ctrl.selectedRowKeys.length > 0 && (
               <Space>
                 <Popconfirm
                   title="Are you sure to unassign selected teachers?"
@@ -113,7 +99,7 @@ const CourseTabs: React.FC<Props> = ({ course }) => {
           <Table
             rowSelection={rowSelection}
             columns={columns}
-            dataSource={teachers}
+            dataSource={ctrl.teachers}
             rowKey="key"
             pagination={false}
           />
@@ -128,8 +114,8 @@ const CourseTabs: React.FC<Props> = ({ course }) => {
           <Button
             type="primary"
             onClick={() => {
-              form.resetFields();
-              setIsModalVisible(true);
+              ctrl.form.resetFields();
+              ctrl.setIsModalVisible(true);
             }}
           >
             Add New Teacher Assignment
@@ -137,12 +123,12 @@ const CourseTabs: React.FC<Props> = ({ course }) => {
 
           <Modal
             title={t("Assign Teacher")}
-            open={isModalVisible}
-            onCancel={() => setIsModalVisible(false)}
+            open={ctrl.isModalVisible}
+            onCancel={() => ctrl.setIsModalVisible(false)}
             onOk={handleSubmit}
             okText={t("save")}
           >
-            <Form form={form} layout="vertical">
+            <Form form={ctrl.form} layout="vertical">
               <Form.Item
                 label={t("teacher")}
                 name="fullName"
@@ -172,21 +158,19 @@ const CourseTabs: React.FC<Props> = ({ course }) => {
               <Form.Item
                 label={t("subject")}
                 name="subject"
-                initialValue={course.courses[0]?.subject}
+                initialValue={ctrl.course?.subject}
               >
                 <Select disabled>
-                  {course.courses.map((c) => (
-                    <Option key={c.key} value={c.subject}>
-                      {c.subject}
-                    </Option>
-                  ))}
+                  <Option value={ctrl.course?.subject}>
+                    {ctrl.course?.subject}
+                  </Option>
                 </Select>
               </Form.Item>
 
               <Form.Item
                 label={t("grade")}
                 name="grade"
-                initialValue={course.gradeLevel}
+                initialValue={ctrl.course?.grade}
               >
                 <InputNumber
                   disabled
