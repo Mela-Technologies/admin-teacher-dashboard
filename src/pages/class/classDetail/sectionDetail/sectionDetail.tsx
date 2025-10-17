@@ -11,13 +11,11 @@ import { UserRole } from "../../../../types/user";
 import { useSectionDetailController } from "./sectionDetailController";
 
 const SectionDetail = ({ role }: { role: UserRole }) => {
-  const queryParams = new URLSearchParams(location.search);
-  const id = queryParams.get("id"); // ?id=SEC-001A
   const { t } = useTranslation();
   const controller = useSectionDetailController();
   const handleBack = () => window.history.back();
-  const handleEdit = () => console.log("Edit section", id);
-  const handlePrint = () => console.log("Print section", id);
+  const handleEdit = () => console.log("Edit section");
+  const handlePrint = () => console.log("Print section");
 
   return (
     <div className={`space-y-2 h-full ${role}`}>
