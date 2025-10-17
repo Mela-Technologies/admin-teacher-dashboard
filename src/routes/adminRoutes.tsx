@@ -18,6 +18,8 @@ import SettingsPage from "../pages/settings/settings";
 import AddStudentsPage from "../pages/students/addStudent";
 import StudentDetailPage from "../pages/students/studentDetail/studentDetailPage";
 import StudentsPage from "../pages/students/students";
+import AddTeacherPage from "../pages/teachers/addTeacher";
+import TeacherDetailPage from "../pages/teachers/teacherDetail/teacherDetailPage";
 import TeacherPage from "../pages/teachers/teachers";
 
 const role = "admin";
@@ -45,6 +47,8 @@ export const adminRoutes = [
   },
   { path: "students/parents", element: <ParentsPage role={role} /> },
   { path: "staff/teachers", element: <TeacherPage role={role} /> },
+  { path: "staff/teachers/detail", element: <TeacherDetailPage role={role} /> },
+  { path: "staff/teachers/add", element: <AddTeacherPage role={role} /> },
   { path: "communication/events", element: <EventsPage role={role} /> },
   { path: "communication/message", element: <MessagesPage role={role} /> },
   { path: "settings", element: <SettingsPage role={role} /> },
