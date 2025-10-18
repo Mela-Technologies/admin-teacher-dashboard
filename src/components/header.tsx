@@ -44,7 +44,7 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <div className="flex justify-between items-center h-full gap-4 px-3">
+    <div className="flex justify-between items-center h-full gap-4 px-3 ">
       {/* 🌐 Language Selector */}
       <div className="flex items-center gap-2">
         <GlobalOutlined className="text-gray-600" />

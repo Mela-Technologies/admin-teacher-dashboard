@@ -8,11 +8,11 @@ import {
   PrinterOutlined,
 } from "@ant-design/icons";
 
-import CourseTabs from "./courseTab";
 import { UserRole } from "../../../types/user";
 import { useTranslation } from "react-i18next";
 import { CourseFormValues } from "../addCourse/addCourseController";
 import { useCourseDetailCtrl } from "./courseDetailController";
+import CourseTabs from "./courseTab";
 
 interface Props {
   course?: CourseFormValues;

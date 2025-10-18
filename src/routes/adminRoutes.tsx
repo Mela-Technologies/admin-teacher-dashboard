@@ -7,6 +7,7 @@ import AddCoursePage from "../pages/courses/addCourse/addCourse";
 import CourseDetailPage from "../pages/courses/courseDetail/courseDetailPage";
 import CoursesPage from "../pages/courses/courses";
 import DashBoard from "../pages/dashboard/dashboard";
+import AddEventPage from "../pages/events/addEvent/addEvent";
 import EventsPage from "../pages/events/events";
 import LessonsPage from "../pages/lessons/lessons";
 import MessagesPage from "../pages/messages/messages";
@@ -50,6 +51,7 @@ export const adminRoutes = [
   { path: "staff/teachers/detail", element: <TeacherDetailPage role={role} /> },
   { path: "staff/teachers/add", element: <AddTeacherPage role={role} /> },
   { path: "communication/events", element: <EventsPage role={role} /> },
+  { path: "communication/events/add", element: <AddEventPage role={role} /> },
   { path: "communication/message", element: <MessagesPage role={role} /> },
   { path: "settings", element: <SettingsPage role={role} /> },
   { path: "account", element: <ProfilePage role={role} /> },

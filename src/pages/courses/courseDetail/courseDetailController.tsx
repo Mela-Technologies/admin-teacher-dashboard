@@ -1,4 +1,4 @@
-import { App, Form, FormInstance } from "antd";
+import { App, Form } from "antd";
 import React, { useEffect, useState } from "react";
 import { CourseType } from "../courseController";
 import { useAxios } from "../../../hooks/useAxios";
@@ -14,13 +14,13 @@ export const useCourseDetailCtrl = () => {
   const queryParams = new URLSearchParams(location.search);
   const courseId = queryParams.get("id");
   const [teachers, setTeachers] = useState([
-    // {
-    //   key: "1",
-    //   fullName: "Mr. Daniel Bekele",
-    //   section: "A",
-    //   subject: course?.subject || "Mathematics",
-    //   grade: course?.grade,
-    // },
+    {
+      key: "1",
+      fullName: "Mr. Daniel Bekele",
+      section: "A",
+      subject: course?.subject || "Mathematics",
+      grade: course?.grade,
+    },
   ]);
   useEffect(() => {
     fetchCourseDetail();
@@ -60,32 +60,4 @@ export const useCourseDetailCtrl = () => {
     setTeachers,
   };
 };
-
-export type CourseDetailCtrlType = {
-  selectedRowKeys: React.Key[];
-  isModalVisible: boolean;
-  form: FormInstance<any>;
-  teachers: {
-    key: string;
-    fullName: string;
-    section: string;
-    subject: any;
-    grade: any;
-  }[];
-  isLoading: boolean;
-  course: CourseType | undefined;
-  //
-  setSelectedRowKeys: React.Dispatch<React.SetStateAction<React.Key[]>>;
-  setIsModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  setTeachers: React.Dispatch<
-    React.SetStateAction<
-      {
-        key: string;
-        fullName: string;
-        section: string;
-        subject: any;
-        grade: any;
-      }[]
-    >
-  >;
-};
+export type CourseDetailCtrlType = ReturnType<typeof useCourseDetailCtrl>;

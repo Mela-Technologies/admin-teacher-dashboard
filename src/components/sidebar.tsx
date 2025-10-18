@@ -85,13 +85,13 @@ const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
           key: "events",
           icon: "",
           label: t("events"),
-          onClick: () => () => navigate("/admin/communication/events"),
+          onClick: () => navigate("/admin/communication/events"),
         },
         {
           key: "message",
           icon: "",
           label: t("message"),
-          onClick: () => () => navigate("/admin/communication/message"),
+          onClick: () => navigate("/admin/communication/message"),
         },
       ],
     },
@@ -209,20 +209,23 @@ const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
     <ConfigProvider
       theme={{
         components: {
-          // Menu: {
-          //   itemSelectedColor: "#0284c7", // text/icon color when selected
-          //   itemSelectedBg: "#fff", // background when selected
-          //   itemActiveBg: "#f0f9ff", // hover/active background
-          // },
+          Menu: {
+            // itemColor: "#e0e7ff", // normal text (light blue/gray)
+            // itemHoverColor: "#ffffff", // text when hovered
+            // itemSelectedColor: "#ffffff", // text when selected
+            // itemBg: "#152259", // menu background
+            // itemHoverBg: "#1e3a8a", // hover background (slightly lighter blue)
+            // itemSelectedBg: "#1d4ed8", // active/selected background
+            // groupTitleColor: "#93c5fd",
+          },
         },
       }}
     >
       <Menu
-        theme="light"
         mode="inline"
         defaultSelectedKeys={["dashboard"]}
         items={items}
-        className="h-full border-r"
+        className="border-r"
       />
     </ConfigProvider>
   );
