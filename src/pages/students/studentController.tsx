@@ -35,7 +35,7 @@ export const useStudentController = () => {
       console.log(res.data);
       const studentsData = res.data;
       setStudents(
-        studentsData.map((s, i: number) => ({
+        studentsData.map((s: any, i: number) => ({
           key: i,
           firstName: s.firstName,
           lastName: s.lastName,
