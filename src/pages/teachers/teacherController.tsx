@@ -1,6 +1,5 @@
 import { App } from "antd";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
-import { useAxios } from "../../hooks/useAxios";
 
 interface TeacherType {
   key: number;
@@ -21,7 +20,7 @@ export const useTeacherController = () => {
   const [refresh, setRefresh] = useState(false);
   const [subjectList, setSubjectList] = useState<string[]>([]);
   const { message } = App.useApp();
-  const axios = useAxios();
+  //   const axios = useAxios();
 
   useEffect(() => {
     fetchTeachers();

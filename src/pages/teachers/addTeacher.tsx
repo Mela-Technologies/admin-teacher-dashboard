@@ -21,7 +21,7 @@ const AddTeacherPage = ({
   const rgsController = useTeacherRegistrationController();
   const { t } = useTranslation();
   const [open, setOpen] = useState(isEditing);
-  // console.log(editData, open, setOpen);
+  console.log(editData, open, setOpen);
   return (
     <div className={`h-full ${role}`}>
       {/*  */}
