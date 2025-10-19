@@ -23,6 +23,7 @@ type TopActionBarProps = {
   onPrint?: () => void;
   title?: string;
   addBtnText?: string;
+  role?: "admin" | "teacher";
 };
 
 const TopActionBar: React.FC<TopActionBarProps> = ({
@@ -35,6 +36,7 @@ const TopActionBar: React.FC<TopActionBarProps> = ({
   onPrint,
   title,
   addBtnText,
+  role,
 }) => {
   const { t } = useTranslation();
   // --- Main Menu Items ---
@@ -97,15 +99,17 @@ const TopActionBar: React.FC<TopActionBarProps> = ({
           <Button icon={<MoreOutlined />} className="" />
         </Dropdown>
         {/* Conditional Add or Actions */}
-        {hasSelection ? (
-          <Dropdown menu={{ items: actionMenuItems }} trigger={["click"]}>
-            <Button type="primary">Actions</Button>
-          </Dropdown>
-        ) : (
-          <Button type="primary" icon={<PlusOutlined />} onClick={onAddUser}>
-            {addBtnText ?? "Add"}
-          </Button>
-        )}
+
+        {role == "admin" &&
+          (hasSelection ? (
+            <Dropdown menu={{ items: actionMenuItems }} trigger={["click"]}>
+              <Button type="primary">Actions</Button>
+            </Dropdown>
+          ) : (
+            <Button type="primary" icon={<PlusOutlined />} onClick={onAddUser}>
+              {addBtnText ?? "Add"}
+            </Button>
+          ))}
       </div>
     </div>
   );
