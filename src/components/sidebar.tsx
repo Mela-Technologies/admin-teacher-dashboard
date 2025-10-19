@@ -122,16 +122,10 @@ const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
       label: t("myAcademics"),
       children: [
         {
-          key: "my-lessons",
-          icon: <BookOutlined />,
-          label: t("myLessons"),
-          onClick: () => navigate("/teacher/academics/lessons"),
-        },
-        {
-          key: "my-courses",
+          key: "my-class",
           icon: <ReadOutlined />,
-          label: "My Courses",
-          onClick: () => navigate("/teacher/academics/courses"),
+          label: "My Classes",
+          onClick: () => navigate("/teacher/academics/class"),
         },
       ],
     },
@@ -139,12 +133,12 @@ const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
       type: "group",
       label: t("studentsManagement"),
       children: [
-        {
-          key: "my-students",
-          icon: <TeamOutlined />,
-          label: t("myStudents"),
-          onClick: () => navigate("/teacher/students"),
-        },
+        // {
+        //   key: "my-students",
+        //   icon: <TeamOutlined />,
+        //   label: t("myStudents"),
+        //   onClick: () => navigate("/teacher/students"),
+        // },
         {
           key: "attendance",
           icon: <CalendarOutlined />,
@@ -153,24 +147,24 @@ const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
         },
       ],
     },
-    {
-      type: "group",
-      label: t("grade"),
-      children: [
-        {
-          key: "results",
-          label: t("result"),
-          icon: "",
-          onClick: () => navigate("/teacher/results"),
-        },
-        {
-          key: "exams",
-          label: t("exams"),
-          icon: "",
-          onClick: () => navigate("/teacher/exams"),
-        },
-      ],
-    },
+    // {
+    //   type: "group",
+    //   label: t("grade"),
+    //   children: [
+    //     {
+    //       key: "results",
+    //       label: t("result"),
+    //       icon: "",
+    //       onClick: () => navigate("/teacher/results"),
+    //     },
+    //     {
+    //       key: "exams",
+    //       label: t("exams"),
+    //       icon: "",
+    //       onClick: () => navigate("/teacher/exams"),
+    //     },
+    //   ],
+    // },
     {
       type: "group",
       label: t("communication"),
@@ -179,13 +173,13 @@ const Sidebar = ({ role }: { role: "admin" | "teacher" }) => {
           key: "events",
           icon: "",
           label: t("events"),
-          onClick: () => () => navigate("/admin/communication/events"),
+          onClick: () => navigate("/teacher/communication/events"),
         },
         {
           key: "message",
           icon: "",
           label: t("message"),
-          onClick: () => () => navigate("/admin/communication/message"),
+          onClick: () => navigate("/teacher/communication/message"),
         },
       ],
     },
