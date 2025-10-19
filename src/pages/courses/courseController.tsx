@@ -1,7 +1,10 @@
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+// src/pages/course/courseController.ts
+import { useEffect, useMemo, useState } from "react";
 import { message } from "antd";
 import { useAxios } from "../../hooks/useAxios";
 import { CourseFormValues } from "./addCourse/addCourseController";
+import { UserRole } from "../../types/user";
+
 export interface CourseType {
   key: string;
   subject: string;
@@ -11,9 +14,21 @@ export interface CourseType {
   grade?: number | string;
   courseId?: string;
   existing?: boolean;
+  section?: string;
+  color?: string;
 }
-
-export const useCourseCtrl = () => {
+const getColorByIndex = (index: number): string => {
+  const colors = [
+    "#0284c7",
+    "#16a34a",
+    "#f59e0b",
+    "#dc2626",
+    "#9333ea",
+    "#0ea5e9",
+  ];
+  return colors[index % colors.length];
+};
+export const useCourseCtrl = (role?: UserRole) => {
   const [courses, setCourses] = useState<CourseType[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -22,23 +37,30 @@ export const useCourseCtrl = () => {
   const [editingClass, setEditingClass] = useState<CourseFormValues>();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [refresh, setRefresh] = useState(false);
+
   useEffect(() => {
     fetchCourses();
   }, [refresh]);
+
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`/api/courses/viewall`);
-      console.log(res.data);
+      const endpoint =
+        role === "teacher"
+          ? `/api/courses/teacher/viewall`
+          : `/api/courses/viewall`;
+
+      const res = await axios.get(endpoint);
       const courseData = res.data.data.data;
+
       setCourses(
         courseData.map((c: any, index: number) => ({
-          key: Date.now().toString() + index,
+          key: `${Date.now()}_${index}`,
           subject: c.course_name,
           code: c.course_code,
           creditHours: c.credit_hours,
-          core: true,
-          grade: c.class.grade || "-",
+          core: c.is_core ?? true,
+          grade: c.class?.grade || "-",
           courseId: c.id,
           existing: true,
         }))
@@ -49,6 +71,7 @@ export const useCourseCtrl = () => {
       setLoading(false);
     }
   };
+
   const handleEdit = (record: CourseFormValues) => {
     const data: CourseFormValues = {
       gradeLevel: record.gradeLevel,
@@ -58,7 +81,7 @@ export const useCourseCtrl = () => {
     setEditingClass(data);
     setIsEditModalOpen(true);
   };
-  // 🔹 Filter and search logic
+
   const filteredData = useMemo(() => {
     return courses.filter((course) => {
       const matchesSearch =
@@ -74,7 +97,6 @@ export const useCourseCtrl = () => {
     });
   }, [searchTerm, filterCore, courses]);
 
-  // 🔹 Group courses by grade
   const groupedCourses = useMemo(() => {
     const groups: Record<string, CourseType[]> = {};
     filteredData.forEach((course) => {
@@ -89,6 +111,58 @@ export const useCourseCtrl = () => {
     setSearchTerm("");
     setFilterCore(null);
   };
+
+  // ----------------------
+  // TeacherCourse Controller
+  // -----------------------
+
+  const teacherCoursesData: CourseType[] = [
+    {
+      key: "1",
+      subject: "Mathematics",
+      code: "MTH101",
+      creditHours: 3,
+      grade: "Grade 10",
+      section: "A",
+      core: false,
+    },
+    {
+      key: "2",
+      subject: "Mathematics",
+      code: "MTH201",
+      creditHours: 4,
+      grade: "Grade 11",
+      section: "B",
+      core: false,
+    },
+    {
+      key: "3",
+      subject: "Mathematics",
+      code: "MTH102",
+      creditHours: 2,
+      grade: "Grade 9",
+      section: "C",
+      core: false,
+    },
+    {
+      key: "4",
+      subject: "Mathematics",
+      code: "MTH301",
+      creditHours: 3,
+      grade: "Grade 12",
+      section: "A",
+      core: false,
+    },
+  ].map((course, i) => ({
+    ...course,
+    color: getColorByIndex(i),
+  }));
+
+  const filteredCourses = useMemo(() => {
+    return teacherCoursesData.filter((c) =>
+      c.subject.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm, teacherCoursesData, refresh]);
 
   return {
     courses,
@@ -105,29 +179,14 @@ export const useCourseCtrl = () => {
     setFilterCore,
     setRefresh,
     groupedCourses,
+    filteredData,
     handleResetFilters,
     setEditingClass,
     setIsEditModalOpen,
     handleEdit,
+    filteredCourses,
+    teacherCoursesData,
   };
 };
 
-export type CourseCtrlType = {
-  courses: CourseType[];
-  loading: boolean;
-  searchTerm: string;
-  filterCore: string | null;
-  editingClass: CourseFormValues | undefined;
-  isEditModalOpen: boolean;
-  //
-  setCourses: Dispatch<SetStateAction<CourseType[]>>;
-  setLoading: Dispatch<SetStateAction<boolean>>;
-  setSearchTerm: Dispatch<SetStateAction<string>>;
-  setFilterCore: Dispatch<SetStateAction<string | null>>;
-  setRefresh: Dispatch<SetStateAction<boolean>>;
-  groupedCourses: Record<number, CourseType[]>;
-  handleResetFilters: () => void;
-  setEditingClass: Dispatch<SetStateAction<CourseFormValues | undefined>>;
-  setIsEditModalOpen: Dispatch<SetStateAction<boolean>>;
-  handleEdit: (record: CourseFormValues) => void;
-};
+export type CourseCtrlType = ReturnType<typeof useCourseCtrl>;
