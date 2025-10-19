@@ -19,7 +19,7 @@ const TeacherLayout = () => {
           <Sidebar role="teacher" />
         </div>
         <main
-          className="flex-1 p-4 overflow-y-auto"
+          className="flex-1 overflow-y-auto"
           style={{
             background: "#F3F3F9",
           }}
