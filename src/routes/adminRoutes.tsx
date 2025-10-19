@@ -14,7 +14,6 @@ import MessagesPage from "../pages/messages/messages";
 import ParentsPage from "../pages/parents/parents";
 import PermissionsAccessPage from "../pages/permissionsAccess/permissionsAccess";
 import ProfilePage from "../pages/profile/profile";
-import UserRegistrationPage from "../pages/registration/registration";
 import SettingsPage from "../pages/settings/settings";
 import AddStudentsPage from "../pages/students/addStudent";
 import StudentDetailPage from "../pages/students/studentDetail/studentDetailPage";
@@ -26,7 +25,6 @@ import TeacherPage from "../pages/teachers/teachers";
 const role = "admin";
 export const adminRoutes = [
   { path: "dashboard", element: <DashBoard /> },
-  { path: "admission/user-registration", element: <UserRegistrationPage /> },
   { path: "admission/permissions", element: <PermissionsAccessPage /> },
   { path: "academics/lessons", element: <LessonsPage role={role} /> },
   { path: "academics/courses", element: <CoursesPage role={role} /> },

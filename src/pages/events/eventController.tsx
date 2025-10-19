@@ -67,6 +67,13 @@ export const useEventCtrl = (editData?: EventFormValues) => {
         date: "2025-11-18",
         color: "#dc2626",
       },
+      {
+        key: 5,
+        title: "Graduation Ceremony",
+        message: "Celebrating our final-year students' achievements.",
+        date: "2025-11-18",
+        color: "#dc2626",
+      },
     ];
 
     setEvents(sampleEvents);
