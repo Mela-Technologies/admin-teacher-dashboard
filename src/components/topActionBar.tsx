@@ -12,6 +12,7 @@ import {
   ImportOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
+import { useAuthContext } from "../contexts/auth/useAuthContext";
 
 type TopActionBarProps = {
   hasSelection?: boolean;
@@ -36,9 +37,11 @@ const TopActionBar: React.FC<TopActionBarProps> = ({
   onPrint,
   title,
   addBtnText,
-  role,
+  role: r,
 }) => {
   const { t } = useTranslation();
+  const { user } = useAuthContext();
+  const role = user?.role || r;
   // --- Main Menu Items ---
   const mainMenuItems: MenuProps["items"] = [
     {
@@ -100,7 +103,7 @@ const TopActionBar: React.FC<TopActionBarProps> = ({
         </Dropdown>
         {/* Conditional Add or Actions */}
 
-        {role == "admin" &&
+        {role === "admin" &&
           (hasSelection ? (
             <Dropdown menu={{ items: actionMenuItems }} trigger={["click"]}>
               <Button type="primary">Actions</Button>
