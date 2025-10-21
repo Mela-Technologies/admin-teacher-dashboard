@@ -37,7 +37,6 @@ const EventCalendar = () => {
       <Calendar onChange={onChange} value={value} />
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold my-4">{t("events")}</h1>
-        <img src="/moreDark.png" alt="" width={20} height={20} />
       </div>
       <div className="flex flex-col gap-4">
         {events.map((event) => (

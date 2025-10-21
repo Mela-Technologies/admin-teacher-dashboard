@@ -17,7 +17,7 @@ const useLogin = () => {
       //adding zero to phone number
       data.phone_number = `0${data.phone_number}`;
       const response = await axios.post("/api/users/login", data);
-      // console.log(response.data);
+      console.log(response.data);
       const loggedUser = response.data.user;
       const userRole = (data.role as UserRole) ?? "admin";
       updateUser({
@@ -34,16 +34,16 @@ const useLogin = () => {
     } catch (error) {
       console.log(error);
       message.error(`${error}`);
-      updateUser({
-        id: "11",
-        name: "DemoUser",
-        role: data.role ?? "admin",
-        email: "admin@123",
-        token: null,
-        phone_number: (data.phone_number = `0${data.phone_number}`),
-      });
+      // updateUser({
+      //   id: "11",
+      //   name: "DemoUser",
+      //   role: data.role ?? "admin",
+      //   email: "admin@123",
+      //   token: null,
+      //   phone_number: (data.phone_number = `0${data.phone_number}`),
+      // });
 
-      navigator(`/${data.role ?? "admin"}/dashboard`);
+      // navigator(`/${data.role ?? "admin"}/dashboard`);
     } finally {
       setLoading(false);
     }

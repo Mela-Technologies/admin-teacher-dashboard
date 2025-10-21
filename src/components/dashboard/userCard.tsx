@@ -11,7 +11,6 @@ const UserCard = ({
         <span className="text-[10px] bg-white px-2 py-1 rounded-full text-green-600">
           2025/26
         </span>
-        <img src="/more.png" alt="" width={20} height={20} />
       </div>
       <h1 className="text-2xl font-semibold my-4">{value}</h1>
       <h2 className="capitalize text-sm font-medium text-gray-500">{type}s</h2>
